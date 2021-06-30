@@ -7,10 +7,24 @@ defmodule Tableau.Application do
 
   @impl true
   def start(_type, _args) do
-    children = [
-      # Starts a worker by calling: Tableau.Worker.start_link(arg)
-      # {Tableau.Worker, arg}
-    ]
+    children =
+      if Application.get_env(:tableau, :server) do
+        reloader_opts = Application.get_env(:tableau, :reloader, dirs: ["./lib/pages/", "./_posts"])
+
+        [
+          {Plug.Cowboy,
+           scheme: :http, plug: Tableau.Router, options: [port: 4999]},
+          %{
+            id: FileSystem,
+            start:
+              {FileSystem, :start_link,
+               [Keyword.merge(reloader_opts, name: :tableau_file_watcher, latency: 0)]}
+          },
+          Tableau.Watcher
+        ]
+      else
+        []
+      end
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options

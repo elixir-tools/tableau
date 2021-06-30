@@ -20,12 +20,7 @@ erl_crash.dump
 *.ez
 
 # Ignore package tarball (built via "mix hex.build").
-tableau-*.tar
+tab_demo-*.tar
 
 # Temporary files, for example, from tests.
 /tmp/
-
-/test/support/tab_demo/_site
-
-
-/test/support/tab_demo/priv/static
