@@ -9,11 +9,11 @@ defmodule Tableau.Application do
   def start(_type, _args) do
     children =
       if Application.get_env(:tableau, :server) do
-        reloader_opts = Application.get_env(:tableau, :reloader, dirs: ["./lib/pages/", "./_posts"])
+        reloader_opts =
+          Application.get_env(:tableau, :reloader, dirs: ["./lib/pages/", "./_posts"])
 
         [
-          {Plug.Cowboy,
-           scheme: :http, plug: Tableau.Router, options: [port: 4999]},
+          {Plug.Cowboy, scheme: :http, plug: Tableau.Router, options: [port: 4999]},
           %{
             id: FileSystem,
             start:

@@ -49,6 +49,6 @@ defmodule Mix.Tasks.Tableau.Build do
   end
 
   defp tableau_page?(mod) do
-    String.match?(to_string(mod), ~r/Elixir\.#{Tableau.module_prefix()}\.Pages/)
+    String.match?(to_string(mod), ~r/#{Tableau.module_prefix()}\.Pages/)
   end
 end
