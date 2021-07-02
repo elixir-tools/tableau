@@ -1,38 +1,58 @@
 defmodule Tableau.Router do
   use Plug.Router
 
+  require Logger
+
+  alias Tableau.Store
+
+  @not_found ~S|<!DOCTYPE html><html lang="en"><head></head><body>Not Found</body></html>|
+
   plug Plug.Logger, log: :debug
   plug Plug.Static, at: "/", only: [".css"], from: "priv/static"
-  plug :append_slash
+  plug :recompile
+  plug :add_index
 
   plug :match
   plug :dispatch
 
   match _ do
-    file = "_site" <> conn.request_path <> "index.html"
+    site = Store.fetch()
 
-    conn = put_resp_header(conn, "content-type", "text/html")
+    site.posts
+    |> Map.merge(site.pages)
+    |> Map.fetch!(URI.decode(conn.request_path))
+    |> Tableau.Renderable.render()
 
     try do
-      send_resp(conn, 200, File.read!(file))
+      conn
+      |> put_resp_header("content-type", "text/html")
+      |> send_resp(200, File.read!(conn.private.tableau_file))
     rescue
-      _ ->
-        send_resp(
-          conn,
-          404,
-          ~S|<!DOCTYPE html><html lang="en"><head></head><body>Not Found</body></html>|
-        )
+      exception ->
+        Logger.error(inspect(exception))
+
+        send_resp(conn, 404, @not_found)
     end
   end
 
-  defp append_slash(conn, _) do
-    path =
-      if String.ends_with?(conn.request_path, "/") do
-        conn.request_path
+  defp recompile(conn, _) do
+    Mix.Task.rerun("compile.elixir", [])
+
+    conn
+  end
+
+  defp add_index(conn, _) do
+    path_info =
+      if List.last(conn.path_info) == "index.html" do
+        conn.path_info
       else
-        conn.request_path <> "/"
+        rest = Enum.reverse(conn.path_info)
+
+        Enum.reverse(["index.html" | rest])
       end
 
-    %{conn | request_path: path}
+    file = Enum.join(["_site" | path_info], "/") |> URI.decode()
+
+    conn |> put_private(:tableau_file, file)
   end
 end

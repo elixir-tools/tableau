@@ -1,3 +1,3 @@
 import Config
 
-config :tableau, :reloader, dirs: ["./lib/pages/", "./_posts"]
+config :tableau, :reloader, dirs: ["./lib/app.ex", "./lib/pages/", "./_posts"]

@@ -1,5 +1,7 @@
 defmodule TabDemo.Pages.Season do
-  import Temple.Component
+  use Tableau.Page
+
+  def permalink, do: "/season"
 
   render do
     span class: "text-red-500 font-bold" do

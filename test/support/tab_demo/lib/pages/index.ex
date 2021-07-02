@@ -1,7 +1,9 @@
 defmodule TabDemo.Pages.Index do
-  import Temple.Component
+  use Tableau.Page
+
+  def permalink(), do: "/"
 
   render do
-    "Hello, folks!"
+    "Hello, world!!"
   end
 end

@@ -1,6 +1,8 @@
 defmodule Mix.Tasks.Tableau.Build do
   use Mix.Task
 
+  alias Tableau.Store
+
   require Logger
 
   @moduledoc "Task to build the tableau site"
@@ -8,47 +10,23 @@ defmodule Mix.Tasks.Tableau.Build do
 
   @impl Mix.Task
   def run(_args) do
-    Tableau.compile_all()
+    Mix.Task.run("compile")
+    Application.ensure_all_started(:tableau)
 
     {time, _} =
       :timer.tc(fn ->
-        Logger.debug("Building!")
+        site = Store.fetch()
 
-        post_data =
-          for file <- File.ls!("./_posts") do
-            {:ok, matter, body} = YamlFrontMatter.parse_file(Path.absname(file, "./_posts"))
-
-            permalink =
-              String.replace(matter["permalink"], ~r/:title/, matter["title"])
-              |> String.replace(~r/[_\s]/, "-")
-
-            Map.merge(matter, %{permalink: permalink, content: body})
+        site.posts
+        |> Map.merge(site.pages)
+        |> Task.async_stream(fn {_, page} ->
+          unless Tableau.Renderable.layout?(page) do
+            Tableau.Renderable.render(page)
           end
-
-        pages =
-          for {mod, _, _} <- :code.all_available(), tableau_page?(mod) do
-            Task.async(fn ->
-              mod
-              |> to_string()
-              |> String.to_existing_atom()
-              |> Tableau.build(%{posts: post_data})
-            end)
-          end
-
-        posts =
-          for file <- post_data do
-            Task.async(fn -> Tableau.build_post(file) end)
-          end
-
-        Task.await_many(pages ++ posts)
-
-        nil
+        end)
+        |> Stream.run()
       end)
 
     Logger.debug("Built in: #{time / 1000}ms")
-  end
-
-  defp tableau_page?(mod) do
-    String.match?(to_string(mod), ~r/#{Tableau.module_prefix()}\.Pages/)
   end
 end

@@ -19,7 +19,7 @@ Experimental static site generator using [Temple](https://github.com/mhanberg/te
 
 ### Pages
 
-Pages are Temple components located in the `./lib/pages` directory, and that have the module suffix `Pages.PageName`. So if you were to have an `/about` page, it would be generated from the `YourApp.Pages.About` module that implements a Temple component.
+Pages are Tableau.Pages, which is a form of Temple.Component that's located in the `./lib/pages` directory, and that have the module suffix `Pages.PageName`. So if you were to have an `/about` page, it would be generated from the `YourApp.Pages.About` module that implements a Temple component.
 
 These pages are rendered in the layout module called `YourApp.App`, which is also a Temple component.
 
@@ -28,6 +28,8 @@ These pages are rendered in the layout module called `YourApp.App`, which is als
 ```elixir
 defmodule TabDemo.App do
   import Temple.Component
+
+  def layout?, do: true
 
   render do
     "<!DOCTYPE html>"
@@ -65,7 +67,7 @@ end
 
 ```elixir
 defmodule TabDemo.Pages.About do
-  import Temple.Component
+  use Tableau.Page
 
   render do
     span class: "text-red-500 font-bold" do
@@ -98,14 +100,14 @@ Pages included a `@posts` assign that includes all posts and their frontmatter d
 
 ```elixir
 defmodule TabDemo.Pages.Posts do
-  import Temple.Component
+  use Tableau.Page
 
   render do
     ul class: "list-disc pl-6" do
       for post <- @posts do
         li do
           a class: "text-blue-500 hover:underline", href: post.permalink do
-            post["title"]
+            post.frontmatter["title"]
           end
         end
       end
@@ -116,4 +118,4 @@ end
 
 ### Development
 
-The dev server can be started with `mix tableau.server`. Pages and posts will be recompiled on file change, so all you need to do is refresh the browser to see the new content.
+The dev server can be started with `mix tableau.server`. On file change, a browser reload will be triggered and the page your requesting will be re-built during the request.

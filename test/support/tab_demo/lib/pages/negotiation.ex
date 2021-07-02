@@ -1,5 +1,5 @@
 defmodule TabDemo.Pages.Negotiation do
-  import Temple.Component
+  use Tableau.Page
 
   render do
     span class: "text-red-500 font-bold" do
