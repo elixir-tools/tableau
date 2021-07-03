@@ -21,15 +21,13 @@ Experimental static site generator using [Temple](https://github.com/mhanberg/te
 
 Pages are Tableau.Pages, which is a form of Temple.Component that's located in the `./lib/pages` directory, and that have the module suffix `Pages.PageName`. So if you were to have an `/about` page, it would be generated from the `YourApp.Pages.About` module that implements a Temple component.
 
-These pages are rendered in the layout module called `YourApp.App`, which is also a Temple component.
+These pages are rendered withing Layout modules, which are also Temple Components
 
 #### Layout
 
 ```elixir
-defmodule TabDemo.App do
-  import Temple.Component
-
-  def layout?, do: true
+defmodule TabDemo.Layouts.App do
+  use Tableau.Layout
 
   render do
     "<!DOCTYPE html>"
@@ -54,7 +52,7 @@ defmodule TabDemo.App do
               "Posts"
             end
 
-            @inner_content
+            slot :default
           end
         end
       end
@@ -79,16 +77,53 @@ end
 
 The root `/` can be built by create an "Index" module, `YourApp.Pages.Index`.
 
+You can change which layout your page renders within by using the `layout` macro.
+
+```elixir
+defmodule TabDemo.Layouts.Sidebar do
+  use Tableau.Layout
+
+  layout TabDemo.Layouts.App
+
+  render do
+    aside do
+      ul do
+        li do: "Home"
+        li do: "Profile"
+        li do: "Messages"
+      end
+    end
+
+    slot :default
+  end
+end
+
+defmodule TabDemo.Pages.Home do
+  use Tableau.Page
+
+  layout TabDemo.Layouts.Sidebar
+
+  render do
+    div do
+      c TheFeed
+    end
+  end
+end
+```
+
+
 ### Posts
 
-Posts are markdown files with YAML frontmatter that are located in the `_posts` directory. Currently, it is supported to have a `title` and `permalink` property that can use the `:title` slug.
+Posts are markdown files with YAML frontmatter that are located in the `_posts` directory. 
 
 The following post would be rendered to the path `/posts/hello-word!`.
 
 ```markdown
 ---
+layout: "TabDemo.Layouts.Sidebar"
 title: "hello world!"
-permalink: /posts/:title
+category: "elixir"
+permalink: /posts/:category/:title
 ---
 
 # Yo!

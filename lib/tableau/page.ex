@@ -1,11 +1,15 @@
 defmodule Tableau.Page do
   alias Tableau.Store
+  alias Tableau.Render
+
+  require Temple.Component
 
   defstruct module: nil, permalink: nil
 
   defmacro __using__(_) do
     quote do
       import Temple.Component
+      import Tableau.Page, only: [layout: 1]
 
       def path_info() do
         Tableau.Page.path_from_module(__MODULE__)
@@ -17,7 +21,17 @@ defmodule Tableau.Page do
 
       def layout?, do: false
 
-      defoverridable permalink: 0, path_info: 0
+      defdelegate layout, to: Tableau.Layout, as: :default
+
+      defoverridable permalink: 0, path_info: 0, layout: 0
+    end
+  end
+
+  defmacro layout(layout) do
+    quote do
+      def layout() do
+        unquote(layout)
+      end
     end
   end
 
@@ -51,14 +65,12 @@ defmodule Tableau.Page do
     def render(%{module: module, permalink: permalink}) do
       %{posts: posts} = Store.fetch()
 
-      layout = Module.concat(Tableau.module_prefix(), App)
-
       posts = Map.values(posts)
 
       page =
-        Phoenix.View.render_layout layout, :self, posts: posts do
-          Phoenix.View.render(module, :self, posts: posts)
-        end
+        module
+        |> Render.gather_modules([])
+        |> Render.recursively_render(posts: posts)
         |> Phoenix.HTML.safe_to_string()
 
       dir = "_site#{permalink}"

@@ -1,5 +1,7 @@
 defmodule Tableau.Post do
-  defstruct frontmatter: %{}, content: "", permalink: nil
+  alias Tableau.Render
+
+  defstruct frontmatter: %{}, content: "", layout: Tableau.Layout.default(), permalink: nil
 
   def build() do
     for file <- File.ls!("./_posts"), into: %{} do
@@ -8,7 +10,14 @@ defmodule Tableau.Post do
         |> Path.absname("./_posts")
         |> YamlFrontMatter.parse_file()
 
-      path =
+      layout =
+        if layout = matter["layout"] do
+          Module.concat([layout])
+        else
+          Tableau.Layout.default()
+        end
+
+      permalink =
         matter["permalink"]
         |> String.split("/")
         |> Enum.map(fn
@@ -18,23 +27,28 @@ defmodule Tableau.Post do
           x ->
             x
         end)
+        |> Enum.join("/")
+        |> String.replace(" ", "-")
 
-      permalink = Enum.join(path, "/")
-
-      {permalink, struct!(__MODULE__, frontmatter: matter, content: body, permalink: permalink)}
+      {permalink,
+       struct!(__MODULE__,
+         frontmatter: matter,
+         layout: layout,
+         content: body,
+         permalink: permalink
+       )}
     end
   end
 
   defimpl Tableau.Renderable do
-    def render(%{frontmatter: frontmatter, permalink: permalink, content: content}) do
+    def render(post) do
+      %{frontmatter: frontmatter, permalink: permalink, content: content, layout: layout} = post
       post = Earmark.as_html!(content)
 
-      layout = Module.concat(Tableau.module_prefix(), App)
-
       page =
-        Phoenix.View.render_layout layout, :self, %{page: frontmatter} do
-          Phoenix.HTML.raw(post)
-        end
+        layout
+        |> Render.gather_modules([post])
+        |> Render.recursively_render(page: frontmatter)
         |> Phoenix.HTML.safe_to_string()
 
       dir = "_site#{permalink}"
