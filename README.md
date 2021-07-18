@@ -8,6 +8,7 @@ Experimental static site generator using [Temple](https://github.com/mhanberg/te
 - [x] Good code and browser reloading on file change
 - [x] Easy to use the current Node.js JS/CSS tooling
 - [ ] Handles stuff like RSS, sitemap, SEO.
+- [ ] Ability to work with "data" (either dynamic data or static files)
 - [ ] Good project generation experience.
 
 ## Installation
