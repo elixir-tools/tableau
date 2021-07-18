@@ -15,7 +15,7 @@ defmodule TabDemo.Layouts.App do
                "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%E2%98%80%EF%B8%8F%3C%2Ftext%3E%3C%2Fsvg%3E",
              type: "image/svg+xml"
 
-        script(src: "https://unpkg.com/tailwindcss-jit-cdn")
+        link rel: "stylesheet", href: "/css/site.css"
       end
 
       body class: "font-sans" do
@@ -34,41 +34,8 @@ defmodule TabDemo.Layouts.App do
         end
       end
 
-      script defer: true do
-        """
-        function connect() {
-          try {
-            window.socket = new WebSocket('ws://' + location.host + '/ws');
-
-            window.socket.onmessage = function(e) {
-              if (e.data === "reload") {
-                location.reload();
-              }
-            }
-
-            window.socket.onopen = () => {
-              waitForConnection(() => window.socket.send("subscribe"), 300);
-            };
-
-            window.socket.onclose = () => {
-              setTimeout(() => connect(), 500);
-            };
-
-            function waitForConnection(callback, interval) {
-              console.log("Waiting for connection!")
-              if (window.socket.readyState === 1) {
-                callback();
-              } else {
-                setTimeout(() => waitForConnection(callback, interval), interval);
-              }
-            }
-          } catch (e) {
-            setTimeout(() => connect(), 500);
-          }
-        }
-
-        connect();
-        """
+      if Mix.env() == :dev do
+        c Tableau.Components.LiveReload
       end
     end
   end

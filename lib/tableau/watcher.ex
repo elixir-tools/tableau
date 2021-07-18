@@ -13,8 +13,10 @@ defmodule Tableau.Watcher do
     {:ok, %{}}
   end
 
-  def handle_info({:file_event, _watcher_pid, {_path, _event}}, state) do
+  def handle_info({:file_event, _watcher_pid, {path, _event}}, state) do
     Logger.debug("🔫 Reload! 🔫")
+
+    :ok = Tableau.Store.mark_stale(path)
 
     Registry.dispatch(Tableau.LiveReloadRegistry, :reload, fn entries ->
       for {pid, _} <- entries, do: send(pid, :reload)
@@ -25,6 +27,7 @@ defmodule Tableau.Watcher do
 
   def handle_info(message, state) do
     Logger.debug("Unhandled message: #{inspect(message)}")
+
     {:noreply, state}
   end
 end

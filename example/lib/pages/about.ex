@@ -3,10 +3,10 @@ defmodule TabDemo.Pages.About do
 
   render do
     span class: "text-red-500 font-bold" do
-      "i'm a super cool and smart! dfkj"
+      "i'm a super cool and smart!"
 
-      div class: "font-bold italic" do
-        "and i'm very humble"
+      div class: "font-bold italic text-yellow-800" do
+        "and i'm very yellow"
       end
     end
   end

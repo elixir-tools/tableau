@@ -25,7 +25,7 @@ tableau-*.tar
 # Temporary files, for example, from tests.
 /tmp/
 
-/test/support/tab_demo/_site
+/example/_site
 
 
-/test/support/tab_demo/priv/static
+/example/priv/static

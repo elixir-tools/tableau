@@ -1,8 +1,6 @@
 defmodule Mix.Tasks.Tableau.Build do
   use Mix.Task
 
-  alias Tableau.Store
-
   require Logger
 
   @moduledoc "Task to build the tableau site"
@@ -11,20 +9,24 @@ defmodule Mix.Tasks.Tableau.Build do
   @impl Mix.Task
   def run(_args) do
     Mix.Task.run("compile")
-    Application.ensure_all_started(:tableau)
 
     {time, _} =
       :timer.tc(fn ->
-        site = Store.fetch()
+        posts = Tableau.Post.build(Path.expand("_posts"))
 
-        site.posts
-        |> Map.merge(site.pages)
-        |> Task.async_stream(fn {_, page} ->
+        Tableau.Page.build()
+        |> Enum.concat(posts)
+        |> Task.async_stream(fn page ->
           unless Tableau.Renderable.layout?(page) do
-            Tableau.Renderable.render(page)
+            Tableau.Renderable.render(page, posts: posts)
           end
         end)
         |> Stream.run()
+
+        for {mod, args} <- Tableau.Application.asset_children() do
+          mod.async(args)
+        end
+        |> Task.await_many()
       end)
 
     Logger.debug("Built in: #{time / 1000}ms")

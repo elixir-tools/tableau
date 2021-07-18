@@ -1,7 +1,7 @@
 defmodule TabDemo.Layouts.WithHeader do
   use Tableau.Layout
 
-  layout Tableau.Layout.default()
+  layout(Tableau.Layout.default())
 
   render do
     header class: "px-2 py-4 border border-red-500 w-full flex justify-between" do

@@ -21,6 +21,8 @@ defmodule Tableau.Page do
 
       def layout?, do: false
 
+      def file_path, do: __ENV__.file
+
       defdelegate layout, to: Tableau.Layout, as: :default
 
       defoverridable permalink: 0, path_info: 0, layout: 0
@@ -35,14 +37,15 @@ defmodule Tableau.Page do
     end
   end
 
-  def build() do
-    for {mod, _, _} <- :code.all_available(), tableau_page?(mod), into: %{} do
+  def build(callback \\ fn x -> x end) do
+    for {mod, _, _} <- :code.all_available(), tableau_page?(mod) do
       mod =
         mod
         |> to_string()
         |> String.to_existing_atom()
 
-      {mod.permalink(), struct(__MODULE__, module: mod, permalink: mod.permalink())}
+      page = struct(__MODULE__, module: mod, permalink: mod.permalink())
+      callback.(page)
     end
   end
 
@@ -62,12 +65,10 @@ defmodule Tableau.Page do
   end
 
   defimpl Tableau.Renderable do
-    def render(%{module: module, permalink: permalink}) do
-      %{posts: posts} = Store.fetch()
+    def render(%{module: module, permalink: permalink} = page, opts \\ [posts: Store.posts()]) do
+      posts = opts[:posts]
 
-      posts = Map.values(posts)
-
-      page =
+      content =
         module
         |> Render.gather_modules([])
         |> Render.recursively_render(posts: posts)
@@ -76,8 +77,12 @@ defmodule Tableau.Page do
       dir = "_site#{permalink}"
 
       File.mkdir_p!(dir)
-      File.write!(dir <> "/index.html", page)
+      File.write!(dir <> "/index.html", content)
+
+      page
     end
+
+    def refresh(page), do: page
 
     def layout?(%{module: module}) do
       module.layout?

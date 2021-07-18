@@ -4,10 +4,11 @@ Experimental static site generator using [Temple](https://github.com/mhanberg/te
 
 ## Goals
 
-- Uses Temple's component model
-- Good code and browser reloading on file change.
-- Easy to use the current Node.js JS/CSS tooling
-- Handles stuff like RSS, sitemap, SEO.
+- [x] Uses Temple's component model
+- [x] Good code and browser reloading on file change
+- [x] Easy to use the current Node.js JS/CSS tooling
+- [ ] Handles stuff like RSS, sitemap, SEO.
+- [ ] Good project generation experience.
 
 ## Installation
 
@@ -34,11 +35,11 @@ defmodule TabDemo.Layouts.App do
 
     html lang: "en" do
       head do
-        meta(charset: "utf-8")
-        meta(http_equiv: "X-UA-Compatible", content: "IE=edge")
-        meta(name: "viewport", content: "width=device-width, initial-scale=1.0")
+        meta charset: "utf-8"
+        meta http_equiv: "X-UA-Compatible", content: "IE=edge"
+        meta name: "viewport", content: "width=device-width, initial-scale=1.0"
 
-        script src: "https://unpkg.com/tailwindcss-jit-cdn"
+        link rel: "stylesheet", href: "/css/site.css"
       end
 
       body class: "font-sans" do
@@ -55,6 +56,10 @@ defmodule TabDemo.Layouts.App do
             slot :default
           end
         end
+      end
+
+      if Mix.env() == :dev do
+        c Tableau.Components.LiveReload
       end
     end
   end
@@ -150,6 +155,104 @@ defmodule TabDemo.Pages.Posts do
   end
 end
 ```
+
+### Live Reloading
+
+You can specify a set of directories/files to watch for changes, and the browser will automatically refresh.
+
+```elixir
+# config/config.exs
+import Config
+
+config :tableau, :reloader,
+  dirs: [
+    "./lib/app.ex",
+    "./lib/pages/",
+    "./_posts",
+    "./_site/css"
+  ]
+```
+
+All you need to do is render the `Tableau.Components.LiveReload` component right after your `body` tag.
+
+```elixir
+# lib/layouts/app.ex
+
+defmodule YourApp.Layouts.App do
+  use Tableau.Layout
+
+  render do
+    "<!DOCTYPE html>"
+
+    html lang: "en" do
+      head do
+        meta charset: "utf-8"
+        meta http_equiv: "X-UA-Compatible", content: "IE=edge"
+        meta name: "viewport", content: "width=device-width, initial-scale=1.0"
+
+        link rel: "stylesheet", href: "/css/site.css"
+      end
+
+      body class: "font-sans" do
+        main class: "container mx-auto px-2" do
+            slot :default
+          end
+        end
+      end
+
+      if Mix.env() == :dev do
+        c Tableau.Components.LiveReload
+      end
+    end
+  end
+end
+```
+
+
+### JS/CSS
+
+You can arbitrarily start other build tools as "watchers". This is inspired by the way [Phoenix does it](TODO).
+
+```elixir
+# config/config.exs
+
+import Config
+
+config :tableau, :assets,
+  npx: [
+    "tailwindcss",
+    "-o",
+    "_site/css/site.css",
+    "--watch"
+  ]
+
+import_config "#{config_env()}.exs"
+```
+
+This will start a long running process that will independently build your CSS as it see's files change.
+
+These are started automatically when you run `mix tableau.server`.
+
+In production, you can declare your prod configuration in the `config/prod.exs`
+
+
+```elixir
+# config/prod.exs
+
+import Config
+
+config :tableau, :assets,
+  npx: [
+    "tailwindcss",
+    "-o",
+    "_site/css/site.css",
+    env: [{"NODE_ENV", "production"}],
+  ]
+```
+
+This configuration will be used when running with `MIX_ENV=prod`.
+
+When you run `MIX_ENV=prod mix tableau.build`, it will use this configuration and await on the command to finish, rather than starting a long running process.
 
 ### Development
 

@@ -6,7 +6,7 @@ defmodule TabDemo.Pages.Posts do
       for post <- @posts do
         li do
           a class: "text-blue-500 hover:underline", href: post.permalink do
-            post.frontmatter["title"]
+            post.frontmatter["title"] <> " 🧨"
           end
         end
       end
