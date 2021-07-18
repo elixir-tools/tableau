@@ -26,7 +26,7 @@ defmodule Mix.Tasks.Tableau.Build do
         for {mod, args} <- Tableau.Application.asset_children() do
           mod.async(args)
         end
-        |> Task.await_many()
+        |> Task.await_many(60_000)
       end)
 
     Logger.debug("Built in: #{time / 1000}ms")
