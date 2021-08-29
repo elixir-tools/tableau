@@ -45,6 +45,7 @@ defmodule Tableau.Store do
 
   def posts() do
     :ets.select(:store, [{{{:post, :_, :_}, {:"$1", :_}}, [], [:"$1"]}])
+    |> Enum.sort_by(fn p -> p.frontmatter["date"] end, :desc)
   end
 
   @impl GenServer

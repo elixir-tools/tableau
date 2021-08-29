@@ -23,14 +23,14 @@ defmodule Tableau.Post do
 
   defimpl Tableau.Renderable do
     def render(post, _ \\ []) do
-      %{permalink: permalink, layout: layout, content: content, frontmatter: frontmatter} = post
+      %{permalink: permalink, layout: layout, content: content} = post
 
       html = Earmark.as_html!(content)
 
       page =
         layout
         |> Render.gather_modules([html])
-        |> Render.recursively_render(page: frontmatter)
+        |> Render.recursively_render(post: post)
         |> Phoenix.HTML.safe_to_string()
 
       dir = "_site#{permalink}"
