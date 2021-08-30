@@ -23,7 +23,7 @@ defmodule Tableau.Router do
   end
 
   defp recompile(conn, _) do
-    Mix.Task.rerun("compile.elixir", [])
+    Tableau.CodeReloader.reload()
 
     conn
   end

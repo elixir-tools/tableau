@@ -25,6 +25,7 @@ defmodule Tableau.Application do
                [Keyword.merge(reloader_opts, name: :tableau_file_watcher, latency: 0)]}
           },
           Tableau.Watcher,
+          Tableau.CodeReloader,
           {Tableau.Store, name: Tableau.Store}
         ] ++ asset_children()
       else

@@ -35,9 +35,9 @@ defmodule Tableau.Store do
     :ets.select(:store, [{{{:"$1", :"$2", :"$3"}, :"$4"}, [{:==, :"$2", permalink}], [:"$4"]}])
   end
 
-  def mark_stale(file_path, server \\ __MODULE__) do
-    GenServer.call(server, {:mark_stale, file_path})
-  end
+  # def mark_stale(file_path, server \\ __MODULE__) do
+  #   GenServer.call(server, {:mark_stale, file_path})
+  # end
 
   def build(permalink, server \\ __MODULE__) do
     GenServer.call(server, {:build, permalink})
@@ -49,27 +49,27 @@ defmodule Tableau.Store do
   end
 
   @impl GenServer
-  def handle_call({:mark_stale, file_path}, _from, state) do
-    :ets.select_replace(:store, [
-      {{{:"$1", :"$2", :"$3"}, {:"$4", :_}}, [{:==, :"$3", file_path}],
-       [{{{{:"$1", :"$2", :"$3"}}, {{:"$4", true}}}}]}
-    ])
+  # def handle_call({:mark_stale, file_path}, _from, state) do
+  #   :ets.select_replace(:store, [
+  #     {{{:"$1", :"$2", :"$3"}, {:"$4", :_}}, [{:==, :"$3", file_path}],
+  #      [{{{{:"$1", :"$2", :"$3"}}, {{:"$4", true}}}}]}
+  #   ])
 
-    {:reply, :ok, state}
-  end
+  #   {:reply, :ok, state}
+  # end
 
   def handle_call({:build, permalink}, _from, state) do
     result =
       :ets.select(:store, [{{{:"$1", :"$2", :"$3"}, :"$4"}, [{:==, :"$2", permalink}], [:"$4"]}])
 
     case result do
-      [{page, true}] ->
+      [{page, _true}] ->
         page = Tableau.Renderable.refresh(page)
 
-        :ets.select_replace(:store, [
-          {{{:"$1", :"$2", :"$3"}, {:"$4", :_}}, [{:==, :"$2", permalink}],
-           [{{{{:"$1", :"$2", :"$3"}}, {{page, false}}}}]}
-        ])
+        # :ets.select_replace(:store, [
+        #   {{{:"$1", :"$2", :"$3"}, {:"$4", :_}}, [{:==, :"$2", permalink}],
+        #    [{{{{:"$1", :"$2", :"$3"}}, {{page, false}}}}]}
+        # ])
 
         {time, _} =
           :timer.tc(fn ->
