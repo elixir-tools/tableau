@@ -3,34 +3,45 @@ defmodule Mix.Tasks.Tableau.Build do
 
   require Logger
 
+  @cache :tableau_store_cache
+
   @moduledoc "Task to build the tableau site"
   @shortdoc "Builds the site"
 
   @impl Mix.Task
   def run(_args) do
     Mix.Task.run("compile")
+    Application.ensure_all_started(:telemetry)
+
+    Tableau.Store.start_link(name: Tableau.Store)
 
     {time, _} =
       :timer.tc(fn ->
-        posts = Tableau.Post.build(Path.expand("_posts"))
+        Tableau.Post.build(Path.expand("_posts"), fn post ->
+          Task.async(fn ->
+            content = Tableau.Renderable.render(post)
+            Mentat.put(@cache, post.permalink, {post, content})
 
-        Tableau.Page.build()
-        |> Enum.concat(posts)
-        |> Task.async_stream(fn page ->
-          unless Tableau.Renderable.layout?(page) do
-            Tableau.Renderable.render(page, posts: posts)
-            |> then(&Tableau.Renderable.write!(page, &1))
-          end
+            Tableau.Renderable.write!(post, content)
+          end)
         end)
-        |> Stream.run()
+        |> Task.await_many()
+
+        Tableau.Page.build(fn page ->
+          Task.async(fn ->
+            content = Tableau.Renderable.render(page)
+
+            Tableau.Renderable.write!(page, content)
+          end)
+        end)
+        |> Task.await_many()
       end)
 
     {asset_time, _} =
       :timer.tc(fn ->
-        for {mod, args} <- Tableau.Application.asset_children() do
-          mod.async(args)
+        for {mod, conf} <- Tableau.Application.asset_children() do
+          apply(mod, :start_link, [conf])
         end
-        |> Task.await_many(60_000)
       end)
 
     tab_text = "Tableau built in: #{time / 1000}ms"
