@@ -37,29 +37,6 @@ defmodule Mix.Tasks.Tableau.Build do
         |> Task.await_many()
       end)
 
-    {asset_time, _} =
-      :timer.tc(fn ->
-        for {mod, conf} <- Tableau.Application.asset_children() do
-          apply(mod, :start_link, [conf])
-        end
-      end)
-
-    tab_text = "Tableau built in: #{time / 1000}ms"
-    asset_text = "Assets built in: #{asset_time / 1000}ms"
-    text_length = Enum.max([String.length(tab_text), String.length(asset_text)])
-
-    tab_text = String.pad_trailing(tab_text, text_length)
-    asset_text = String.pad_trailing(asset_text, text_length)
-
-    box_string = String.duplicate("═", text_length + 2)
-
-    Logger.debug("""
-
-    ╔#{box_string}╗
-    ║ #{tab_text} ║
-    ╠#{box_string}╣
-    ║ #{asset_text} ║
-    ╚#{box_string}╝
-    """)
+    Logger.debug("Tableau built in: #{time / 1000}ms")
   end
 end

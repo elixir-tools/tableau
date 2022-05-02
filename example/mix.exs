@@ -8,7 +8,9 @@ defmodule TabDemo.MixProject do
       elixir: "~> 1.12",
       compilers: [:temple] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      aliases: aliases(),
+      preferred_cli_env: [build: :prod]
     ]
   end
 
@@ -16,6 +18,12 @@ defmodule TabDemo.MixProject do
   def application do
     [
       extra_applications: [:logger, :tableau]
+    ]
+  end
+
+  def aliases() do
+    [
+      build: ["tailwind default --minify", "tableau.build"]
     ]
   end
 
