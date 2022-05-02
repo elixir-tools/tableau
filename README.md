@@ -264,27 +264,6 @@ This will start a long running process that will independently build your CSS as
 
 These are started automatically when you run `mix tableau.server`.
 
-In production, you can declare your prod configuration in the `config/prod.exs`
-
-
-```elixir
-# config/prod.exs
-
-import Config
-
-config :tableau, :assets,
-  npx: [
-    "tailwindcss",
-    "-o",
-    "_site/css/site.css",
-    env: [{"NODE_ENV", "production"}],
-  ]
-```
-
-This configuration will be used when running with `MIX_ENV=prod`.
-
-When you run `MIX_ENV=prod mix tableau.build`, it will use this configuration and await on the command to finish, rather than starting a long running process.
-
 ### Development
 
 The dev server can be started with `mix tableau.server`. On file change, a browser reload will be triggered and the page your requesting will be re-built during the request.
