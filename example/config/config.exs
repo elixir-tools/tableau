@@ -14,6 +14,7 @@ config :tailwind,
   default: [
     args: ~w(
     --config=tailwind.config.js
+    --input=assets/css/app.css
     --output=_site/css/site.css
     )
   ]

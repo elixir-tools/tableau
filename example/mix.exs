@@ -23,7 +23,7 @@ defmodule TabDemo.MixProject do
 
   def aliases() do
     [
-      build: ["tailwind default --minify", "tableau.build"]
+      build: ["tableau.build", "tailwind default --minify"]
     ]
   end
 
