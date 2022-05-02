@@ -28,10 +28,11 @@ defmodule Tableau.MixProject do
   defp deps do
     [
       {:mentat, github: "keathley/mentat"},
+      {:timex, "~> 3.7"},
+      {:credo, "~> 1.6", only: [:dev, :test]},
       {:plug_cowboy, "~> 2.0"},
       {:plug_static_index_html, "~> 1.0"},
       {:temple, "~> 0.9.0-rc.0"},
-      {:phoenix_html, "~> 3.0"},
       # {:temple, path: "../temple"},
       {:file_system, "~> 0.2"},
       {:yaml_front_matter, "~> 1.0"},

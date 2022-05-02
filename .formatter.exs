@@ -1,6 +1,9 @@
 # Used by "mix format"
 locals_without_parens = [
-  layout: 1
+  layout: 1,
+  name: 1,
+  data: 1,
+  permalink: 1
 ]
 
 [

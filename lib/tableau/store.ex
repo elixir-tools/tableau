@@ -3,7 +3,8 @@ defmodule Tableau.Store do
 
   require Logger
 
-  @cache :tableau_store_cache
+  @cache :tableau_pages_cache
+  @data_cache :tableau_data_cache
 
   def start_link(opts) do
     GenServer.start_link(
@@ -16,6 +17,12 @@ defmodule Tableau.Store do
   @impl GenServer
   def init(opts) do
     Mentat.start_link(name: @cache)
+    Mentat.start_link(name: @data_cache)
+
+    Tableau.Data.build(fn %Tableau.Data{} = data ->
+      data = Tableau.Data.fetch(data)
+      Mentat.put(@data_cache, data.name, data)
+    end)
 
     Tableau.Post.build(opts[:base_post_path], fn post ->
       content = Tableau.Renderable.render(post)
@@ -62,10 +69,28 @@ defmodule Tableau.Store do
     end)
   end
 
+  def data() do
+    @data_cache
+    |> Mentat.keys()
+    |> Map.new(fn k ->
+      data = Mentat.get(@data_cache, k)
+      {k, data.data}
+    end)
+  end
+
   @impl true
   def handle_call({:build, permalink}, _from, state) do
+    Logger.debug("build: " <> permalink)
+
     {time, {resp, built?}} =
       :timer.tc(fn ->
+        # data should be fetched at compile time,
+        # so we can thankfully just re-cache them all here
+        Tableau.Data.build(fn %Tableau.Data{} = data ->
+          data = Tableau.Data.fetch(data)
+          Mentat.put(@data_cache, data.name, data)
+        end)
+
         # rebuild and write all posts
         Tableau.Post.build(state.opts[:base_post_path], fn post ->
           Mentat.fetch(@cache, post.permalink, fn _key ->
@@ -116,6 +141,7 @@ defmodule Tableau.Store do
           {page, old_content} ->
             # refresh the page struct and re-render
             refreshed_page = Tableau.Renderable.refresh(page)
+
             # we re-render, because data could have changed, even if the module content did not change
             new_content = Tableau.Renderable.render(refreshed_page)
 

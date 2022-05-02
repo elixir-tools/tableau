@@ -1,4 +1,5 @@
 defmodule Tableau.Post do
+  @moduledoc false
   alias Tableau.Render
 
   defstruct frontmatter: %{},
@@ -23,7 +24,7 @@ defmodule Tableau.Post do
 
   defimpl Tableau.Renderable do
     def render(post, _ \\ []) do
-      %{permalink: permalink, layout: layout, content: content} = post
+      %{layout: layout, content: content} = post
 
       html = Earmark.as_html!(content)
 
@@ -52,14 +53,13 @@ defmodule Tableau.Post do
       permalink =
         matter["permalink"]
         |> String.split("/")
-        |> Enum.map(fn
+        |> Enum.map_join("/", fn
           ":" <> slug ->
             matter[slug]
 
           x ->
             x
         end)
-        |> Enum.join("/")
         |> String.replace(" ", "-")
 
       struct!(post,

@@ -2,7 +2,7 @@ defmodule Tableau.Page do
   alias Tableau.Store
   alias Tableau.Render
 
-  defstruct module: nil, permalink: nil, md5: nil, posts: []
+  defstruct module: nil, permalink: nil, md5: nil, posts: [], data: %{}
 
   defmacro __using__(_) do
     quote do
@@ -51,7 +51,14 @@ defmodule Tableau.Page do
         |> to_string()
         |> String.to_existing_atom()
 
-      page = struct(__MODULE__, module: mod, permalink: mod.permalink(), posts: Store.posts())
+      page =
+        struct(__MODULE__,
+          module: mod,
+          permalink: mod.permalink(),
+          posts: Store.posts(),
+          data: Store.data()
+        )
+
       callback.(page)
     end
   end
@@ -68,7 +75,10 @@ defmodule Tableau.Page do
   end
 
   defp tableau_page?(mod) do
-    with mod <- Module.concat([to_string(mod)]),
+    mod = to_string(mod)
+
+    with true <- String.starts_with?(mod, "Elixir."),
+         mod <- Module.concat([mod]),
          true <- function_exported?(mod, :tableau_page?, 0) do
       mod.tableau_page?()
     else
@@ -78,11 +88,12 @@ defmodule Tableau.Page do
   end
 
   defimpl Tableau.Renderable do
-    def render(%{module: module, posts: posts}, _opts \\ []) do
+    def render(%{module: module, posts: posts, data: data}, _opts \\ []) do
+      assigns = Map.merge(%{posts: posts}, data)
 
       module
       |> Render.gather_modules([])
-      |> Render.recursively_render(posts: posts)
+      |> Render.recursively_render(assigns)
     end
 
     def write!(%{permalink: permalink}, content) do
@@ -97,7 +108,11 @@ defmodule Tableau.Page do
     def refresh(page) do
       modules = Render.gather_modules(page.module, [])
 
-      struct!(page, md5: for(mod <- modules, do: mod.__info__(:md5)), posts: Store.posts())
+      struct!(page,
+        md5: for(mod <- modules, do: mod.__info__(:md5)),
+        posts: Store.posts(),
+        data: Store.data()
+      )
     end
 
     def layout?(%{module: module}) do

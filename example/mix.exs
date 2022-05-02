@@ -31,6 +31,8 @@ defmodule TabDemo.MixProject do
   defp deps do
     [
       {:tableau, path: "../"},
+      {:req, "~> 0.2.2"},
+      {:easyxml, "~> 0.1.0-dev", github: "wojtekmach/easyxml", branch: "main"},
       {:benchee, "~> 1.0"},
       {:tailwind, "~> 0.1", runtime: Mix.env() == :dev}
     ]

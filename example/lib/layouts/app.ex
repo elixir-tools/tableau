@@ -27,6 +27,7 @@ defmodule TabDemo.Layouts.App do
               a class: "text-blue-500 hover:underline", href: "/", do: "Foo"
               a class: "text-blue-500 hover:underline", href: "/about", do: "About"
               a class: "text-blue-500 hover:underline", href: "/posts", do: "Posts"
+              a class: "text-blue-500 hover:underline", href: "/bookshelf", do: "Bookshelf"
 
               slot :default
             end

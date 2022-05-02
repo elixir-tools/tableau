@@ -3,7 +3,7 @@ defmodule Mix.Tasks.Tableau.Build do
 
   require Logger
 
-  @cache :tableau_store_cache
+  @cache :tableau_pages_cache
 
   @moduledoc "Task to build the tableau site"
   @shortdoc "Builds the site"
