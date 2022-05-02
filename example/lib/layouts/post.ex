@@ -1,13 +1,17 @@
 defmodule TabDemo.Layouts.Post do
   use Tableau.Layout
 
-  layout(TabDemo.Layouts.App)
+  import Temple
 
-  render do
-    h1 class: "text-4xl font-bold", do: @post.frontmatter["title"]
+  layout TabDemo.Layouts.App
 
-    hr class: "border border-2"
+  def render(assigns) do
+    temple do
+      h1 class: "text-4xl font-bold", do: @post.frontmatter["title"]
 
-    slot :default
+      hr class: "border-2"
+
+      slot :default
+    end
   end
 end

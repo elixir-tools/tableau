@@ -2,14 +2,11 @@ defmodule Tableau.Page do
   alias Tableau.Store
   alias Tableau.Render
 
-  require Temple.Component
-
-  defstruct module: nil, permalink: nil
+  defstruct module: nil, permalink: nil, md5: nil, posts: []
 
   defmacro __using__(_) do
     quote do
-      import Temple.Component
-      import Tableau.Page, only: [layout: 1]
+      import Tableau.Page, only: [layout: 1, permalink: 1]
 
       def path_info() do
         Tableau.Page.path_from_module(__MODULE__)
@@ -22,6 +19,8 @@ defmodule Tableau.Page do
       def layout?, do: false
 
       def file_path, do: __ENV__.file
+
+      def tableau_page?(), do: true
 
       defdelegate layout, to: Tableau.Layout, as: :default
 
@@ -37,6 +36,14 @@ defmodule Tableau.Page do
     end
   end
 
+  defmacro permalink(permalink) do
+    quote do
+      def permalink() do
+        unquote(permalink)
+      end
+    end
+  end
+
   def build(callback \\ fn x -> x end) do
     for {mod, _, _} <- :code.all_available(), tableau_page?(mod) do
       mod =
@@ -44,7 +51,7 @@ defmodule Tableau.Page do
         |> to_string()
         |> String.to_existing_atom()
 
-      page = struct(__MODULE__, module: mod, permalink: mod.permalink())
+      page = struct(__MODULE__, module: mod, permalink: mod.permalink(), posts: Store.posts())
       callback.(page)
     end
   end
@@ -61,28 +68,37 @@ defmodule Tableau.Page do
   end
 
   defp tableau_page?(mod) do
-    String.match?(to_string(mod), ~r/#{Tableau.module_prefix()}\.Pages/)
+    with mod <- Module.concat([to_string(mod)]),
+         true <- function_exported?(mod, :tableau_page?, 0) do
+      mod.tableau_page?()
+    else
+      _ ->
+        false
+    end
   end
 
   defimpl Tableau.Renderable do
-    def render(%{module: module, permalink: permalink} = page, opts \\ [posts: Store.posts()]) do
-      posts = opts[:posts]
+    def render(%{module: module, posts: posts}, _opts \\ []) do
 
-      content =
-        module
-        |> Render.gather_modules([])
-        |> Render.recursively_render(posts: posts)
-        |> Phoenix.HTML.safe_to_string()
+      module
+      |> Render.gather_modules([])
+      |> Render.recursively_render(posts: posts)
+    end
 
+    def write!(%{permalink: permalink}, content) do
       dir = "_site#{permalink}"
 
       File.mkdir_p!(dir)
       File.write!(dir <> "/index.html", content)
 
-      page
+      :ok
     end
 
-    def refresh(page), do: page
+    def refresh(page) do
+      modules = Render.gather_modules(page.module, [])
+
+      struct!(page, md5: for(mod <- modules, do: mod.__info__(:md5)), posts: Store.posts())
+    end
 
     def layout?(%{module: module}) do
       module.layout?

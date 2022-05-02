@@ -6,8 +6,11 @@ defmodule TabDemo.MixProject do
       app: :tab_demo,
       version: "0.1.0",
       elixir: "~> 1.12",
+      compilers: [:temple] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      aliases: aliases(),
+      preferred_cli_env: [build: :prod]
     ]
   end
 
@@ -18,13 +21,18 @@ defmodule TabDemo.MixProject do
     ]
   end
 
+  def aliases() do
+    [
+      build: ["tableau.build", "tailwind default --minify"]
+    ]
+  end
+
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
       {:tableau, path: "../"},
-      {:benchee, "~> 1.0"}
-      # {:dep_from_hexpm, "~> 0.3.0"},
-      # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
+      {:benchee, "~> 1.0"},
+      {:tailwind, "~> 0.1", runtime: Mix.env() == :dev}
     ]
   end
 end
