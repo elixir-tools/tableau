@@ -7,3 +7,5 @@ permalink: /posts/:title
 
 This is a post
 
+## Changed
+

@@ -19,6 +19,7 @@ defmodule Mix.Tasks.Tableau.Build do
         |> Task.async_stream(fn page ->
           unless Tableau.Renderable.layout?(page) do
             Tableau.Renderable.render(page, posts: posts)
+            |> then(&Tableau.Renderable.write!(page, &1))
           end
         end)
         |> Stream.run()

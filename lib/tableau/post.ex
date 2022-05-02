@@ -27,18 +27,16 @@ defmodule Tableau.Post do
 
       html = Earmark.as_html!(content)
 
-      page =
-        layout
-        |> Render.gather_modules([html])
-        |> Render.recursively_render(post: post)
-        |> Phoenix.HTML.safe_to_string()
+      layout
+      |> Render.gather_modules([html])
+      |> Render.recursively_render(post: post)
+    end
 
+    def write!(%{permalink: permalink}, content) do
       dir = "_site#{permalink}"
 
       File.mkdir_p!(dir)
-      File.write!(dir <> "/index.html", page)
-
-      post
+      File.write!(dir <> "/index.html", content)
     end
 
     def refresh(%{path: path} = post) do

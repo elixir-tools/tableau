@@ -1,7 +1,6 @@
 defmodule Tableau.Layout do
-  defmacro __using__(_) do
-    quote do
-      import Temple.Component
+  defmacro __using__(opts) do
+    quote location: :keep, bind_quoted: [opts: opts] do
       import Tableau.Layout, only: [layout: 1]
 
       def layout?, do: true

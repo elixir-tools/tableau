@@ -1,25 +1,61 @@
 defmodule Tableau.LiveReload do
-  @behaviour :cowboy_websocket
+  require Logger
+  def init(opts \\ []) do
+    name = Keyword.get(opts, :name, :live_reload_watcher)
 
-  def init(request, state) do
-    {:cowboy_websocket, request, state}
+    FileSystem.subscribe(name)
   end
 
-  def websocket_init(state) do
-    Registry.register(Tableau.LiveReloadRegistry, :reload, :reload)
+  def reload!({:file_event, _watcher_pid, {path, _event}}, opts \\ []) do
+    patterns = Keyword.get(opts, :patterns, [])
+    debounce = Keyword.get(opts, :debounce, 0)
+    callback = Keyword.get(opts, :callback, &Function.identity/1)
 
-    {:ok, state}
+    if matches_any_pattern?(path, patterns) do
+      ext = Path.extname(path)
+
+      for {path, ext} <- [{path, ext} | debounce(debounce, [ext], patterns)] do
+        asset_type = remove_leading_dot(ext)
+        Logger.debug("Live reload: #{Path.relative_to_cwd(path)}")
+
+        callback.(path)
+
+        send(self(), {:reload, asset_type})
+      end
+    end
   end
 
-  def websocket_handle({:text, _text}, state) do
-    {:reply, {:text, "pong"}, state}
+  defp debounce(0, _exts, _patterns), do: []
+
+  defp debounce(time, exts, patterns) when is_integer(time) and time > 0 do
+    Process.send_after(self(), :debounced, time)
+    debounce(exts, patterns)
   end
 
-  def websocket_handle({:ping, _text}, state) do
-    {:reply, {:pong, "PONG"}, state}
+  defp debounce(exts, patterns) do
+    receive do
+      :debounced ->
+        []
+
+      {:file_event, _pid, {path, _event}} ->
+        ext = Path.extname(path)
+
+        if matches_any_pattern?(path, patterns) and ext not in exts do
+          [{path, ext} | debounce([ext | exts], patterns)]
+        else
+          debounce(exts, patterns)
+        end
+    end
   end
 
-  def websocket_info(:reload, state) do
-    {:reply, {:text, "reload"}, state}
+  defp matches_any_pattern?(path, patterns) do
+    path = to_string(path)
+
+    Enum.any?(patterns, fn pattern ->
+      String.match?(path, pattern) and not String.match?(path, ~r{(^|/)_build/})
+    end)
   end
+
+  defp remove_leading_dot("." <> rest), do: rest
+  defp remove_leading_dot(rest), do: rest
 end

@@ -1,4 +1,5 @@
 # module mostly taken from `Phoenix.Endpoint.Watcher`
+# copyright belongs to them.
 
 defmodule Tableau.Assets do
   @moduledoc false
@@ -12,29 +13,36 @@ defmodule Tableau.Assets do
     }
   end
 
-  def start_link({cmd, args, opts}) do
-    Task.start_link(__MODULE__, :watch, [to_string(cmd), args, opts])
+  def start_link({cmd, args}) do
+    Task.start_link(__MODULE__, :watch, [to_string(cmd), args])
   end
 
-  def async({cmd, args, opts}) do
-    Task.async(__MODULE__, :watch, [to_string(cmd), args, opts])
+  def watch(_cmd, {mod, fun, args}) do
+    try do
+      apply(mod, fun, args)
+    catch
+      kind, reason ->
+        # The function returned a non-zero exit code.
+        # Sleep for a couple seconds before exiting to
+        # ensure this doesn't hit the supervisor's
+        # max_restarts/max_seconds limit.
+        Process.sleep(2000)
+        :erlang.raise(kind, reason, __STACKTRACE__)
+    end
   end
 
-  def watch(cmd, args, opts) do
-    merged_opts =
-      Keyword.merge(
-        [into: IO.stream(:stdio, :line), stderr_to_stdout: true],
-        opts
-      )
+  def watch(cmd, args) when is_list(args) do
+    {args, opts} = Enum.split_while(args, &is_binary(&1))
+    opts = Keyword.merge([into: IO.stream(:stdio, :line), stderr_to_stdout: true], opts)
 
     try do
-      System.cmd(cmd, args, merged_opts)
+      System.cmd(cmd, args, opts)
     catch
       :error, :enoent ->
         relative = Path.relative_to_cwd(cmd)
 
         Logger.error(
-          "Could not start watcher #{inspect(relative)} from #{inspect(cd(merged_opts))}, executable does not exist"
+          "Could not start watcher #{inspect(relative)} from #{inspect(cd(opts))}, executable does not exist"
         )
 
         exit(:shutdown)

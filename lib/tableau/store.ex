@@ -3,6 +3,8 @@ defmodule Tableau.Store do
 
   require Logger
 
+  @cache :tableau_store_cache
+
   def start_link(opts) do
     GenServer.start_link(
       __MODULE__,
@@ -13,75 +15,132 @@ defmodule Tableau.Store do
 
   @impl GenServer
   def init(opts) do
-    :ets.new(:store, [:set, :named_table, :public, read_concurrency: true])
-
-    Tableau.Page.build(fn page ->
-      :ets.insert(:store, {{:page, page.permalink, page.module.file_path}, {page, true}})
-    end)
+    Mentat.start_link(name: @cache)
 
     Tableau.Post.build(opts[:base_post_path], fn post ->
-      :ets.insert(:store, {{:post, post.permalink, post.path}, {post, true}})
+      content = Tableau.Renderable.render(post)
+      Mentat.put(@cache, post.permalink, {post, content})
+
+      Tableau.Renderable.write!(post, content)
     end)
 
-    {:ok, %{}}
+    Tableau.Page.build(fn page ->
+      content = Tableau.Renderable.render(page)
+      Mentat.put(@cache, page.permalink, {page, content})
+
+      Tableau.Renderable.write!(page, content)
+    end)
+
+    {:ok, %{opts: opts}}
   end
 
   def all do
-    :ets.tab2list(:store)
-    |> Enum.map(fn {_, {page, _}} -> page end)
+    Mentat.keys(@cache)
+    |> Enum.map(fn k ->
+      {page, _} = Mentat.get(@cache, k)
+      page
+    end)
   end
 
   def fetch(permalink) do
-    :ets.select(:store, [{{{:"$1", :"$2", :"$3"}, :"$4"}, [{:==, :"$2", permalink}], [:"$4"]}])
+    Mentat.get(@cache, permalink)
   end
-
-  # def mark_stale(file_path, server \\ __MODULE__) do
-  #   GenServer.call(server, {:mark_stale, file_path})
-  # end
 
   def build(permalink, server \\ __MODULE__) do
     GenServer.call(server, {:build, permalink})
   end
 
   def posts() do
-    :ets.select(:store, [{{{:post, :_, :_}, {:"$1", :_}}, [], [:"$1"]}])
-    |> Enum.sort_by(fn p -> p.frontmatter["date"] end, :desc)
+    @cache
+    |> Mentat.keys()
+    |> Enum.map(fn k ->
+      {p, _} = Mentat.get(@cache, k)
+      p
+    end)
+    |> Enum.filter(fn p ->
+      match?(%Tableau.Post{}, p)
+    end)
   end
 
-  @impl GenServer
-  # def handle_call({:mark_stale, file_path}, _from, state) do
-  #   :ets.select_replace(:store, [
-  #     {{{:"$1", :"$2", :"$3"}, {:"$4", :_}}, [{:==, :"$3", file_path}],
-  #      [{{{{:"$1", :"$2", :"$3"}}, {{:"$4", true}}}}]}
-  #   ])
-
-  #   {:reply, :ok, state}
-  # end
-
+  @impl true
   def handle_call({:build, permalink}, _from, state) do
-    result =
-      :ets.select(:store, [{{{:"$1", :"$2", :"$3"}, :"$4"}, [{:==, :"$2", permalink}], [:"$4"]}])
+    {time, {resp, built?}} =
+      :timer.tc(fn ->
+        # rebuild and write all posts
+        Tableau.Post.build(state.opts[:base_post_path], fn post ->
+          Mentat.fetch(@cache, post.permalink, fn _key ->
+            content = Tableau.Renderable.render(post)
+            Tableau.Renderable.write!(post, content)
+            {:commit, {post, content}}
+          end)
+        end)
 
-    case result do
-      [{page, _true}] ->
-        page = Tableau.Renderable.refresh(page)
+        # fetch the page for the current permalink
+        # cache and write to disk if it it's a new page
+        result =
+          Mentat.fetch(@cache, permalink, fn key ->
+            posts =
+              Tableau.Post.build(state.opts[:base_post_path], fn post ->
+                if post.permalink == key do
+                  post = Tableau.Renderable.refresh(post)
+                  content = Tableau.Renderable.render(post)
+                  Tableau.Renderable.write!(post, content)
 
-        # :ets.select_replace(:store, [
-        #   {{{:"$1", :"$2", :"$3"}, {:"$4", :_}}, [{:==, :"$2", permalink}],
-        #    [{{{{:"$1", :"$2", :"$3"}}, {{page, false}}}}]}
-        # ])
+                  post
+                end
+              end)
 
-        {time, _} =
-          :timer.tc(fn ->
-            Tableau.Renderable.render(page)
+            pages =
+              Tableau.Page.build(fn page ->
+                if page.permalink == key do
+                  page = Tableau.Renderable.refresh(page)
+                  content = Tableau.Renderable.render(page)
+                  Tableau.Renderable.write!(page, content)
+                  {page, content}
+                end
+              end)
+
+            case Enum.filter(pages ++ posts, & &1) do
+              [page] ->
+                {:commit, page}
+
+              _ ->
+                {:ignore, nil}
+            end
           end)
 
-        Logger.debug("Built in: #{time / 1000}ms")
+        case result do
+          nil ->
+            {{:reply, :not_found, state}, false}
 
-        {:reply, page, state}
+          {page, old_content} ->
+            # refresh the page struct and re-render
+            refreshed_page = Tableau.Renderable.refresh(page)
+            # we re-render, because data could have changed, even if the module content did not change
+            new_content = Tableau.Renderable.render(refreshed_page)
 
-      _ ->
-        {:reply, :not_found, state}
+            # if the content has changed, write to disk
+            # and cache the results
+            # we return true or false to determine whether to log the build time
+            rebuilt =
+              if old_content != new_content do
+                Tableau.Renderable.write!(refreshed_page, new_content)
+
+                Mentat.put(@cache, refreshed_page.permalink, {refreshed_page, new_content})
+
+                true
+              else
+                false
+              end
+
+            {{:reply, nil, state}, rebuilt}
+        end
+      end)
+
+    if built? do
+      Logger.debug("Built in: #{time / 1000}ms")
     end
+
+    resp
   end
 end
