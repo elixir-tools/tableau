@@ -48,4 +48,3 @@ defmodule Tableau.CodeReloader do
     Mix.Task.run("compile.elixir")
   end
 end
-
