@@ -1,9 +1,7 @@
 defmodule TabDemo.Data.Books do
   use Tableau.Data
 
-  name :books
-
-  data do
+  data :books do
     Application.ensure_all_started(:req)
 
     response =

@@ -32,13 +32,13 @@ defmodule Tableau.Application do
     Supervisor.start_link(children, opts)
   end
 
-  def asset_children() do
+  def asset_children do
     for conf <- Application.get_env(:tableau, :assets, []) do
       {Tableau.Assets, conf}
     end
   end
 
-  defp dispatch() do
+  defp dispatch do
     [
       {:_,
        [

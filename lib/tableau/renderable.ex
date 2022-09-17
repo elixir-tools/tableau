@@ -5,4 +5,5 @@ defprotocol Tableau.Renderable do
   def layout?(renderable)
 
   def write!(renderable, content)
+  def write!(renderable, content, opts)
 end

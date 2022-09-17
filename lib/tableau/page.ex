@@ -1,6 +1,9 @@
 defmodule Tableau.Page do
-  alias Tableau.Store
+  @moduledoc """
+  A tableau page.
+  """
   alias Tableau.Render
+  alias Tableau.Store
 
   defstruct module: nil, permalink: nil, md5: nil, posts: [], data: %{}
 
@@ -8,11 +11,11 @@ defmodule Tableau.Page do
     quote do
       import Tableau.Page, only: [layout: 1, permalink: 1]
 
-      def path_info() do
+      def path_info do
         Tableau.Page.path_from_module(__MODULE__)
       end
 
-      def permalink() do
+      def permalink do
         "/" <> Enum.join(path_info(), "/")
       end
 
@@ -20,7 +23,7 @@ defmodule Tableau.Page do
 
       def file_path, do: __ENV__.file
 
-      def tableau_page?(), do: true
+      def tableau_page?, do: true
 
       defdelegate layout, to: Tableau.Layout, as: :default
 
@@ -30,7 +33,7 @@ defmodule Tableau.Page do
 
   defmacro layout(layout) do
     quote do
-      def layout() do
+      def layout do
         unquote(layout)
       end
     end
@@ -38,7 +41,7 @@ defmodule Tableau.Page do
 
   defmacro permalink(permalink) do
     quote do
-      def permalink() do
+      def permalink do
         unquote(permalink)
       end
     end
@@ -96,8 +99,9 @@ defmodule Tableau.Page do
       |> Render.recursively_render(assigns)
     end
 
-    def write!(%{permalink: permalink}, content) do
-      dir = "_site#{permalink}"
+    def write!(%{permalink: permalink}, content, opts \\ []) do
+      base_dir = Keyword.get(opts, :base_dir, "_site")
+      dir = "#{base_dir}#{permalink}"
 
       File.mkdir_p!(dir)
       File.write!(dir <> "/index.html", content)

@@ -33,8 +33,9 @@ defmodule Tableau.Post do
       |> Render.recursively_render(post: post)
     end
 
-    def write!(%{permalink: permalink}, content) do
-      dir = "_site#{permalink}"
+    def write!(%{permalink: permalink}, content, opts \\ []) do
+      base_dir = Keyword.get(opts, :base_dir, "_site")
+      dir = "#{base_dir}#{permalink}"
 
       File.mkdir_p!(dir)
       File.write!(dir <> "/index.html", content)

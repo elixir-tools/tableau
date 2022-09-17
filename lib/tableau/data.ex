@@ -1,35 +1,56 @@
 defmodule Tableau.Data do
+  @moduledoc """
+  Declare data for your site.
+  """
   defstruct module: nil, data: [], name: nil
 
-  defmacro __using__(_) do
+  defmacro __using__(opts) do
     quote do
-      import Tableau.Data, only: [name: 1, data: 1]
-      def tableau_data?(), do: true
+      @before_compile unquote(__MODULE__)
 
-      def data(), do: []
+      import Tableau.Data, only: [data: 2, yaml: 1]
+      Module.register_attribute(__MODULE__, :data_base_dir, [])
+      def tableau_data?, do: true
+
+      Module.put_attribute(__MODULE__, :data_base_dir, unquote(opts)[:base_dir])
+
+      def data, do: []
 
       defoverridable data: 0
+    end
+  end
+
+  defmacro __before_compile__(%{module: mod}) do
+    path_to_yaml = Module.get_attribute(mod, :yaml)
+    base_dir = Module.get_attribute(mod, :data_base_dir, "_data")
+
+    file_path = Path.join([base_dir, path_to_yaml <> ".yml"])
+
+    data = YamlElixir.read_from_file!(file_path)
+
+    quote do
+      def data do
+        {unquote(path_to_yaml), unquote(Macro.escape(data))}
+      end
     end
   end
 
   @callback data() :: list() | map()
   @callback name() :: atom()
 
-  defmacro name(name) do
+  defmacro data(name, do: block) do
+    {result, _} = Code.eval_quoted(block, [], __CALLER__)
+
     quote do
-      def name() do
-        unquote(name)
+      def data do
+        {unquote(name), unquote(Macro.escape(result))}
       end
     end
   end
 
-  defmacro data(do: block) do
-    {result, _} = Code.eval_quoted(block, [], __CALLER__)
-
+  defmacro yaml(filename) do
     quote do
-      def data() do
-        unquote(Macro.escape(result))
-      end
+      @yaml unquote(filename)
     end
   end
 
@@ -40,7 +61,7 @@ defmodule Tableau.Data do
         |> to_string()
         |> String.to_existing_atom()
 
-      data = struct!(__MODULE__, module: mod, name: mod.name())
+      data = struct!(__MODULE__, module: mod)
 
       if callback do
         callback.(data)
@@ -51,7 +72,8 @@ defmodule Tableau.Data do
   end
 
   def fetch(%{module: module} = data) do
-    struct!(data, data: module.data())
+    {name, d} = module.data()
+    struct!(data, data: d, name: name)
   end
 
   defp tableau_data?(mod) do

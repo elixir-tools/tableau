@@ -1,4 +1,5 @@
 defmodule Tableau.Store do
+  @moduledoc false
   use GenServer
 
   require Logger
@@ -16,29 +17,32 @@ defmodule Tableau.Store do
 
   @impl GenServer
   def init(opts) do
-    Mentat.start_link(name: @cache)
-    Mentat.start_link(name: @data_cache)
+    page_cache = Keyword.get(opts, :page_cache, @cache)
+    data_cache = Keyword.get(opts, :data_cache, @data_cache)
+
+    Mentat.start_link(name: page_cache)
+    Mentat.start_link(name: data_cache)
 
     Tableau.Data.build(fn %Tableau.Data{} = data ->
       data = Tableau.Data.fetch(data)
-      Mentat.put(@data_cache, data.name, data)
+      Mentat.put(data_cache, data.name, data)
     end)
 
     Tableau.Post.build(opts[:base_post_path], fn post ->
       content = Tableau.Renderable.render(post)
-      Mentat.put(@cache, post.permalink, {post, content})
+      Mentat.put(page_cache, post.permalink, {post, content})
 
-      Tableau.Renderable.write!(post, content)
+      Tableau.Renderable.write!(post, content, opts)
     end)
 
     Tableau.Page.build(fn page ->
       content = Tableau.Renderable.render(page)
-      Mentat.put(@cache, page.permalink, {page, content})
+      Mentat.put(page_cache, page.permalink, {page, content})
 
-      Tableau.Renderable.write!(page, content)
+      Tableau.Renderable.write!(page, content, opts)
     end)
 
-    {:ok, %{opts: opts}}
+    {:ok, %{opts: opts, page_cache: page_cache, data_cache: data_cache}}
   end
 
   def all do
@@ -49,15 +53,11 @@ defmodule Tableau.Store do
     end)
   end
 
-  def fetch(permalink) do
-    Mentat.get(@cache, permalink)
-  end
-
   def build(permalink, server \\ __MODULE__) do
     GenServer.call(server, {:build, permalink})
   end
 
-  def posts() do
+  def posts do
     @cache
     |> Mentat.keys()
     |> Enum.map(fn k ->
@@ -69,7 +69,7 @@ defmodule Tableau.Store do
     end)
   end
 
-  def data() do
+  def data do
     @data_cache
     |> Mentat.keys()
     |> Map.new(fn k ->
@@ -80,8 +80,6 @@ defmodule Tableau.Store do
 
   @impl true
   def handle_call({:build, permalink}, _from, state) do
-    Logger.debug("build: " <> permalink)
-
     {time, {resp, built?}} =
       :timer.tc(fn ->
         # data should be fetched at compile time,
@@ -95,7 +93,7 @@ defmodule Tableau.Store do
         Tableau.Post.build(state.opts[:base_post_path], fn post ->
           Mentat.fetch(@cache, post.permalink, fn _key ->
             content = Tableau.Renderable.render(post)
-            Tableau.Renderable.write!(post, content)
+            Tableau.Renderable.write!(post, content, state.opts)
             {:commit, {post, content}}
           end)
         end)
@@ -109,7 +107,7 @@ defmodule Tableau.Store do
                 if post.permalink == key do
                   post = Tableau.Renderable.refresh(post)
                   content = Tableau.Renderable.render(post)
-                  Tableau.Renderable.write!(post, content)
+                  Tableau.Renderable.write!(post, content, state.opts)
 
                   post
                 end
@@ -120,7 +118,7 @@ defmodule Tableau.Store do
                 if page.permalink == key do
                   page = Tableau.Renderable.refresh(page)
                   content = Tableau.Renderable.render(page)
-                  Tableau.Renderable.write!(page, content)
+                  Tableau.Renderable.write!(page, content, state.opts)
                   {page, content}
                 end
               end)
@@ -150,7 +148,7 @@ defmodule Tableau.Store do
             # we return true or false to determine whether to log the build time
             rebuilt =
               if old_content != new_content do
-                Tableau.Renderable.write!(refreshed_page, new_content)
+                Tableau.Renderable.write!(refreshed_page, new_content, state.opts)
 
                 Mentat.put(@cache, refreshed_page.permalink, {refreshed_page, new_content})
 

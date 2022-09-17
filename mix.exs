@@ -6,6 +6,7 @@ defmodule Tableau.MixProject do
       app: :tableau,
       version: "0.1.0",
       elixir: "~> 1.12",
+      compilers: [:temple] ++ Mix.compilers(),
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       deps: deps()

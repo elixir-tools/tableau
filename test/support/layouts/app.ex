@@ -5,8 +5,10 @@ defmodule Tableau.Layouts.App do
 
   def render(assigns) do
     temple do
-      div do
-        slot :default
+      html do
+        body do
+          slot :default
+        end
       end
     end
   end
