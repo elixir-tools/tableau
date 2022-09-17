@@ -1,14 +1,13 @@
 # Tableau
 
-Experimental static site generator using [Temple](https://github.com/mhanberg/temple).
+Experimental static site generator for Elixir.
 
 ## Goals
 
-- [x] Uses Temple's component model
 - [x] Good code and browser reloading on file change
 - [x] Easy to use the current Node.js JS/CSS tooling
+- [x] Ability to work with "data" (either dynamic data or static files)
 - [ ] Handles stuff like RSS, sitemap, SEO.
-- [ ] Ability to work with "data" (either dynamic data or static files)
 - [ ] Good project generation experience.
 
 ## Installation
@@ -19,11 +18,12 @@ Experimental static site generator using [Temple](https://github.com/mhanberg/te
 
 ## Getting Started
 
+The examples in the README use the [Temple](https://github.com/mhanberg/temple) library to demonstrate that Tableau can be used with any markup language of your choice. You could easily use the builtin EEx, or use HEEx, Surface, or HAML.
+
 ### Pages
 
-Pages are Tableau.Pages, which is a form of Temple.Component that's located in the `./lib/pages` directory, and that have the module suffix `Pages.PageName`. So if you were to have an `/about` page, it would be generated from the `YourApp.Pages.About` module that implements a Temple component.
-
-These pages are rendered withing Layout modules, which are also Temple Components
+Pages are Tableau.Pages that are located in the `./lib/pages` directory, and that have the module suffix `Pages.PageName`. So if you were to have an `/about` page, it would be generated from the `YourApp.Pages.About` module.
+These pages are rendered withing Layout modules.
 
 #### Layout
 

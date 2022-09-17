@@ -79,7 +79,6 @@ defmodule Tableau.Page do
 
   defimpl Tableau.Renderable do
     def render(%{module: module, posts: posts}, _opts \\ []) do
-
       module
       |> Render.gather_modules([])
       |> Render.recursively_render(posts: posts)

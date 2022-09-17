@@ -7,6 +7,7 @@ defmodule TabDemo.MixProject do
       version: "0.1.0",
       elixir: "~> 1.12",
       compilers: [:temple] ++ Mix.compilers(),
+      consolidate_protocols: Mix.env() not in [:test, :dev],
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       aliases: aliases(),
@@ -31,8 +32,11 @@ defmodule TabDemo.MixProject do
   defp deps do
     [
       {:tableau, path: "../"},
+      {:temple, "~> 0.9"},
       {:benchee, "~> 1.0"},
-      {:tailwind, "~> 0.1", runtime: Mix.env() == :dev}
+      {:tailwind, "~> 0.1", runtime: Mix.env() == :dev},
+      {:req, "~> 0.3"},
+      {:easyxml, "~> 0.1.0-dev", github: "wojtekmach/easyxml", branch: "main"}
     ]
   end
 end
