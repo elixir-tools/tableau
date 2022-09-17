@@ -23,7 +23,7 @@ defmodule Tableau.Post do
 
   defimpl Tableau.Renderable do
     def render(post, _ \\ []) do
-      %{permalink: permalink, layout: layout, content: content} = post
+      %{layout: layout, content: content} = post
 
       html = Earmark.as_html!(content)
 
