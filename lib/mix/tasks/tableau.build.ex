@@ -3,40 +3,30 @@ defmodule Mix.Tasks.Tableau.Build do
 
   require Logger
 
-  @cache :tableau_store_cache
-
   @moduledoc "Task to build the tableau site"
   @shortdoc "Builds the site"
 
   @impl Mix.Task
-  def run(_args) do
-    Mix.Task.run("compile")
-    Application.ensure_all_started(:telemetry)
+  def run(argv) do
+    Mix.Task.run("app.start")
 
-    Tableau.Store.start_link(name: Tableau.Store)
+    {opts, _argv} = OptionParser.parse!(argv, strict: [out: :string])
 
-    {time, _} =
-      :timer.tc(fn ->
-        Tableau.Post.build(Path.expand("_posts"), fn post ->
-          Task.async(fn ->
-            content = Tableau.Renderable.render(post)
-            Mentat.put(@cache, post.permalink, {post, content})
+    out = Keyword.get(opts, :out, "_site")
+    mods = :code.all_available()
+    graph = Tableau.Graph.new(mods) |> dbg()
+    File.mkdir_p!(out)
 
-            Tableau.Renderable.write!(post, content)
-          end)
-        end)
-        |> Task.await_many()
+    for mod <- Graph.vertices(graph), {:ok, :page} == dbg(Tableau.Graph.Node.type(mod)) do
+      content = Tableau.Document.render(graph, mod, %{site: %{}})
+      permalink = mod.__tableau_permalink__()
+      dir = Path.join(out, permalink)
 
-        Tableau.Page.build(fn page ->
-          Task.async(fn ->
-            content = Tableau.Renderable.render(page)
+      File.mkdir_p!(dir)
 
-            Tableau.Renderable.write!(page, content)
-          end)
-        end)
-        |> Task.await_many()
-      end)
+      dbg(Path.absname(dir))
 
-    Logger.debug("Tableau built in: #{time / 1000}ms")
+      File.write!(Path.join(dir, "index.html"), content, [:sync])
+    end
   end
 end

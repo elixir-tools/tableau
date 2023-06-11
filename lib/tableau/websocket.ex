@@ -1,6 +1,6 @@
 defmodule Tableau.Websocket do
   @behaviour :cowboy_websocket
-  @reloader_opts Application.compile_env(:tableau, :reloader, patterns: [])
+  # @reloader_opts Application.compile_env(:tableau, :reloader, patterns: [])
 
   require Logger
 
@@ -9,7 +9,7 @@ defmodule Tableau.Websocket do
   end
 
   def websocket_init(state) do
-    :ok = Tableau.LiveReload.init(name: :tableau_file_watcher)
+    # :ok = Tableau.LiveReload.init(name: :tableau_file_watcher)
 
     {:ok, state}
   end
@@ -26,8 +26,8 @@ defmodule Tableau.Websocket do
     {:reply, {:text, "reload"}, state}
   end
 
-  def websocket_info({:file_event, _watcher_pid, {_path, _event}} = file_event, state) do
-    Tableau.LiveReload.reload!(file_event, patterns: @reloader_opts[:patterns])
+  def websocket_info({:file_event, _watcher_pid, {_path, _event}} = _file_event, state) do
+    # Tableau.LiveReload.reload!(file_event, patterns: @reloader_opts[:patterns])
 
     {:ok, state}
   end

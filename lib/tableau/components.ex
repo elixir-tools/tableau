@@ -1,10 +1,12 @@
 defmodule Tableau.Components do
   require EEx
 
+  import Strung
+
   EEx.function_from_string(
     :def,
     :live_reload,
-    """
+    ~g'''
     <script defer>
       function connect() {
         try {
@@ -40,7 +42,7 @@ defmodule Tableau.Components do
 
       connect();
     </script>
-    """,
+    '''html,
     [:_]
   )
 end
