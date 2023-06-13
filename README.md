@@ -6,7 +6,7 @@ Experimental static site generator for Elixir.
 
 - [x] Good code and browser reloading on file change
 - [x] Easy to use the current Node.js JS/CSS tooling
-- [x] Ability to work with "data" (either dynamic data or static files)
+- [ ] Ability to work with "data" (either dynamic data or static files)
 - [ ] Handles stuff like RSS, sitemap, SEO.
 - [ ] Good project generation experience.
 
@@ -20,20 +20,14 @@ Experimental static site generator for Elixir.
 
 The examples in the README use the [Temple](https://github.com/mhanberg/temple) library to demonstrate that Tableau can be used with any markup language of your choice. You could easily use the builtin EEx, or use HEEx, Surface, or HAML.
 
-### Pages
-
-Pages are Tableau.Pages that are located in the `./lib/pages` directory, and that have the module suffix `Pages.PageName`. So if you were to have an `/about` page, it would be generated from the `YourApp.Pages.About` module.
-These pages are rendered withing Layout modules.
-
-#### Layout
 
 ```elixir
-defmodule TabDemo.Layouts.App do
+defmodule MySite.RootLayout do
   use Tableau.Layout
 
   import Temple
 
-  def render(assigns) do
+  def template(assigns) do
     temple do
       "<!DOCTYPE html>"
 
@@ -57,7 +51,7 @@ defmodule TabDemo.Layouts.App do
                 "Posts"
               end
 
-              slot :default
+              render @inner_content
             end
           end
         end
@@ -74,8 +68,10 @@ end
 #### Page
 
 ```elixir
-defmodule TabDemo.Pages.About do
-  use Tableau.Page
+defmodule MySite.AboutPage do
+  use Tableau.Page,
+    layout: MySite.RootLayout,
+    permalink: "/about"
 
   import Temple
 
@@ -83,94 +79,6 @@ defmodule TabDemo.Pages.About do
     temple do
       span class: "text-red-500 font-bold" do
         "i'm a super cool and smart!"
-      end
-    end
-  end
-end
-```
-
-The root `/` can be built by create an "Index" module, `YourApp.Pages.Index`.
-
-You can change which layout your page renders within by using the `layout` macro.
-
-```elixir
-defmodule TabDemo.Layouts.Sidebar do
-  use Tableau.Layout
-  
-  import Temple
-
-  layout TabDemo.Layouts.App
-
-  def render(assigns) do
-    temple do
-      aside do
-        ul do
-          li do: "Home"
-          li do: "Profile"
-          li do: "Messages"
-        end
-      end
-
-      slot :default
-    end
-  end
-end
-
-defmodule TabDemo.Pages.Home do
-  use Tableau.Page
-
-  import Temple
-
-  layout TabDemo.Layouts.Sidebar
-
-  def render(assigns) do
-    temple do
-      div do
-        c TheFeed
-      end
-    end
-  end
-end
-```
-
-
-### Posts
-
-Posts are markdown files with YAML frontmatter that are located in the `_posts` directory. 
-
-The following post would be rendered to the path `/posts/hello-word!`.
-
-```markdown
----
-layout: "TabDemo.Layouts.Sidebar"
-title: "hello world!"
-category: "elixir"
-permalink: /posts/:category/:title
----
-
-# Yo!
-
-This is a post
-```
-
-Pages included a `@posts` assign that includes all posts and their frontmatter data. You can use this to render an archive of posts.
-
-```elixir
-defmodule TabDemo.Pages.Posts do
-  use Tableau.Page
-
-  import Temple
-
-  def render(assigns) do
-    temple do
-      ul class: "list-disc pl-6" do
-        for post <- @posts do
-          li do
-            a class: "text-blue-500 hover:underline", href: post.permalink do
-              post.frontmatter["title"]
-            end
-          end
-        end
       end
     end
   end
@@ -190,7 +98,6 @@ config :tableau, :reloader,
     ~r"lib/layouts/.*.ex",
     ~r"lib/pages/.*.ex",
     ~r"lib/components.ex",
-    ~r"_posts/.*.md",
     ~r"_site/.*.css"
   ]
 ```

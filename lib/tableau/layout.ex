@@ -1,4 +1,38 @@
 defmodule Tableau.Layout do
+  @moduledoc ~s'''
+  A tableau layout.
+
+  Layouts will render `@inner_content` using the `Tableau.Document.Helper.render/2` macro.
+
+  ```elixir
+  defmodule MySite.SidebarLayout do
+    use Tableau.Page,
+      layout: MySite.RootLayout
+
+    def template(assigns) do
+      """
+      <nav>
+        <a href="/home">
+        <a href="/about">
+      </nav>
+
+      <p>
+        <%= render @inner_content, foo: "bar" %>
+      </p>
+      """
+    end
+  end
+  ```
+  '''
+
+  @type assigns :: map()
+  @type template :: any()
+
+  @doc """
+  The layout template.
+  """
+  @callback template(assigns()) :: template()
+
   defmacro __using__(opts) do
     opts = Keyword.validate!(opts, [:layout])
 
@@ -12,6 +46,11 @@ defmodule Tableau.Layout do
         def __tableau_parent__, do: unquote(opts[:layout] || :root)
       end
 
-    [page, parent]
+    postlude =
+      quote do
+        import Tableau.Document.Helper
+      end
+
+    [page, parent, postlude]
   end
 end

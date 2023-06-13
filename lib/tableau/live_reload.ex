@@ -1,4 +1,5 @@
 defmodule Tableau.LiveReload do
+  @moduledoc false
   require Logger
 
   def init(opts \\ []) do

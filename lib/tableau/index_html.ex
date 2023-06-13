@@ -1,8 +1,7 @@
 defmodule Tableau.IndexHtml do
+  @moduledoc false
+
   @behaviour Plug
-  @moduledoc """
-  Serves `index.html` pages for requests to paths without a filename in Plug applications.
-  """
 
   @doc ~S"""
   Initialize plug options

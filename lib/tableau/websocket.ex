@@ -1,4 +1,5 @@
 defmodule Tableau.Websocket do
+  @moduledoc false
   @behaviour :cowboy_websocket
   @reloader_opts Application.compile_env(:tableau, :reloader, patterns: [])
 

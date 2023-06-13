@@ -1,9 +1,9 @@
 defmodule Tableau.CodeReloader do
-  @moduledoc """
-  Handles automatic code reloading.
+  @moduledoc false
 
-  Taken from [Still](https://github.com/still-ex/still/blob/277f4b546f0abf1ba56167a7ae894a49069b3c6c/lib/still/web/code_reloader.ex), which is taken from [Phoenix](https://github.com/phoenixframework/phoenix/blob/431c51e20d8840fa1f851160b659f78c6bb484c6/lib/phoenix/code_reloader/server.ex).
-  """
+  # Handles automatic code reloading.
+
+  # Taken from [Still](https://github.com/still-ex/still/blob/277f4b546f0abf1ba56167a7ae894a49069b3c6c/lib/still/web/code_reloader.ex), which is taken from [Phoenix](https://github.com/phoenixframework/phoenix/blob/431c51e20d8840fa1f851160b659f78c6bb484c6/lib/phoenix/code_reloader/server.ex).
   use GenServer
 
   require Logger

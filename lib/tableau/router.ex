@@ -1,4 +1,5 @@
 defmodule Tableau.Router do
+  @moduledoc false
   use Plug.Router, init_mode: :runtime
 
   require Logger

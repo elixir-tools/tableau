@@ -1,5 +1,11 @@
 defmodule Tableau.Document do
+  @moduledoc false
   defmodule Helper do
+    @doc """
+    A macro for rendering nested content within a layout.
+
+    Please see the `Tableau.Layout` docs for more info.
+    """
     defmacro render(inner_content, extra_assigns \\ Macro.escape(%{})) do
       quote do
         case unquote(inner_content) do

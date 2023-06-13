@@ -1,4 +1,5 @@
 defmodule Tableau.FileSystem do
+  @moduledoc false
   def child_spec(_) do
     file_system_opts =
       Keyword.merge([dirs: [Path.absname("")]], name: :tableau_file_watcher, latency: 0)
