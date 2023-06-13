@@ -8,10 +8,19 @@ defmodule Tableau.Graph.NodeTest do
 
     def __tableau_type__, do: :page
     def __tableau_parent__, do: Layout
+    def __tableau_permalink__, do: "/about"
+
+    def template(_) do
+      ""
+    end
   end
 
   defmodule Layout do
     def __tableau_type__, do: :layout
+
+    def template(_) do
+      ""
+    end
   end
 
   defmodule Math do

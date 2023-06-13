@@ -1,7 +1,7 @@
 defmodule Tableau.Components do
   require EEx
 
-  import Strung
+  import Tableau.Strung
 
   EEx.function_from_string(
     :def,

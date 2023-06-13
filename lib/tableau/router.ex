@@ -2,7 +2,7 @@ defmodule Tableau.Router do
   use Plug.Router, init_mode: :runtime
 
   require Logger
-  import Strung
+  import Tableau.Strung
 
   @not_found ~g'''
   <!DOCTYPE html><html lang="en"><head></head><body>Not Found</body></html>

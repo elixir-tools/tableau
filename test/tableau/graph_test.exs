@@ -6,6 +6,7 @@ defmodule Tableau.GraphTest do
 
     def __tableau_type__, do: :page
     def __tableau_parent__, do: InnerLayout
+    def __tableau_permalink__, do: "/about"
 
     def template(_), do: ""
   end
@@ -15,6 +16,7 @@ defmodule Tableau.GraphTest do
 
     def __tableau_type__, do: :page
     def __tableau_parent__, do: RootLayout
+    def __tableau_permalink__, do: "/about"
     def template(_), do: ""
   end
 

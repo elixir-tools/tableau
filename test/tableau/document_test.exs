@@ -1,10 +1,11 @@
 defmodule Tableau.DocumentTest.About do
-  import Strung
+  import Tableau.Strung
   require EEx
   alias Tableau.DocumentTest.InnerLayout
 
   def __tableau_type__, do: :page
   def __tableau_parent__, do: InnerLayout
+  def __tableau_permalink__, do: "/about"
 
   EEx.function_from_string(
     :def,
@@ -19,12 +20,13 @@ defmodule Tableau.DocumentTest.About do
 end
 
 defmodule Tableau.DocumentTest.Index do
-  import Strung
+  import Tableau.Strung
   require EEx
   alias Tableau.DocumentTest.InnerLayout
 
   def __tableau_type__, do: :page
   def __tableau_parent__, do: InnerLayout
+  def __tableau_permalink__, do: "/"
 
   EEx.function_from_string(
     :def,
@@ -34,12 +36,12 @@ defmodule Tableau.DocumentTest.Index do
       Home page!
     </div>
     '''html,
-    [:assigns]
+    [:_assigns]
   )
 end
 
 defmodule Tableau.DocumentTest.InnerLayout do
-  import Strung
+  import Tableau.Strung
   import Tableau.Document.Helper, only: [render: 2]
   require EEx
   alias Tableau.DocumentTest.RootLayout
@@ -60,7 +62,7 @@ defmodule Tableau.DocumentTest.InnerLayout do
 end
 
 defmodule Tableau.DocumentTest.RootLayout do
-  import Strung
+  import Tableau.Strung
   import Tableau.Document.Helper, only: [render: 1]
   require EEx
   def __tableau_type__, do: :layout
@@ -84,8 +86,6 @@ defmodule Tableau.DocumentTest do
   use ExUnit.Case, async: true
 
   alias Tableau.Document
-
-  import Strung
 
   test "renders a document" do
     graph = Tableau.Graph.new(:code.all_available())
