@@ -1,4 +1,6 @@
 defmodule Tableau.Graph.Node do
+  @moduledoc false
+
   def type(module) do
     if function_exported?(module, :__tableau_type__, 0) do
       {:ok, module.__tableau_type__()}
