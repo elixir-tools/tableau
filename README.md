@@ -1,6 +1,6 @@
 # Tableau
 
-Experimental static site generator for Elixir.
+Static Site Generator for Elixir.
 
 ## Goals
 
@@ -8,18 +8,23 @@ Experimental static site generator for Elixir.
 - [x] Easy to use the current Node.js JS/CSS tooling
 - [ ] Ability to work with "data" (either dynamic data or static files)
 - [ ] Handles stuff like RSS, sitemap, SEO.
-- [ ] Good project generation experience.
 
 ## Installation
 
-1. Clone this repo.
-1. `mix new my_site`
-1. Add `{:tableau, path: "path/to/tableau"}` to your `mix.exs`
+This package can be installed by adding `tableau` to your list of dependencies in `mix.exs`:
+
+```elixir
+def deps do
+  [
+    {:tableau, "~> 0.1"}
+  ]
+end
+```
+Documentation can be found at <https://hexdocs.pm/tableau>.
 
 ## Getting Started
 
 The examples in the README use the [Temple](https://github.com/mhanberg/temple) library to demonstrate that Tableau can be used with any markup language of your choice. You could easily use the builtin EEx, or use HEEx, Surface, or HAML.
-
 
 ```elixir
 defmodule MySite.RootLayout do
