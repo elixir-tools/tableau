@@ -28,16 +28,15 @@ defmodule Tableau.MixProject do
   defp deps do
     [
       {:libgraph, "~> 0.16.0"},
-      {:mentat, github: "keathley/mentat"},
       {:plug_cowboy, "~> 2.0"},
       {:plug_static_index_html, "~> 1.0"},
       {:file_system, "~> 0.2"},
-      {:yaml_front_matter, "~> 1.0"},
-      {:jason, "~> 1.4"},
-      {:toml, "~> 0.6.2"},
-      {:req, "~> 0.3", only: :test},
-      {:bypass, "~> 2.0", only: :test},
-      {:earmark, "~> 1.4"},
+      # {:yaml_front_matter, "~> 1.0"},
+      # {:jason, "~> 1.4"},
+      # {:toml, "~> 0.6.2"},
+      # {:req, "~> 0.3", only: :test},
+      # {:bypass, "~> 2.0", only: :test},
+      # {:earmark, "~> 1.4"},
       {:floki, "~> 0.34", only: :test}
     ]
   end
