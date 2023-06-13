@@ -32,7 +32,7 @@ defmodule TabDemo.MixProject do
   defp deps do
     [
       {:tableau, path: "../"},
-      {:temple, "~> 0.9"},
+      {:temple, "~> 0.12"},
       {:benchee, "~> 1.0"},
       {:tailwind, "~> 0.1", runtime: Mix.env() == :dev},
       {:req, "~> 0.3"},

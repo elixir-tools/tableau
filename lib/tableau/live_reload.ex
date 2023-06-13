@@ -1,7 +1,8 @@
 defmodule Tableau.LiveReload do
   require Logger
+
   def init(opts \\ []) do
-    name = Keyword.get(opts, :name, :live_reload_watcher)
+    name = Keyword.get(opts, :name, :tableau_file_watcher)
 
     FileSystem.subscribe(name)
   end
