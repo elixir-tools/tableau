@@ -1,4 +1,5 @@
 defmodule Tableau.Server do
+  @moduledoc false
   def child_spec(_) do
     Supervisor.child_spec(
       {Plug.Cowboy,

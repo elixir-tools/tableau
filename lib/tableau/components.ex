@@ -1,8 +1,16 @@
 defmodule Tableau.Components do
+  @moduledoc """
+  Builtin components.
+  """
   require EEx
 
   import Tableau.Strung
 
+  @doc """
+  A component for triggering live reloading.
+
+  Include this in your root layout to have your site live reload when using `mix tableau.server`.
+  """
   EEx.function_from_string(
     :def,
     :live_reload,

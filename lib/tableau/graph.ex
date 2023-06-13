@@ -1,4 +1,5 @@
 defmodule Tableau.Graph do
+  @moduledoc false
   alias Tableau.Graph.Node
 
   def new(modules) do
