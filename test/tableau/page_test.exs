@@ -25,7 +25,7 @@ defmodule Tableau.PageTest do
 
   test "dsl" do
     assert :page == AboutPage.__tableau_type__()
-    assert InnerLayout  == AboutPage.__tableau_parent__()
+    assert InnerLayout == AboutPage.__tableau_parent__()
     assert "/about" == AboutPage.__tableau_permalink__()
   end
 end
