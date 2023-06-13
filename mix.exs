@@ -1,13 +1,18 @@
 defmodule Tableau.MixProject do
   use Mix.Project
 
+  @source_url "https://github.com/elixir-tools/tableau"
+
   def project do
     [
       app: :tableau,
+      description: "Static site generator for elixir",
+      source_url: @source_url,
       version: "0.1.0",
       elixir: "~> 1.12",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
+      package: package(),
       deps: deps()
     ]
   end
@@ -39,6 +44,18 @@ defmodule Tableau.MixProject do
       # {:bypass, "~> 2.0", only: :test},
       # {:earmark, "~> 1.4"},
       {:floki, "~> 0.34", only: :test}
+    ]
+  end
+
+  defp package() do
+    [
+      maintainers: ["Mitchell Hanberg"],
+      licenses: ["MIT"],
+      links: %{
+        GitHub: @source_url,
+        Sponsor: "https://github.com/sponsors/mhanberg"
+      },
+      files: ~w(lib LICENSE mix.exs README.md .formatter.exs)
     ]
   end
 end
