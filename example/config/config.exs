@@ -2,12 +2,13 @@ import Config
 
 config :tableau, :reloader,
   patterns: [
-    ~r"lib/layouts/.*.ex",
-    ~r"lib/pages/.*.ex",
-    ~r"lib/components.ex",
-    ~r"_posts/.*.md",
-    ~r"_site/.*.css"
+    ~r"lib/.*.ex",
   ]
+
+config :temple,
+  engine: EEx.SmartEngine,
+  attributes: {Temple, :attributes}
+
 
 config :tailwind,
   version: "3.0.24",

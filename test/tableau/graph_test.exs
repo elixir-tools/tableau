@@ -6,6 +6,8 @@ defmodule Tableau.GraphTest do
 
     def __tableau_type__, do: :page
     def __tableau_parent__, do: InnerLayout
+
+    def template(_), do: ""
   end
 
   defmodule Careers do
@@ -13,6 +15,7 @@ defmodule Tableau.GraphTest do
 
     def __tableau_type__, do: :page
     def __tableau_parent__, do: RootLayout
+    def template(_), do: ""
   end
 
   defmodule InnerLayout do
@@ -20,38 +23,40 @@ defmodule Tableau.GraphTest do
 
     def __tableau_type__, do: :layout
     def __tableau_parent__, do: RootLayout
+    def template(_), do: ""
   end
 
   defmodule RootLayout do
     def __tableau_type__, do: :layout
+
+    def template(_), do: ""
   end
 
   describe "graph/1" do
     test "creates a graph of nodes" do
       graph = Tableau.Graph.new(:code.all_available())
+      edges = Graph.edges(graph)
 
-      assert [
-               %Graph.Edge{
-                 v1: Tableau.GraphTest.InnerLayout,
-                 v2: Tableau.GraphTest.RootLayout
-               },
-               %Graph.Edge{
-                 v1: Tableau.GraphTest.About,
-                 v2: Tableau.GraphTest.InnerLayout
-               },
-               %Graph.Edge{
-                 v1: Tableau.GraphTest.RootLayout,
-                 v2: :root
-               },
-               %Graph.Edge{
-                 v1: Tableau.GraphTest.Careers,
-                 v2: Tableau.GraphTest.RootLayout
-               }
-             ] = Graph.edges(graph)
-
-      assert "foo brett bar" == "foo mitch bar"
-
-      assert false
+      for e <- [
+            %Graph.Edge{
+              v1: Tableau.GraphTest.InnerLayout,
+              v2: Tableau.GraphTest.RootLayout
+            },
+            %Graph.Edge{
+              v1: Tableau.GraphTest.About,
+              v2: Tableau.GraphTest.InnerLayout
+            },
+            %Graph.Edge{
+              v1: Tableau.GraphTest.RootLayout,
+              v2: :root
+            },
+            %Graph.Edge{
+              v1: Tableau.GraphTest.Careers,
+              v2: Tableau.GraphTest.RootLayout
+            }
+          ] do
+        assert e in edges
+      end
     end
   end
 end

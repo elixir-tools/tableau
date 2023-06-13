@@ -1,84 +1,65 @@
 defmodule TabDemo.About do
-  import Strung
-  require EEx
-  alias TabDemo.InnerLayout
+  use Tableau.Page, layout: TabDemo.InnerLayout, permalink: "/about"
+  use TabDemo.Component
 
-  def __tableau_type__, do: :page
-  def __tableau_parent__, do: InnerLayout
-  def __tableau_permalink__, do: "/about"
-
-  EEx.function_from_string(
-    :def,
-    :template,
-    ~g'''
-    <div class="<%= @class %>">
-      hi, my name is motch
-    </div>
-    '''html,
-    [:assigns]
-  )
+  def template(assigns) do
+    temple do
+      div @attrs do
+        "hi, my name is motch"
+      end
+    end
+  end
 end
 
 defmodule TabDemo.Index do
-  import Strung
-  require EEx
-  alias TabDemo.InnerLayout
+  use Tableau.Page, layout: TabDemo.InnerLayout, permalink: "/"
+  use TabDemo.Component
 
-  def __tableau_type__, do: :page
-  def __tableau_parent__, do: InnerLayout
-  def __tableau_permalink__, do: "/"
-
-  EEx.function_from_string(
-    :def,
-    :template,
-    ~g'''
-    <div id="home">
-      Home page!
-    </div>
-    '''html,
-    [:assigns]
-  )
+  def template(_assigns) do
+    temple do
+      div id: "home", class: "text-red-500" do
+        "Home page! whoa i changed!"
+      end
+    end
+  end
 end
 
 defmodule TabDemo.InnerLayout do
-  import Strung
+  use Tableau.Layout, layout: TabDemo.RootLayout
+  use TabDemo.Component
+
   import Tableau.Document.Helper, only: [render: 2]
-  require EEx
-  alias TabDemo.RootLayout
 
-  def __tableau_type__, do: :layout
-  def __tableau_parent__, do: RootLayout
-
-  EEx.function_from_string(
-    :def,
-    :template,
-    ~g'''
-    <div id="inner-layout">
-      <%= render(@inner_content, class: "text-red") %>
-    </div>
-    '''html,
-    [:assigns]
-  )
+  def template(assigns) do
+    temple do
+      div id: "inner-layout", class: "border border-red-500" do
+        span(do: "haha")
+        render(@inner_content, attrs: [class: "text-blue-500"])
+      end
+    end
+  end
 end
 
 defmodule TabDemo.RootLayout do
-  import Strung
+  use Tableau.Layout
+  use TabDemo.Component
+
   import Tableau.Document.Helper, only: [render: 1]
-  require EEx
-  def __tableau_type__, do: :layout
 
-  EEx.function_from_string(
-    :def,
-    :template,
-    ~g'''
-    <html>
-      <head></head>
-      <body>
-        <%= render @inner_content %>
-      </body>
-    </html>
-    '''html,
-    [:assigns]
-  )
+  def template(assigns) do
+    temple do
+      html do
+        head do
+          link(href: "/css/site.css", rel: "stylesheet")
+        end
+
+        body do
+          render(@inner_content)
+
+
+          c(&Tableau.Components.live_reload/1)
+        end
+      end
+    end
+  end
 end
-

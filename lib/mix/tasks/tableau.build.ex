@@ -14,19 +14,17 @@ defmodule Mix.Tasks.Tableau.Build do
 
     out = Keyword.get(opts, :out, "_site")
     mods = :code.all_available()
-    graph = Tableau.Graph.new(mods) |> dbg()
+    graph = Tableau.Graph.new(mods)
     File.mkdir_p!(out)
 
-    for mod <- Graph.vertices(graph), {:ok, :page} == dbg(Tableau.Graph.Node.type(mod)) do
+    for mod <- Graph.vertices(graph), {:ok, :page} == Tableau.Graph.Node.type(mod) do
       content = Tableau.Document.render(graph, mod, %{site: %{}})
       permalink = mod.__tableau_permalink__()
       dir = Path.join(out, permalink)
 
       File.mkdir_p!(dir)
 
-      dbg(Path.absname(dir))
-
-      File.write!(Path.join(dir, "index.html"), content, [:sync])
+      File.write!(Path.join(dir, "index.html"), content)
     end
   end
 end
