@@ -9,7 +9,6 @@ defmodule Tableau.ServerSupervisor do
   def init(_init_arg) do
     if Application.get_env(:tableau, :server) do
       children = [
-        Tableau.ContentSupervisor,
         Tableau.FileSystem,
         Tableau.Server,
         Tableau.CodeReloader
