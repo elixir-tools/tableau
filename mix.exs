@@ -31,6 +31,7 @@ defmodule Tableau.MixProject do
       {:plug_cowboy, "~> 2.0"},
       {:plug_static_index_html, "~> 1.0"},
       {:file_system, "~> 0.2"},
+      {:ex_doc, ">= 0.0.0"},
       # {:yaml_front_matter, "~> 1.0"},
       # {:jason, "~> 1.4"},
       # {:toml, "~> 0.6.2"},
