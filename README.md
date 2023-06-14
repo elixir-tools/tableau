@@ -13,13 +13,17 @@ Static Site Generator for Elixir.
 
 This package can be installed by adding `tableau` to your list of dependencies in `mix.exs`:
 
+<!-- x-release-please-start-version -->
+
 ```elixir
 def deps do
   [
-    {:tableau, "~> 0.1"}
+    {:tableau, "~> 0.2"}
   ]
 end
 ```
+<!-- x-release-please-end -->
+
 Documentation can be found at <https://hexdocs.pm/tableau>.
 
 ## Getting Started
