@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [0.1.2](https://github.com/elixir-tools/tableau/compare/v0.1.1...v0.1.2) (2023-06-14)
+
+
+### Bug Fixes
+
+* always preload modules ([f083b46](https://github.com/elixir-tools/tableau/commit/f083b46cc425fdf22b8c2685f0b5932360eb3c98))
+
 ## [0.1.1](https://github.com/elixir-tools/tableau/compare/v0.1.0...v0.1.1) (2023-06-13)
 
 
