@@ -12,6 +12,8 @@ defmodule Mix.Tasks.Tableau.Server do
 
     Logger.debug("server started on http://localhost:4999")
 
+    Mix.Task.run("app.start", ["--preload-modules"])
+
     Mix.Tasks.Run.run(["--no-halt"])
   end
 end

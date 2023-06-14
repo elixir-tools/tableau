@@ -56,7 +56,6 @@ defmodule TabDemo.RootLayout do
         body do
           render(@inner_content)
 
-
           c(&Tableau.Components.live_reload/1)
         end
       end

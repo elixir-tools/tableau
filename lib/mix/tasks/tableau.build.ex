@@ -8,7 +8,7 @@ defmodule Mix.Tasks.Tableau.Build do
 
   @impl Mix.Task
   def run(argv) do
-    Mix.Task.run("app.start")
+    Mix.Task.run("app.start", ["--preload-modules"])
 
     {opts, _argv} = OptionParser.parse!(argv, strict: [out: :string])
 
