@@ -30,20 +30,7 @@ defmodule Tableau.Router do
   end
 
   defp rerender(conn, _) do
-    out = "_site"
-    mods = :code.all_available()
-    graph = Tableau.Graph.new(mods)
-    File.mkdir_p!(out)
-
-    for mod <- Graph.vertices(graph), {:ok, :page} == Tableau.Graph.Node.type(mod) do
-      content = Tableau.Document.render(graph, mod, %{site: %{}})
-      permalink = mod.__tableau_permalink__()
-      dir = Path.join(out, permalink)
-
-      File.mkdir_p!(dir)
-
-      File.write!(Path.join(dir, "index.html"), content, [:sync])
-    end
+    Mix.Task.rerun("tableau.build", ["--out", "_site"])
 
     conn
   end

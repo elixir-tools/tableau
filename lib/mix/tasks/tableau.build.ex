@@ -6,6 +6,8 @@ defmodule Mix.Tasks.Tableau.Build do
   @moduledoc "Task to build the tableau site"
   @shortdoc "Builds the site"
 
+  @include_dir Application.compile_env(:tableau, :include, "extra")
+
   @impl Mix.Task
   def run(argv) do
     Mix.Task.run("app.start", ["--preload-modules"])
@@ -25,6 +27,10 @@ defmodule Mix.Tasks.Tableau.Build do
       File.mkdir_p!(dir)
 
       File.write!(Path.join(dir, "index.html"), content)
+    end
+
+    if File.exists?(@include_dir) do
+      File.cp_r!(@include_dir, out)
     end
   end
 end

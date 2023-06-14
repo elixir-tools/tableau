@@ -89,7 +89,7 @@ defmodule Mix.Tasks.Tableau.BuildTest do
 
   @tag :tmp_dir
   test "renders all pages", %{tmp_dir: out} do
-    documents = Build.run(["--out", out])
+    _documents = Build.run(["--out", out])
 
     # # FIXME: this is due to the way the page modules are compiled in the tests
     # assert 8 == length(documents)

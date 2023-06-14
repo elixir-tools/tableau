@@ -168,13 +168,22 @@ config :tableau, :assets,
 
 config :tableau, :assets, tailwind: {Tailwind, :install_and_run, [:default, ~w(--watch)]}
 
-
 import_config "#{config_env()}.exs"
 ```
 
 This will start a long running process that will independently build your CSS as it see's files change.
 
 These are started automatically when you run `mix tableau.server`.
+
+### Static Assets
+
+Other static assets can be copied into the "out" directory by placing them in an `extra` directory in the root of your project.
+
+This directory can be configured.
+
+```elixir
+config :tableau, :include, "static"
+```
 
 ### Development
 
