@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## [0.2.0](https://github.com/elixir-tools/tableau/compare/v0.1.2...v0.2.0) (2023-06-14)
+
+
+### Features
+
+* copy static assets ([ad4281b](https://github.com/elixir-tools/tableau/commit/ad4281b92969c82b6605235d509e7a21bbbe3fa9))
+
+
+### Bug Fixes
+
+* include page/layout behaviour in postlude ([06ef33e](https://github.com/elixir-tools/tableau/commit/06ef33e26a1c2bd32b2ae4b16be984d15ab0b271))
+
 ## [0.1.2](https://github.com/elixir-tools/tableau/compare/v0.1.1...v0.1.2) (2023-06-14)
 
 
