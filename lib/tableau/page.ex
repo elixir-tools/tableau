@@ -49,6 +49,11 @@ defmodule Tableau.Page do
         def __tableau_permalink__, do: unquote(opts[:permalink])
       end
 
-    [page, parent, permalink]
+    postlude =
+      quote do
+        @behaviour unquote(__MODULE__)
+      end
+
+    [page, parent, permalink, postlude]
   end
 end

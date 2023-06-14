@@ -49,6 +49,7 @@ defmodule Tableau.Layout do
     postlude =
       quote do
         import Tableau.Document.Helper
+        @behaviour unquote(__MODULE__)
       end
 
     [page, parent, postlude]
