@@ -100,7 +100,7 @@ defmodule Mix.Tasks.Tableau.BuildTest.RootLayout do
 end
 
 defmodule Mix.Tasks.Tableau.BuildTest do
-  use ExUnit.Case, async: true
+  use ExUnit.Case, async: false
 
   import ExUnit.CaptureIO
   import ExUnit.CaptureLog
