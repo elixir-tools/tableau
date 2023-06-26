@@ -115,9 +115,6 @@ defmodule Mix.Tasks.Tableau.BuildTest do
                     end) =~ "FailExtension failed to run"
            end) =~ "hi!"
 
-    # # FIXME: this is due to the way the page modules are compiled in the tests
-    # assert 8 == length(documents)
-
     assert File.exists?(Path.join(out, "/index.html"))
     assert File.exists?(Path.join(out, "/about/index.html"))
   end

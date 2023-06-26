@@ -27,6 +27,7 @@ defmodule Tableau.Document do
   def render(graph, module, assigns) do
     [root | mods] =
       graph
+      |> dbg()
       |> Graph.dijkstra(module, :root)
       |> Enum.reverse()
       |> tl()
