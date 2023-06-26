@@ -1,11 +1,11 @@
-defmodule Tableau.Support.MyData.Http do
-  defstruct [:data]
+# defmodule Tableau.Support.MyData.Http do
+#   defstruct [:data]
 
-  defimpl Tableau.Provider do
-    def fetch(http) do
-      data = Req.get!("http://localhost:9000/books").body
+#   defimpl Tableau.Provider do
+#     def fetch(http) do
+#       data = Req.get!("http://localhost:9000/books").body
 
-      %{http | data: data}
-    end
-  end
-end
+#       %{http | data: data}
+#     end
+#   end
+# end
