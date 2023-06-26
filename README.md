@@ -6,6 +6,7 @@ Static Site Generator for Elixir.
 
 - [x] Good code and browser reloading on file change
 - [x] Easy to use the current Node.js JS/CSS tooling
+- [x] Extensions
 - [ ] Ability to work with "data" (either dynamic data or static files)
 - [ ] Handles stuff like RSS, sitemap, SEO.
 
@@ -18,7 +19,7 @@ This package can be installed by adding `tableau` to your list of dependencies i
 ```elixir
 def deps do
   [
-    {:tableau, "~> 0.2"}
+    {:tableau, "~> 0.3"}
   ]
 end
 ```
@@ -84,7 +85,7 @@ defmodule MySite.AboutPage do
 
   import Temple
 
-  def render(assigns) do
+  def template(assigns) do
     temple do
       span class: "text-red-500 font-bold" do
         "i'm a super cool and smart!"
@@ -121,7 +122,7 @@ defmodule YourApp.Layouts.App do
 
   import Temple
 
-  def render(assigns) do
+  def template(assigns) do
     temple do
       "<!DOCTYPE html>"
 
@@ -136,8 +137,7 @@ defmodule YourApp.Layouts.App do
 
         body class: "font-sans" do
           main class: "container mx-auto px-2" do
-              slot :default
-            end
+            render(@inner_content)
           end
         end
 
@@ -153,7 +153,7 @@ end
 
 ### JS/CSS
 
-You can arbitrarily start other build tools as "watchers". This is inspired by the way [Phoenix does it](TODO).
+You can arbitrarily start other build tools as "watchers". This is inspired by the way Phoenix does it.
 
 ```elixir
 # config/config.exs
