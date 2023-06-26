@@ -34,7 +34,7 @@ defmodule Tableau.Websocket do
   end
 
   def websocket_info(message, state) do
-    Logger.warn("Unhandled message: #{inspect(message)}")
+    Logger.warning("Unhandled message: #{inspect(message)}")
 
     {:ok, state}
   end
