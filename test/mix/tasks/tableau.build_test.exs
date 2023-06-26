@@ -1,16 +1,17 @@
 defmodule Mix.Tasks.Tableau.LogExtension do
-  use Tableau.Extension, type: :pre_build
+  use Tableau.Extension, type: :pre_build, priority: 200
 
   def run(_site) do
-    IO.puts("hi!")
+    IO.inspect(System.monotonic_time(), label: "second")
     :ok
   end
 end
 
 defmodule Mix.Tasks.Tableau.FailExtension do
-  use Tableau.Extension, type: :pre_build
+  use Tableau.Extension, type: :pre_build, priority: 100
 
   def run(_site) do
+    IO.inspect(System.monotonic_time(), label: "first")
     :error
   end
 end
@@ -109,11 +110,29 @@ defmodule Mix.Tasks.Tableau.BuildTest do
 
   @tag :tmp_dir
   test "renders all pages", %{tmp_dir: out} do
-    assert capture_io(fn ->
-             assert capture_log(fn ->
-                      _documents = Build.run(["--out", out])
-                    end) =~ "FailExtension failed to run"
-           end) =~ "hi!"
+    {log, io} =
+      with_io(fn ->
+        {_, log} =
+          with_log(fn ->
+            _documents = Build.run(["--out", out])
+          end)
+
+        log
+      end)
+
+    assert [{"first", first}, {"second", second}] =
+             io
+             |> String.split("\n", trim: true)
+             |> Enum.map(fn line ->
+               [order, time] =
+                 Regex.run(~r/^(first|second): (.*)$/, line, capture: :all_but_first)
+
+               {order, String.to_integer(time)}
+             end)
+
+    assert first < second
+
+    assert log =~ "FailExtension failed to run"
 
     assert File.exists?(Path.join(out, "/index.html"))
     assert File.exists?(Path.join(out, "/about/index.html"))

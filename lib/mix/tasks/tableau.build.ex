@@ -49,5 +49,6 @@ defmodule Mix.Tasks.Tableau.Build do
         match?({:ok, :pre_build}, Tableau.Extension.type(mod)) do
       mod
     end
+    |> Enum.sort_by(& &1.__tableau_extension_priority__())
   end
 end
