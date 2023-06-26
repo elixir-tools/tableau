@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## [0.3.0](https://github.com/elixir-tools/tableau/compare/v0.2.0...v0.3.0) (2023-06-26)
+
+
+### Features
+
+* extensions ([#13](https://github.com/elixir-tools/tableau/issues/13)) ([333437f](https://github.com/elixir-tools/tableau/commit/333437fa5ddeef29135e0c0070cea0e5140e1f9d))
+
+
+### Bug Fixes
+
+* fix deprecation warnings for Logger.warn/1 ([#10](https://github.com/elixir-tools/tableau/issues/10)) ([0b13494](https://github.com/elixir-tools/tableau/commit/0b13494c35628236d152fe780971bec8a7bf8dd3))
+
 ## [0.2.0](https://github.com/elixir-tools/tableau/compare/v0.1.2...v0.2.0) (2023-06-14)
 
 
