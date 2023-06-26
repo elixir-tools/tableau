@@ -1,7 +1,7 @@
 defmodule Mix.Tasks.Tableau.LogExtension do
   use Tableau.Extension, type: :pre_build
 
-  def run(_graph, _site) do
+  def run(_site) do
     IO.puts("hi!")
     :ok
   end
@@ -10,7 +10,7 @@ end
 defmodule Mix.Tasks.Tableau.FailExtension do
   use Tableau.Extension, type: :pre_build
 
-  def run(_graph, _site) do
+  def run(_site) do
     :error
   end
 end

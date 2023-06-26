@@ -12,7 +12,7 @@ defmodule Tableau.Extension do
   defmodule MySite.PostsExtension do
     use Tableau.Extension, type: :pre_build
 
-    def run(_graph, _site) do
+    def run(_site) do
       posts = Path.wildcard("_posts/**/*.md")
 
       for post <- post do
@@ -32,11 +32,9 @@ defmodule Tableau.Extension do
   @doc """
   The extension entry point.
 
-  The function is passed the layout graph and a set of default assigns.
-
-  The graph is an instance of a [Graph.t](https://hexdocs.pm/libgraph/0.16.0/Graph.html#t:t/0) from the library `libgraph`.
+  The function is passed the a set of default assigns.
   """
-  @callback run(Graph.t(), map()) :: :ok | :error
+  @callback run(map()) :: :ok | :error
 
   defmacro __using__(opts) do
     opts = Keyword.validate!(opts, [:type])

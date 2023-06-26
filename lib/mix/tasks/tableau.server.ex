@@ -9,6 +9,7 @@ defmodule Mix.Tasks.Tableau.Server do
   @impl Mix.Task
   def run(_args) do
     Application.put_env(:tableau, :server, true)
+    Code.put_compiler_option(:ignore_module_conflict, true)
 
     Logger.debug("server started on http://localhost:4999")
 

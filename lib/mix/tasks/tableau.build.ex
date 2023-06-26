@@ -15,15 +15,18 @@ defmodule Mix.Tasks.Tableau.Build do
     {opts, _argv} = OptionParser.parse!(argv, strict: [out: :string])
 
     out = Keyword.get(opts, :out, "_site")
-    mods = :code.all_available()
-    graph = Tableau.Graph.new(mods)
-    File.mkdir_p!(out)
 
-    for module <- pre_write_extensions(mods) do
-      with :error <- module.run(graph, %{site: %{}}) do
+    mods = :code.all_available()
+
+    for module <- pre_build_extensions(mods) do
+      with :error <- module.run(%{site: %{}}) do
         Logger.error("#{inspect(module)} failed to run")
       end
     end
+
+    mods = :code.all_available()
+    graph = Tableau.Graph.new(mods)
+    File.mkdir_p!(out)
 
     for mod <- Graph.vertices(graph), {:ok, :page} == Tableau.Graph.Node.type(mod) do
       content = Tableau.Document.render(graph, mod, %{site: %{}})
@@ -40,7 +43,7 @@ defmodule Mix.Tasks.Tableau.Build do
     end
   end
 
-  defp pre_write_extensions(modules) do
+  defp pre_build_extensions(modules) do
     for {mod, _, _} <- modules,
         mod = Module.concat([to_string(mod)]),
         match?({:ok, :pre_build}, Tableau.Extension.type(mod)) do
