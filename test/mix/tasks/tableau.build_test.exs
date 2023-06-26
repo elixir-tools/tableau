@@ -1,3 +1,20 @@
+defmodule Mix.Tasks.Tableau.LogExtension do
+  use Tableau.Extension, type: :pre_build
+
+  def run(_graph, _site) do
+    IO.puts("hi!")
+    :ok
+  end
+end
+
+defmodule Mix.Tasks.Tableau.FailExtension do
+  use Tableau.Extension, type: :pre_build
+
+  def run(_graph, _site) do
+    :error
+  end
+end
+
 defmodule Mix.Tasks.Tableau.BuildTest.About do
   import Tableau.Strung
   require EEx
@@ -85,11 +102,18 @@ end
 defmodule Mix.Tasks.Tableau.BuildTest do
   use ExUnit.Case, async: true
 
+  import ExUnit.CaptureIO
+  import ExUnit.CaptureLog
+
   alias Mix.Tasks.Tableau.Build
 
   @tag :tmp_dir
   test "renders all pages", %{tmp_dir: out} do
-    _documents = Build.run(["--out", out])
+    assert capture_io(fn ->
+             assert capture_log(fn ->
+                      _documents = Build.run(["--out", out])
+                    end) =~ "FailExtension failed to run"
+           end) =~ "hi!"
 
     # # FIXME: this is due to the way the page modules are compiled in the tests
     # assert 8 == length(documents)

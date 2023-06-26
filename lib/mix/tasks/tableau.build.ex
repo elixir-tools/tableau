@@ -19,6 +19,12 @@ defmodule Mix.Tasks.Tableau.Build do
     graph = Tableau.Graph.new(mods)
     File.mkdir_p!(out)
 
+    for module <- pre_write_extensions(mods) do
+      with :error <- module.run(graph, %{site: %{}}) do
+        Logger.error("#{inspect(module)} failed to run")
+      end
+    end
+
     for mod <- Graph.vertices(graph), {:ok, :page} == Tableau.Graph.Node.type(mod) do
       content = Tableau.Document.render(graph, mod, %{site: %{}})
       permalink = mod.__tableau_permalink__()
@@ -31,6 +37,14 @@ defmodule Mix.Tasks.Tableau.Build do
 
     if File.exists?(@include_dir) do
       File.cp_r!(@include_dir, out)
+    end
+  end
+
+  defp pre_write_extensions(modules) do
+    for {mod, _, _} <- modules,
+        mod = Module.concat([to_string(mod)]),
+        match?({:ok, :pre_build}, Tableau.Extension.type(mod)) do
+      mod
     end
   end
 end
