@@ -4,13 +4,19 @@ defmodule Tableau.Extension do
 
   An extension can be used to generate other kinds of content.
 
+  ## Types
+
   There are currently the following extension types:
 
   - `:pre_build` - executed before tableau builds your site and writes anything to disk.
 
+  ## Priority
+
+  Extensions can be assigned a numeric priority for used with sorting.
+
   ```elixir
   defmodule MySite.PostsExtension do
-    use Tableau.Extension, type: :pre_build
+    use Tableau.Extension, type: :pre_build, priority: 300
 
     def run(_site) do
       posts = Path.wildcard("_posts/**/*.md")
@@ -37,11 +43,12 @@ defmodule Tableau.Extension do
   @callback run(map()) :: :ok | :error
 
   defmacro __using__(opts) do
-    opts = Keyword.validate!(opts, [:type])
+    opts = Keyword.validate!(opts, [:type, :priority])
 
     prelude =
       quote do
         def __tableau_extension_type__, do: unquote(opts)[:type]
+        def __tableau_extension_priority__, do: unquote(opts)[:priority] || 0
       end
 
     postlude =
