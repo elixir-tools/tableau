@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [0.4.0](https://github.com/elixir-tools/tableau/compare/v0.3.1...v0.4.0) (2023-06-26)
+
+
+### Features
+
+* extension priority ([#16](https://github.com/elixir-tools/tableau/issues/16)) ([c6f6444](https://github.com/elixir-tools/tableau/commit/c6f6444e0e6571990ed8eb9dda85ecbc37e06743))
+
 ## [0.3.1](https://github.com/elixir-tools/tableau/compare/v0.3.0...v0.3.1) (2023-06-26)
 
 
