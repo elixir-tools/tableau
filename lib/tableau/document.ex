@@ -26,10 +26,15 @@ defmodule Tableau.Document do
 
   def render(graph, module, assigns) do
     [root | mods] =
-      graph
-      |> Graph.dijkstra(module, :root)
-      |> Enum.reverse()
-      |> tl()
+      case Graph.dijkstra(graph, module, :root) do
+        path when is_list(path) ->
+          path
+          |> Enum.reverse()
+          |> tl()
+
+        nil ->
+          raise "Failed to find layout path for #{inspect(module)}"
+      end
 
     root.template(Map.merge(assigns, %{inner_content: mods}))
   end
