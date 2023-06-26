@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [0.3.1](https://github.com/elixir-tools/tableau/compare/v0.3.0...v0.3.1) (2023-06-26)
+
+
+### Bug Fixes
+
+* refresh graph after running extensions ([fbb2621](https://github.com/elixir-tools/tableau/commit/fbb2621ee92d1211faed6c3d21ae6fc07f1c135f))
+
 ## [0.3.0](https://github.com/elixir-tools/tableau/compare/v0.2.0...v0.3.0) (2023-06-26)
 
 
