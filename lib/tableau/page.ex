@@ -32,28 +32,15 @@ defmodule Tableau.Page do
   @callback template(assigns()) :: template()
 
   defmacro __using__(opts) do
-    opts = Keyword.validate!(opts, [:layout, :permalink])
+    opts = Keyword.validate!(opts, [:layout, :permalink, extra: []])
 
-    page =
-      quote do
-        def __tableau_type__, do: :page
-      end
+    quote do
+      @behaviour unquote(__MODULE__)
 
-    parent =
-      quote do
-        def __tableau_parent__, do: unquote(opts[:layout])
-      end
-
-    permalink =
-      quote do
-        def __tableau_permalink__, do: unquote(opts[:permalink])
-      end
-
-    postlude =
-      quote do
-        @behaviour unquote(__MODULE__)
-      end
-
-    [page, parent, permalink, postlude]
+      def __tableau_type__, do: :page
+      def __tableau_parent__, do: unquote(opts[:layout])
+      def __tableau_permalink__, do: unquote(opts[:permalink])
+      def __tableau_extra__, do: unquote(opts[:extra])
+    end
   end
 end

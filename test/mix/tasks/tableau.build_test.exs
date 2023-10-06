@@ -24,16 +24,17 @@ defmodule Mix.Tasks.Tableau.BuildTest.About do
   def __tableau_type__, do: :page
   def __tableau_parent__, do: InnerLayout
   def __tableau_permalink__, do: "/about"
+  def __tableau_extra__, do: []
 
   EEx.function_from_string(
     :def,
     :template,
     ~g'''
-    <div class="<%= @class %>">
+    <div>
       hi
     </div>
     '''html,
-    [:assigns]
+    [:_assigns]
   )
 end
 
@@ -45,6 +46,7 @@ defmodule Mix.Tasks.Tableau.BuildTest.Index do
   def __tableau_type__, do: :page
   def __tableau_parent__, do: InnerLayout
   def __tableau_permalink__, do: "/"
+  def __tableau_extra__, do: []
 
   EEx.function_from_string(
     :def,
@@ -60,7 +62,7 @@ end
 
 defmodule Mix.Tasks.Tableau.BuildTest.InnerLayout do
   import Tableau.Strung
-  import Tableau.Document.Helper, only: [render: 2]
+  import Tableau.Document.Helper, only: [render: 1]
   require EEx
   alias Mix.Tasks.Tableau.BuildTest.RootLayout
 
@@ -72,7 +74,7 @@ defmodule Mix.Tasks.Tableau.BuildTest.InnerLayout do
     :template,
     ~g'''
     <div id="inner-layout">
-      <%= render(@inner_content, class: "text-red") %>
+      <%= render(@inner_content) %>
     </div>
     '''html,
     [:assigns]
