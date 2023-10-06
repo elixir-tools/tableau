@@ -10,7 +10,7 @@ defmodule Tableau.Document do
       quote do
         case unquote(inner_content) do
           [{module, page_assigns} | rest] ->
-            module.template(Map.merge(page_assigns, %{inner_content: rest}))
+            module.template(%{page: page_assigns, inner_content: rest})
 
           [] ->
             nil
@@ -33,8 +33,7 @@ defmodule Tableau.Document do
 
     page_assigns = Map.new(module.__tableau_extra__() || [])
     mods = for mod <- mods, do: {mod, page_assigns}
-    new_assigns = Map.merge(page_assigns, %{inner_content: mods})
 
-    root.template(Map.merge(assigns, new_assigns))
+    root.template(Map.merge(assigns, %{inner_content: mods, page: page_assigns}))
   end
 end

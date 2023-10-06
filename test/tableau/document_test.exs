@@ -12,7 +12,7 @@ defmodule Tableau.DocumentTest.About do
     :def,
     :template,
     ~g'''
-    <div id="<%= @yo %>">
+    <div id="<%= @page.yo %>">
       hi
     </div>
     '''html,
