@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [0.5.0](https://github.com/elixir-tools/tableau/compare/v0.4.0...v0.5.0) (2023-10-06)
+
+
+### Features
+
+* pass values from page through to layouts ([996d7de](https://github.com/elixir-tools/tableau/commit/996d7de2816f679d5e40e76bed81cbf30c5d7da0))
+
 ## [0.4.0](https://github.com/elixir-tools/tableau/compare/v0.3.1...v0.4.0) (2023-06-26)
 
 
