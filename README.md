@@ -31,6 +31,16 @@ Documentation can be found at <https://hexdocs.pm/tableau>.
 
 The examples in the README use the [Temple](https://github.com/mhanberg/temple) library to demonstrate that Tableau can be used with any markup language of your choice. You could easily use the builtin EEx, or use HEEx, Surface, or HAML.
 
+### Layouts
+
+Layouts are modules that use the `use Tableau.Layout` macro.
+
+Layouts have assess to the `@site` and `@page` assign.
+
+The `@site` assign contains your site's config.
+
+The `@page` assign contains all the options passed to the `use Tableau.Page` macro.
+
 ```elixir
 defmodule MySite.RootLayout do
   use Tableau.Layout
@@ -46,6 +56,10 @@ defmodule MySite.RootLayout do
           meta charset: "utf-8"
           meta http_equiv: "X-UA-Compatible", content: "IE=edge"
           meta name: "viewport", content: "width=device-width, initial-scale=1.0"
+
+          title do
+            @page.some_assign
+          end
 
           link rel: "stylesheet", href: "/css/site.css"
         end
@@ -77,11 +91,21 @@ end
 
 #### Page
 
+Pages are modules that use the `use Tableau.Page` macro.
+
+Required options:
+
+* `:layout` - which layout module to use.
+* `:permalink` - the permalink of the page
+
+Any remaining options are arbitrary and will be available under the `@page` assign available to layout and page templates.
+
 ```elixir
 defmodule MySite.AboutPage do
   use Tableau.Page,
     layout: MySite.RootLayout,
-    permalink: "/about"
+    permalink: "/about",
+    some_assign: "foo"
 
   import Temple
 
