@@ -6,7 +6,7 @@ defmodule Tableau.DocumentTest.About do
   def __tableau_type__, do: :page
   def __tableau_parent__, do: InnerLayout
   def __tableau_permalink__, do: "/about"
-  def __tableau_extra__, do: [yo: "lo"]
+  def __tableau_opts__, do: [yo: "lo"]
 
   EEx.function_from_string(
     :def,
@@ -28,7 +28,7 @@ defmodule Tableau.DocumentTest.Index do
   def __tableau_type__, do: :page
   def __tableau_parent__, do: InnerLayout
   def __tableau_permalink__, do: "/"
-  def __tableau_extra__, do: []
+  def __tableau_opts__, do: []
 
   EEx.function_from_string(
     :def,

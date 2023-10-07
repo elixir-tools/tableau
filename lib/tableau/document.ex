@@ -31,7 +31,7 @@ defmodule Tableau.Document do
           raise "Failed to find layout path for #{inspect(module)}"
       end
 
-    page_assigns = Map.new(module.__tableau_extra__() || [])
+    page_assigns = Map.new(module.__tableau_opts__() || [])
     mods = for mod <- mods, do: {mod, page_assigns}
 
     root.template(Map.merge(assigns, %{inner_content: mods, page: page_assigns}))
