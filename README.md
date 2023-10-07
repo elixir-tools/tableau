@@ -210,7 +210,8 @@ Other static assets can be copied into the "out" directory by placing them in an
 This directory can be configured.
 
 ```elixir
-config :tableau, :include, "static"
+config :tableau, :config,
+  include_dir: "static"
 ```
 
 ### Development
