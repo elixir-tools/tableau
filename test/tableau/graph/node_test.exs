@@ -9,7 +9,7 @@ defmodule Tableau.Graph.NodeTest do
     def __tableau_type__, do: :page
     def __tableau_parent__, do: Layout
     def __tableau_permalink__, do: "/about"
-    def __tableau_extra__, do: []
+    def __tableau_opts__, do: []
 
     def template(_) do
       ""
