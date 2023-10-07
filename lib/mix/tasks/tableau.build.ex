@@ -6,10 +6,11 @@ defmodule Mix.Tasks.Tableau.Build do
   @moduledoc "Task to build the tableau site"
   @shortdoc "Builds the site"
 
-  @include_dir Application.compile_env(:tableau, :include, "extra")
+  @config Application.compile_env(:tableau, :config, %{})
 
   @impl Mix.Task
   def run(argv) do
+    {:ok, config} = Tableau.Config.new(@config)
     Mix.Task.run("app.start", ["--preload-modules"])
 
     {opts, _argv} = OptionParser.parse!(argv, strict: [out: :string])
@@ -38,8 +39,8 @@ defmodule Mix.Tasks.Tableau.Build do
       File.write!(Path.join(dir, "index.html"), content)
     end
 
-    if File.exists?(@include_dir) do
-      File.cp_r!(@include_dir, out)
+    if File.exists?(config.include_dir) do
+      File.cp_r!(config.include_dir, out)
     end
   end
 
