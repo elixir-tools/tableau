@@ -37,7 +37,12 @@ defmodule Tableau.MixProject do
       {:libgraph, "~> 0.16.0"},
       {:plug_cowboy, "~> 2.0"},
       {:plug_static_index_html, "~> 1.0"},
-      {:schematic, "~> 0.3"},
+      {:schematic, "~> 0.3.1"},
+      {:nimble_publisher, "~> 1.0"},
+      {:yaml_elixir, "~> 2.9"},
+      {:makeup_elixir, ">= 0.0.0"},
+      {:tz, "~> 0.26.2"},
+
       # {:yaml_front_matter, "~> 1.0"},
       # {:jason, "~> 1.4"},
       # {:req, "~> 0.3", only: :test},
