@@ -6,7 +6,7 @@ defmodule Mix.Tasks.Tableau.Build do
   @moduledoc "Task to build the tableau site"
   @shortdoc "Builds the site"
 
-  @config Application.compile_env(:tableau, :config, %{})
+  @config Application.compile_env(:tableau, :config, %{}) |> Map.new()
 
   @impl Mix.Task
   def run(argv) do
@@ -57,7 +57,8 @@ defmodule Mix.Tasks.Tableau.Build do
   defp pre_build_extensions(modules) do
     for {mod, _, _} <- modules,
         mod = Module.concat([to_string(mod)]),
-        match?({:ok, :pre_build}, Tableau.Extension.type(mod)) do
+        match?({:ok, :pre_build}, Tableau.Extension.type(mod)),
+        Tableau.Extension.enabled?(mod) do
       mod
     end
     |> Enum.sort_by(& &1.__tableau_extension_priority__())

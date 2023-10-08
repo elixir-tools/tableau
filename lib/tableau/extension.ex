@@ -43,11 +43,12 @@ defmodule Tableau.Extension do
   @callback run(map()) :: :ok | :error
 
   defmacro __using__(opts) do
-    opts = Keyword.validate!(opts, [:type, :priority])
+    opts = Keyword.validate!(opts, [:enabled, :type, :priority])
 
     prelude =
       quote do
         def __tableau_extension_type__, do: unquote(opts)[:type]
+        def __tableau_extension_enabled__, do: unquote(opts)[:enabled] || true
         def __tableau_extension_priority__, do: unquote(opts)[:priority] || 0
       end
 
@@ -66,6 +67,16 @@ defmodule Tableau.Extension do
       {:ok, module.__tableau_extension_type__()}
     else
       :error
+    end
+  end
+
+  @doc false
+  @spec enabled?(module()) :: boolean()
+  def enabled?(module) do
+    if function_exported?(module, :__tableau_extension_enabled__, 0) do
+      module.__tableau_extension_enabled__()
+    else
+      false
     end
   end
 end
