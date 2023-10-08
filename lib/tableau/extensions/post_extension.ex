@@ -83,9 +83,9 @@ defmodule Tableau.PostExtension do
 
   @config config
 
-  use Tableau.Extension, enabled: @config.enabled, type: :pre_build, priority: 100
+  use Tableau.Extension, key: :posts, type: :pre_build, priority: 100
 
-  def run(_site) do
+  def run(token) do
     Module.create(
       Tableau.PostExtension.Posts,
       quote do
@@ -111,22 +111,25 @@ defmodule Tableau.PostExtension do
       Macro.Env.location(__ENV__)
     )
 
-    for post <- apply(Tableau.PostExtension.Posts, :posts, []) do
-      {:module, _module, _binary, _term} =
-        Module.create(
-          Module.concat([post.id]),
-          quote do
-            @external_resource unquote(post.file)
-            use Tableau.Page, unquote(Macro.escape(Keyword.new(post)))
+    posts =
+      for post <- apply(Tableau.PostExtension.Posts, :posts, []) do
+        {:module, _module, _binary, _term} =
+          Module.create(
+            Module.concat([post.id]),
+            quote do
+              @external_resource unquote(post.file)
+              use Tableau.Page, unquote(Macro.escape(Keyword.new(post)))
 
-            def template(_assigns) do
-              unquote(post.body)
-            end
-          end,
-          Macro.Env.location(__ENV__)
-        )
-    end
+              def template(_assigns) do
+                unquote(post.body)
+              end
+            end,
+            Macro.Env.location(__ENV__)
+          )
 
-    :ok
+        post
+      end
+
+    {:ok, Map.put(token, :posts, posts)}
   end
 end

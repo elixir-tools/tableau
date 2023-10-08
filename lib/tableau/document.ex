@@ -9,8 +9,8 @@ defmodule Tableau.Document do
     defmacro render(inner_content) do
       quote do
         case unquote(inner_content) do
-          [{module, page_assigns} | rest] ->
-            module.template(%{page: page_assigns, inner_content: rest})
+          [{module, page_assigns, assigns} | rest] ->
+            module.template(Map.merge(assigns, %{page: page_assigns, inner_content: rest}))
 
           [] ->
             nil
@@ -32,7 +32,7 @@ defmodule Tableau.Document do
       end
 
     page_assigns = Map.new(module.__tableau_opts__() || [])
-    mods = for mod <- mods, do: {mod, page_assigns}
+    mods = for mod <- mods, do: {mod, page_assigns, assigns}
 
     root.template(Map.merge(assigns, %{inner_content: mods, page: page_assigns}))
   end

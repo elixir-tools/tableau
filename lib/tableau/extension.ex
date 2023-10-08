@@ -4,21 +4,27 @@ defmodule Tableau.Extension do
 
   An extension can be used to generate other kinds of content.
 
+  ## Options
+
+  * `:key` - The key in which the extensions configuration and data is loaded.
+  * `:type` - The type of extension. See below for a description.
+  * `:priority` - An integer used for ordering extensions of the same type.
+  * `:enabled` - Whether or not to enable the extension. Defaults to true, and can be configured differently based on the extension.
+
   ## Types
 
   There are currently the following extension types:
 
   - `:pre_build` - executed before tableau builds your site and writes anything to disk.
+  - `:post_write` - executed after tableau builds your site and writes everthing to disk.
 
-  ## Priority
-
-  Extensions can be assigned a numeric priority for used with sorting.
+  ## Example
 
   ```elixir
   defmodule MySite.PostsExtension do
-    use Tableau.Extension, type: :pre_build, priority: 300
+    use Tableau.Extension, key: :posts, type: :pre_build, priority: 300
 
-    def run(_site) do
+    def run(token) do
       posts = Path.wildcard("_posts/**/*.md")
 
       for post <- post do
@@ -27,27 +33,28 @@ defmodule Tableau.Extension do
         |> then(&File.write(Path.join(Path.rootname(post), "index.html"), &1))
       end
 
-      :ok
+      {:ok, token}
     end
   end
   ```
   '''
 
-  @typep extension_type :: :pre_build
+  @typep extension_type :: :pre_build | :post_write
 
   @doc """
   The extension entry point.
 
-  The function is passed the a set of default assigns.
+  The function is passed a token and can return a new token with new data loaded into it.
   """
-  @callback run(map()) :: :ok | :error
+  @callback run(map()) :: {:ok, map()} | :error
 
   defmacro __using__(opts) do
-    opts = Keyword.validate!(opts, [:enabled, :type, :priority])
+    opts = Keyword.validate!(opts, [:key, :enabled, :type, :priority])
 
     prelude =
       quote do
         def __tableau_extension_type__, do: unquote(opts)[:type]
+        def __tableau_extension_key__, do: unquote(opts)[:key]
         def __tableau_extension_enabled__, do: unquote(opts)[:enabled] || true
         def __tableau_extension_priority__, do: unquote(opts)[:priority] || 0
       end
@@ -65,6 +72,16 @@ defmodule Tableau.Extension do
   def type(module) do
     if function_exported?(module, :__tableau_extension_type__, 0) do
       {:ok, module.__tableau_extension_type__()}
+    else
+      :error
+    end
+  end
+
+  @doc false
+  @spec key(module()) :: extension_type()
+  def key(module) do
+    if function_exported?(module, :__tableau_extension_key__, 0) do
+      {:ok, module.__tableau_extension_key__()}
     else
       :error
     end

@@ -1,14 +1,22 @@
 defmodule Mix.Tasks.Tableau.LogExtension do
-  use Tableau.Extension, type: :pre_build, priority: 200
+  defmodule Config do
+    def new(i), do: {:ok, i}
+  end
 
-  def run(_site) do
+  use Tableau.Extension, key: :log, type: :pre_build, priority: 200
+
+  def run(token) do
     IO.inspect(System.monotonic_time(), label: "second")
-    :ok
+    {:ok, token}
   end
 end
 
 defmodule Mix.Tasks.Tableau.FailExtension do
-  use Tableau.Extension, type: :pre_build, priority: 100
+  defmodule Config do
+    def new(i), do: {:ok, i}
+  end
+
+  use Tableau.Extension, key: :fail, type: :pre_build, priority: 100
 
   def run(_site) do
     IO.inspect(System.monotonic_time(), label: "first")

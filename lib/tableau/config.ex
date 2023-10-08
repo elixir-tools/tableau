@@ -4,12 +4,12 @@ defmodule Tableau.Config do
 
   * `:include_dir` - Directory that is just copied to the output directory. Defaults to `extra`.
   * `:timezone` - Timezone to use when parsing date times. Defaults to `Etc/UTC`.
+  * `:url` - The URL of your website.
   """
 
   import Schematic
 
-  defstruct include_dir: "extra",
-            timezone: "Etc/UTC"
+  defstruct [:url, include_dir: "extra", timezone: "Etc/UTC"]
 
   def new(config) do
     unify(schematic(), config)
@@ -20,7 +20,8 @@ defmodule Tableau.Config do
       __MODULE__,
       %{
         optional(:include_dir) => str(),
-        optional(:timezone) => str()
+        optional(:timezone) => str(),
+        url: str()
       },
       convert: false
     )
