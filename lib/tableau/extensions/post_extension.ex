@@ -78,7 +78,8 @@ defmodule Tableau.PostExtension do
   ---
   ```
   """
-  {:ok, config} = Tableau.PostExtension.Config.new(Map.new(Application.compile_env(:tableau, :posts, %{})))
+  {:ok, config} =
+    Tableau.PostExtension.Config.new(Map.new(Application.compile_env(:tableau, :posts, %{})))
 
   @config config
 
