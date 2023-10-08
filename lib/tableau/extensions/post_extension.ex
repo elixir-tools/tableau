@@ -19,11 +19,9 @@ defmodule Tableau.PostExtension.Config do
 end
 
 defmodule Tableau.PostExtension.Posts.Post do
-  {:ok, config} = Tableau.Config.new(Map.new(Application.compile_env(:tableau, :config, %{})))
-
-  @config config
-
   def build(filename, attrs, body) do
+    {:ok, config} = Tableau.Config.new(Map.new(Application.get_env(:tableau, :config, %{})))
+
     attrs
     |> Map.put(:body, body)
     |> Map.put(:file, filename)
@@ -32,7 +30,7 @@ defmodule Tableau.PostExtension.Posts.Post do
       :date,
       DateTime.from_naive!(
         Code.eval_string(attrs.date) |> elem(0),
-        @config.timezone
+        config.timezone
       )
     )
     |> Map.put(
