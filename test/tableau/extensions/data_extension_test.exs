@@ -3,13 +3,16 @@ defmodule Tableau.DataExtensionTest do
 
   alias Tableau.DataExtension
 
-  test "reads files from disk" do
+  test "reads/evals files from disk" do
     token = %{data: %{dir: "test/support/fixtures"}}
 
     assert {:ok, actual} = DataExtension.run(token)
 
     assert actual == %{
              data: %{
+               "foobar" => %{
+                 foo: ["bar"]
+               },
                "books" => %{
                  "books" => [
                    %{"author" => "Michael Crichton", "name" => "Jurassic Park"},
