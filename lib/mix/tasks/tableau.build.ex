@@ -11,7 +11,7 @@ defmodule Mix.Tasks.Tableau.Build do
   @impl Mix.Task
   def run(argv) do
     {:ok, config} = Tableau.Config.new(@config)
-    site = %{config: config}
+    token = %{site: %{config: config}}
     Mix.Task.run("app.start", ["--preload-modules"])
 
     {opts, _argv} = OptionParser.parse!(argv, strict: [out: :string])
@@ -20,11 +20,35 @@ defmodule Mix.Tasks.Tableau.Build do
 
     mods = :code.all_available()
 
-    for module <- pre_build_extensions(mods) do
-      with :error <- module.run(%{site: site}) do
-        Logger.error("#{inspect(module)} failed to run")
+    token =
+      for module <- pre_build_extensions(mods), reduce: token do
+        token ->
+          config_mod = Module.concat([module, Config])
+
+          raw_config =
+            Application.get_env(:tableau, module, %{}) |> Map.new()
+
+          if raw_config[:enabled] do
+            {:ok, config} =
+              raw_config
+              |> config_mod.new()
+
+            {:ok, key} = Tableau.Extension.key(module)
+
+            token = put_in(token[key], config)
+
+            case module.run(token) do
+              {:ok, token} ->
+                token
+
+              :error ->
+                Logger.error("#{inspect(module)} failed to run")
+                token
+            end
+          else
+            token
+          end
       end
-    end
 
     mods = :code.all_available()
     graph = Tableau.Graph.new(mods)
@@ -35,12 +59,12 @@ defmodule Mix.Tasks.Tableau.Build do
         {mod, Map.new(mod.__tableau_opts__() || [])}
       end
 
-    {mods, pages} = Enum.unzip(pages)
+    {page_mods, pages} = Enum.unzip(pages)
 
-    site = Map.put(site, :pages, pages)
+    token = put_in(token.site[:pages], pages)
 
-    for mod <- mods do
-      content = Tableau.Document.render(graph, mod, %{site: site})
+    for mod <- page_mods do
+      content = Tableau.Document.render(graph, mod, token)
       permalink = mod.__tableau_permalink__()
       dir = Path.join(out, permalink)
 
@@ -52,13 +76,50 @@ defmodule Mix.Tasks.Tableau.Build do
     if File.exists?(config.include_dir) do
       File.cp_r!(config.include_dir, out)
     end
+
+    for module <- post_write_extensions(mods), reduce: token do
+      token ->
+        config_mod = Module.concat([module, Config])
+
+        raw_config =
+          Application.get_env(:tableau, module, %{}) |> Map.new()
+
+        if raw_config[:enabled] do
+          {:ok, config} =
+            raw_config
+            |> config_mod.new()
+
+          {:ok, key} = Tableau.Extension.key(module)
+
+          token = put_in(token[key], config)
+
+          case module.run(token) do
+            {:ok, token} ->
+              token
+
+            :error ->
+              Logger.error("#{inspect(module)} failed to run")
+              token
+          end
+        else
+          token
+        end
+    end
   end
 
   defp pre_build_extensions(modules) do
     for {mod, _, _} <- modules,
         mod = Module.concat([to_string(mod)]),
-        match?({:ok, :pre_build}, Tableau.Extension.type(mod)),
-        Tableau.Extension.enabled?(mod) do
+        match?({:ok, :pre_build}, Tableau.Extension.type(mod)) do
+      mod
+    end
+    |> Enum.sort_by(& &1.__tableau_extension_priority__())
+  end
+
+  defp post_write_extensions(modules) do
+    for {mod, _, _} <- modules,
+        mod = Module.concat([to_string(mod)]),
+        match?({:ok, :post_write}, Tableau.Extension.type(mod)) do
       mod
     end
     |> Enum.sort_by(& &1.__tableau_extension_priority__())

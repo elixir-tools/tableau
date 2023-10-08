@@ -38,14 +38,14 @@ jobs:
 
   formatter:
     runs-on: ubuntu-latest
-    name: Formatter (1.14.x.x/25.x)
+    name: Formatter (1.15.x/26.x)
 
     steps:
     - uses: actions/checkout@v2
     - uses: erlef/setup-beam@v1
       with:
-        otp-version: 25.x
-        elixir-version: 1.14.x
+        otp-version: 26.x
+        elixir-version: 1.15.x
     - uses: actions/cache@v3
       id: cache
       with:
