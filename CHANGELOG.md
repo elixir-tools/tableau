@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## [0.6.0](https://github.com/elixir-tools/tableau/compare/v0.5.0...v0.6.0) (2023-10-08)
+
+
+### Features
+
+* allow elixir scripts for data extension ([#25](https://github.com/elixir-tools/tableau/issues/25)) ([66416c1](https://github.com/elixir-tools/tableau/commit/66416c1477b61697201cbd9afd6bb1a936c95fe7))
+* data extension ([#24](https://github.com/elixir-tools/tableau/issues/24)) ([736da42](https://github.com/elixir-tools/tableau/commit/736da42d5cea3495942579b68da8349f6aa4e58f))
+* post extension ([#22](https://github.com/elixir-tools/tableau/issues/22)) ([16d1c14](https://github.com/elixir-tools/tableau/commit/16d1c1428b8d4ca1745adddd221b50ec2467a99b))
+* RSS extension ([#23](https://github.com/elixir-tools/tableau/issues/23)) ([4d67147](https://github.com/elixir-tools/tableau/commit/4d67147f931605ae43ecadb6d67630703338eeba))
+* site assign ([#20](https://github.com/elixir-tools/tableau/issues/20)) ([d766c22](https://github.com/elixir-tools/tableau/commit/d766c22cc9d01927fde06080db7fd3e44473f745))
+
 ## [0.5.0](https://github.com/elixir-tools/tableau/compare/v0.4.0...v0.5.0) (2023-10-06)
 
 
