@@ -22,13 +22,23 @@ defmodule Tableau.DataExtension do
 
   def run(token) do
     data =
-      for file <- Path.wildcard(Path.join(token.data.dir, "**/*.{yml,yaml}")), into: %{} do
-        key =
-          file
-          |> Path.basename(".yaml")
-          |> Path.basename(".yml")
+      for file <- Path.wildcard(Path.join(token.data.dir, "**/*.{yml,yaml,exs}")), into: %{} do
+        case Path.extname(file) do
+          ".exs" ->
+            key = file |> Path.basename(".exs")
 
-        {key, YamlElixir.read_from_file!(file)}
+            {result, _binding} = Code.eval_file(file)
+
+            {key, result}
+
+          yaml when yaml in ~w[.yml .yaml] ->
+            key =
+              file
+              |> Path.basename(".yaml")
+              |> Path.basename(".yml")
+
+            {key, YamlElixir.read_from_file!(file)}
+        end
       end
 
     {:ok, Map.put(token, :data, data)}
