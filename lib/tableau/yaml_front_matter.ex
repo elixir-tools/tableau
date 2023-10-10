@@ -14,7 +14,7 @@ defmodule Tableau.YamlFrontMatter do
 
   def parse!(string, opts \\ []) do
     case parse(string, opts) do
-      {:ok, matter, body} -> {matter, body}
+      {:ok, matter, body} -> {atomicize(matter), body}
       {:error, _} -> raise Tableau.YamlFrontMatter.Error
     end
   end
@@ -43,4 +43,19 @@ defmodule Tableau.YamlFrontMatter do
       error -> error
     end
   end
+
+  defp atomicize(map) when is_map(map) do
+    map
+    |> Enum.map(fn
+      {k, v} when is_binary(k) -> {String.to_atom(k), atomicize(v)}
+      other -> other
+    end)
+    |> Enum.into(%{})
+  end
+
+  defp atomicize(list) when is_list(list) do
+    Enum.map(list, &atomicize/1)
+  end
+
+  defp atomicize(other), do: other
 end
