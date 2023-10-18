@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## [0.7.0](https://github.com/elixir-tools/tableau/compare/v0.6.0...v0.7.0) (2023-10-18)
+
+
+### ⚠ BREAKING CHANGES
+
+* convert all yaml keys to atoms
+
+### Features
+
+* convert all yaml keys to atoms ([2bea559](https://github.com/elixir-tools/tableau/commit/2bea559197198708788e3962a3cfd63915c0f1d8))
+
 ## [0.6.0](https://github.com/elixir-tools/tableau/compare/v0.5.0...v0.6.0) (2023-10-08)
 
 
