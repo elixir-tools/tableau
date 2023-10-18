@@ -8,6 +8,8 @@ Static Site Generator for Elixir.
 - [x] Easy to use the current Node.js JS/CSS tooling
 - [x] Extensions
 - [ ] Ability to work with "data" (either dynamic data or static files)
+    - [x] YAML Files
+    - [ ] Elixir scripts (.exs files)
 - [ ] Handles stuff like Posts, RSS, sitemap, SEO.
     - [x] Posts
     - [x] RSS
