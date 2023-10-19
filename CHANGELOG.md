@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [0.7.1](https://github.com/elixir-tools/tableau/compare/v0.7.0...v0.7.1) (2023-10-19)
+
+
+### Bug Fixes
+
+* **posts:** pull correct config key ([0281348](https://github.com/elixir-tools/tableau/commit/0281348ac4b56597273fa157b8ed1247f6e05e68))
+
 ## [0.7.0](https://github.com/elixir-tools/tableau/compare/v0.6.0...v0.7.0) (2023-10-18)
 
 
