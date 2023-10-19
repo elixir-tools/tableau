@@ -56,7 +56,7 @@ defmodule Tableau.PostExtension do
 
   ## Options
 
-  Frontmatter is compiled with `yaml_elixir` and supports atom keys by prefixing a key with a colon `:title:`. Certain required keys must be presented as atoms, but all user provided keys may be string or atom keys.
+  Frontmatter is compiled with `yaml_elixir` and supports atom keys by prefixing a key with a colon `:title:`. Keys are all converted to atoms.
 
   * `:id` - An Elixir module to be used when compiling the backing `Tableau.Page`
   * `:title` - The title of the post
@@ -68,11 +68,11 @@ defmodule Tableau.PostExtension do
 
   ```markdown
   ---
-  :id: "Update.Volume3"
-  :title: "The elixir-tools Update Vol. 3"
-  :permalink: "/news/:title"
-  :date: "~N[2023-09-19 01:00:00]"
-  :layout: "ElixirTools.PostLayout"
+  id: "Update.Volume3"
+  title: "The elixir-tools Update Vol. 3"
+  permalink: "/news/:title"
+  date: "~N[2023-09-19 01:00:00]"
+  layout: "ElixirTools.PostLayout"
   ---
   ```
   """
