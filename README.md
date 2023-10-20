@@ -41,7 +41,7 @@ The examples in the README use the [Temple](https://github.com/mhanberg/temple) 
 
 Layouts are modules that use the `use Tableau.Layout` macro.
 
-Layouts have assess to the `@site` and `@page` assign.
+Layouts have access to the `@site` and `@page` assign.
 
 The `@site` assign contains your site's config.
 
@@ -205,7 +205,7 @@ config :tableau, :assets, tailwind: {Tailwind, :install_and_run, [:default, ~w(-
 import_config "#{config_env()}.exs"
 ```
 
-This will start a long running process that will independently build your CSS as it see's files change.
+This will start a long running process that will independently build your CSS as it sees files change.
 
 These are started automatically when you run `mix tableau.server`.
 
