@@ -9,7 +9,7 @@ defmodule Tableau.Config do
 
   import Schematic
 
-  defstruct [:url, include_dir: "extra", timezone: "Etc/UTC"]
+  defstruct [:url, include_dir: "extra", timezone: "Etc/UTC", reload_log: false]
 
   def new(config) do
     unify(schematic(), config)
@@ -21,6 +21,7 @@ defmodule Tableau.Config do
       %{
         optional(:include_dir) => str(),
         optional(:timezone) => str(),
+        optional(:reload_log) => bool(),
         url: str()
       },
       convert: false

@@ -76,6 +76,7 @@ defmodule Tableau.PostExtension do
   ---
   ```
   """
+
   {:ok, config} =
     Tableau.PostExtension.Config.new(
       Map.new(Application.compile_env(:tableau, Tableau.PostExtension, %{}))
@@ -86,50 +87,57 @@ defmodule Tableau.PostExtension do
   use Tableau.Extension, key: :posts, type: :pre_build, priority: 100
 
   def run(token) do
-    Module.create(
-      Tableau.PostExtension.Posts,
-      quote do
-        use NimblePublisher,
-          build: __MODULE__.Post,
-          from: "#{unquote(@config.dir)}/*.md",
-          as: :posts,
-          highlighters: [:makeup_elixir],
-          parser: Tableau.PostExtension.Posts.Post
+    :global.trans(
+      {:create_posts_module, make_ref()},
+      fn ->
+        Module.create(
+          Tableau.PostExtension.Posts,
+          quote do
+            use NimblePublisher,
+              build: __MODULE__.Post,
+              from: "#{unquote(@config.dir)}/*.md",
+              as: :posts,
+              highlighters: [:makeup_elixir],
+              parser: Tableau.PostExtension.Posts.Post
 
-        def posts(_opts \\ []) do
-          @posts
-          |> Enum.sort_by(& &1.date, {:desc, DateTime})
-          |> then(fn posts ->
-            if unquote(@config.future) do
-              posts
-            else
-              Enum.reject(posts, &(DateTime.compare(&1.date, DateTime.utc_now()) == :gt))
+            def posts(_opts \\ []) do
+              @posts
+              |> Enum.sort_by(& &1.date, {:desc, DateTime})
+              |> then(fn posts ->
+                if unquote(@config.future) do
+                  posts
+                else
+                  Enum.reject(posts, &(DateTime.compare(&1.date, DateTime.utc_now()) == :gt))
+                end
+              end)
             end
-          end)
-        end
+          end,
+          Macro.Env.location(__ENV__)
+        )
+
+        posts =
+          for post <- apply(Tableau.PostExtension.Posts, :posts, []) do
+            {:module, _module, _binary, _term} =
+              Module.create(
+                Module.concat([post.id]),
+                quote do
+                  @external_resource unquote(post.file)
+                  use Tableau.Page, unquote(Macro.escape(Keyword.new(post)))
+
+                  def template(_assigns) do
+                    unquote(post.body)
+                  end
+                end,
+                Macro.Env.location(__ENV__)
+              )
+
+            post
+          end
+
+        {:ok, Map.put(token, :posts, posts)}
       end,
-      Macro.Env.location(__ENV__)
+      [Node.self()],
+      :infinity
     )
-
-    posts =
-      for post <- apply(Tableau.PostExtension.Posts, :posts, []) do
-        {:module, _module, _binary, _term} =
-          Module.create(
-            Module.concat([post.id]),
-            quote do
-              @external_resource unquote(post.file)
-              use Tableau.Page, unquote(Macro.escape(Keyword.new(post)))
-
-              def template(_assigns) do
-                unquote(post.body)
-              end
-            end,
-            Macro.Env.location(__ENV__)
-          )
-
-        post
-      end
-
-    {:ok, Map.put(token, :posts, posts)}
   end
 end
