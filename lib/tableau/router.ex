@@ -26,7 +26,6 @@ defmodule Tableau.Router do
 
   match _ do
     Logger.error("File not found: #{conn.request_path}")
-    dbg conn
 
     send_resp(conn, 404, @not_found)
   end
