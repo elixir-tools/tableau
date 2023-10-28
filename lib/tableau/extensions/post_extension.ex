@@ -1,7 +1,7 @@
 defmodule Tableau.PostExtension.Config do
   import Schematic
 
-  defstruct enabled: true, dir: "_posts", future: false
+  defstruct enabled: true, dir: "_posts", future: false, path: "/posts/:slug", layout: nil
 
   def new(input), do: unify(schematic(), input)
 
@@ -11,7 +11,9 @@ defmodule Tableau.PostExtension.Config do
       %{
         optional(:enabled) => bool(),
         optional(:dir) => str(),
-        optional(:future) => bool()
+        optional(:path) => str(),
+        optional(:future) => bool(),
+        optional(:layout) => str()
       },
       convert: false
     )
@@ -22,10 +24,15 @@ defmodule Tableau.PostExtension.Posts.Post do
   def build(filename, attrs, body) do
     {:ok, config} = Tableau.Config.new(Map.new(Application.get_env(:tableau, :config, %{})))
 
+    {:ok, post_config} =
+      Tableau.PostExtension.Config.new(
+        Map.new(Application.get_env(:tableau, Tableau.PostExtension, %{}))
+      )
+
     attrs
     |> Map.put(:body, body)
     |> Map.put(:file, filename)
-    |> Map.put(:layout, Module.concat([attrs.layout]))
+    |> Map.put(:layout, Module.concat([attrs.layout || post_config.layout]))
     |> Map.put(
       :date,
       DateTime.from_naive!(
@@ -33,18 +40,38 @@ defmodule Tableau.PostExtension.Posts.Post do
         config.timezone
       )
     )
-    |> Map.put(
-      :permalink,
-      attrs.permalink
-      |> String.replace(":title", attrs.title)
-      |> String.replace(" ", "-")
-      |> String.replace(~r/[^[:alnum:]\/\-]/, "")
-      |> String.downcase()
-    )
+    |> build_permalink(post_config)
   end
 
   def parse(_file_path, content) do
     Tableau.YamlFrontMatter.parse!(content, atoms: true)
+  end
+
+  defp build_permalink(%{permalink: permalink} = attrs, _config) do
+    permalink
+    |> transform_path(attrs)
+    |> then(&Map.put(attrs, :permalink, &1))
+  end
+
+  defp build_permalink(%{slug: slug} = attrs, %{path: path}) do
+    slug
+    |> transform_path(attrs)
+    |> then(&Map.put(attrs, :permalink, String.replace(path, :slug, &1)))
+  end
+
+  defp build_permalink(%{file: filename} = attrs, %{path: path}) do
+    filename
+    |> Path.basename(".md")
+    |> transform_path(attrs)
+    |> then(&Map.put(attrs, :permalink, String.replace(path, ":slug", &1)))
+  end
+
+  defp transform_path(path, attrs) do
+    path
+    |> String.replace(":title", attrs.title)
+    |> String.replace(" ", "-")
+    |> String.replace(~r/[^[:alnum:]\/\-]/, "")
+    |> String.downcase()
   end
 end
 
@@ -61,6 +88,7 @@ defmodule Tableau.PostExtension do
   * `:id` - An Elixir module to be used when compiling the backing `Tableau.Page`
   * `:title` - The title of the post
   * `:permalink` - The permalink of the post. `:title` will be replaced with the posts title and non alphanumeric characters removed
+  * `:slug` - A URL slug of the post. Only used if `:permalink` is unset
   * `:date` - An Elixir `NaiveDateTime`, often presented as a `sigil_N`
   * `:layout` - A Tableau layout module.
 
