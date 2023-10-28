@@ -44,7 +44,6 @@ defmodule Tableau.MixProject do
       {:makeup_elixir, ">= 0.0.0"},
       {:tz, "~> 0.26.2"},
 
-
       # {:yaml_front_matter, "~> 1.0"},
       # {:jason, "~> 1.4"},
       # {:req, "~> 0.3", only: :test},
