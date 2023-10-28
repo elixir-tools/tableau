@@ -6,13 +6,13 @@ defmodule Tableau.PostExtension.Config do
     - `:enabled` - boolean - Extension is active or not.
     - `:dir` - string - Directory to scan for markdown files. Defaults to `_posts`
     - `:future` - boolean - Show posts that have dates later than the current timestamp, or time at which the site is generated.
-    - `:permalink` - string - Default output path for posts. Accepts `:slug` as a replacement keyword, replaced with the post's provided slug. If a post has a `:permalink` provided, that will override this value _for that post_
+    - `:permalink` - string - Default output path for posts. Accepts `:title` as a replacement keyword, replaced with the post's provided title. If a post has a `:permalink` provided, that will override this value _for that post_.
     - `layout` - string - Elixir module providing page layout for posts. Default is nil
   """
 
   import Schematic
 
-  defstruct enabled: true, dir: "_posts", future: false, permalink: "/posts/:slug", layout: nil
+  defstruct enabled: true, dir: "_posts", future: false, permalink: nil, layout: nil
 
   def new(input), do: unify(schematic(), input)
 
@@ -64,17 +64,18 @@ defmodule Tableau.PostExtension.Posts.Post do
     |> then(&Map.put(attrs, :permalink, &1))
   end
 
-  defp build_permalink(%{slug: slug} = attrs, %{permalink: permalink}) do
-    slug
+  defp build_permalink(%{title: _title} = attrs, %{permalink: permalink})
+       when not is_nil(permalink) do
+    permalink
     |> transform_permalink(attrs)
-    |> then(&Map.put(attrs, :permalink, String.replace(permalink, :slug, &1)))
+    |> then(&Map.put(attrs, :permalink, &1))
   end
 
-  defp build_permalink(%{file: filename} = attrs, %{permalink: permalink}) do
+  defp build_permalink(%{file: filename} = attrs, _) do
     filename
-    |> Path.basename(".md")
+    |> Path.rootname()
     |> transform_permalink(attrs)
-    |> then(&Map.put(attrs, :permalink, String.replace(permalink, ":slug", &1)))
+    |> then(&Map.put(attrs, :permalink, &1))
   end
 
   defp transform_permalink(path, attrs) do
@@ -99,7 +100,6 @@ defmodule Tableau.PostExtension do
   * `:id` - An Elixir module to be used when compiling the backing `Tableau.Page`
   * `:title` - The title of the post
   * `:permalink` - The permalink of the post. `:title` will be replaced with the posts title and non alphanumeric characters removed. Optional.
-  * `:slug` - A URL slug of the post. Only used if `:permalink` is unset. `:title` will be replaced with the posts title. Optional
   * `:date` - An Elixir `NaiveDateTime`, often presented as a `sigil_N`
   * `:layout` - A Tableau layout module.
 
@@ -119,9 +119,9 @@ defmodule Tableau.PostExtension do
 
   If a `:permalink` is specified in the front matter, whatever is there _will_ be the post's permalink, regardless of presence of `:slug`
 
-  If `:slug` is specified, the globally configured permalink will be used, with the slug provided as a replacement string. See `Tableau.PostExtension.Config` for details.
+  If a global `:permalink` is set, it's rules will be used. See `Tableau.PostExtension.Config` for details.
 
-  If neither `:permalink` nor `:slug` is specified, the files name will be used as the slug.
+  If permalink is set in either location, the file's name and path will be used
 
   In all cases, permalinks are stripped of non-alphanumeric characters.
   """
