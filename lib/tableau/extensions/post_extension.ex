@@ -117,7 +117,7 @@ defmodule Tableau.PostExtension do
 
   ## URL generation
 
-  If a `:permalink` is specified in the front matter, whatever is there _will_ be the post's permalink, regardless of presence of `:slug`
+  If a `:permalink` is specified in the front matter, whatever is there _will_ be the post's permalink.
 
   If a global `:permalink` is set, it's rules will be used. See `Tableau.PostExtension.Config` for details.
 
