@@ -5,7 +5,7 @@ defmodule Tableau.Websocket do
   require Logger
 
   def init(_args) do
-    :ok = Tableau.LiveReload.init(name: :tableau_file_watcher)
+    :ok = WebDevUtils.LiveReload.init()
     {:ok, []}
   end
 
@@ -18,7 +18,7 @@ defmodule Tableau.Websocket do
   end
 
   def handle_info({:file_event, _watcher_pid, {_path, _event}} = file_event, state) do
-    Tableau.LiveReload.reload!(file_event, patterns: @reloader_opts[:patterns])
+    WebDevUtils.LiveReload.reload!(file_event, patterns: @reloader_opts[:patterns])
 
     {:ok, state}
   end

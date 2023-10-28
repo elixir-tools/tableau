@@ -31,7 +31,7 @@ defmodule Tableau.Router do
   end
 
   defp recompile(conn, _) do
-    Tableau.CodeReloader.reload()
+    WebDevUtils.CodeReloader.reload()
     conn
   end
 
