@@ -33,6 +33,12 @@ end
 
 Documentation can be found at <https://hexdocs.pm/tableau>.
 
+
+## Demo
+
+For a real world demo of Tableau, you can see [www.elixir-tools.dev](https://www.elixir-tools.dev) ([source code](https://github.com/elixir-tools/elixir-tools.dev)).
+
+
 ## Getting Started
 
 The examples in the README use the [Temple](https://github.com/mhanberg/temple) library to demonstrate that Tableau can be used with any markup language of your choice. You could easily use the builtin EEx, or use HEEx, Surface, or HAML.
