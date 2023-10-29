@@ -33,7 +33,8 @@ defmodule Tableau.MixProject do
   defp deps do
     [
       {:ex_doc, ">= 0.0.0", only: :dev},
-      {:file_system, "~> 0.2"},
+      # {:file_system, "~> 0.2"},
+      {:web_dev_utils, "~> 0.1"},
       {:libgraph, "~> 0.16.0"},
       {:bandit, "~> 1.0"},
       {:websock_adapter, "~> 0.5"},

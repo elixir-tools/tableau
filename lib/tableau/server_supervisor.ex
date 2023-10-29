@@ -10,9 +10,9 @@ defmodule Tableau.ServerSupervisor do
   def init(_init_arg) do
     if Application.get_env(:tableau, :server) do
       children = [
-        Tableau.FileSystem,
+        WebDevUtils.FileSystem,
         Tableau.Server,
-        Tableau.CodeReloader
+        WebDevUtils.CodeReloader
       ]
 
       Supervisor.init(children ++ asset_children(), strategy: :one_for_one)
@@ -23,7 +23,7 @@ defmodule Tableau.ServerSupervisor do
 
   def asset_children() do
     for conf <- Application.get_env(:tableau, :assets, []) do
-      {Tableau.Assets, conf}
+      {WebDevUtils.Assets, conf}
     end
   end
 end
