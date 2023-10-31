@@ -25,7 +25,7 @@ This package can be installed by adding `tableau` to your list of dependencies i
 ```elixir
 def deps do
   [
-    {:tableau, "~> 0.3"}
+    {:tableau, "~> 0.7"}
   ]
 end
 ```
