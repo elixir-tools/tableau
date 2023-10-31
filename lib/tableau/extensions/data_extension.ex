@@ -17,6 +17,10 @@ defmodule Tableau.DataExtension do
     dir: "_facts"
   ```
 
+  <!-- tabs-open -->
+
+  ### YAML
+
   ```yaml
   # _facts/homies.yaml
   - name: Mitch
@@ -32,6 +36,24 @@ defmodule Tableau.DataExtension do
   </ul>
   ```
 
+  ### Elixir
+
+  ```elixir
+  # _facts/homies.exs
+  resp = Req.get!("https://example.com/homies")
+
+  resp.body["homies"]
+  ```
+
+  ```heex
+  <ul>
+    <li :for={homie <- @data["homies"]}>
+      <%= homie.name %>
+    </li>
+  </ul>
+  ```
+
+  <!-- tabs-close -->
   """
   use Tableau.Extension, key: :data, type: :pre_build, priority: 200
 

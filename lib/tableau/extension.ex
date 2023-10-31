@@ -16,7 +16,7 @@ defmodule Tableau.Extension do
   There are currently the following extension types:
 
   - `:pre_build` - executed before tableau builds your site and writes anything to disk.
-  - `:post_write` - executed after tableau builds your site and writes everthing to disk.
+  - `:post_write` - executed after tableau builds your site and writes everything to disk.
 
   ## Example
 
@@ -40,13 +40,14 @@ defmodule Tableau.Extension do
   '''
 
   @typep extension_type :: :pre_build | :post_write
+  @type token :: map()
 
   @doc """
   The extension entry point.
 
   The function is passed a token and can return a new token with new data loaded into it.
   """
-  @callback run(map()) :: {:ok, map()} | :error
+  @callback run(token()) :: {:ok, token()} | :error
 
   defmacro __using__(opts) do
     opts = Keyword.validate!(opts, [:key, :enabled, :type, :priority])

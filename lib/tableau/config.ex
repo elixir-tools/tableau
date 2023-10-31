@@ -1,13 +1,5 @@
 defmodule Tableau.Config do
-  @moduledoc """
-  Project configuration.
-
-  * `:include_dir` - Directory that is just copied to the output directory. Defaults to `extra`.
-  * `:timezone` - Timezone to use when parsing date times. Defaults to `Etc/UTC`.
-  * `:url` - The URL of your website.
-  * `:markdown` - keyword
-      * `:mdex` - keyword - Options to pass to [MDEx](https://hexdocs.pm/mdex/MDEx.html#to_html/2)
-  """
+  @moduledoc false
 
   import Schematic
 

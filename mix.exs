@@ -13,7 +13,8 @@ defmodule Tableau.MixProject do
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       package: package(),
-      deps: deps()
+      deps: deps(),
+      docs: docs()
     ]
   end
 
@@ -59,6 +60,26 @@ defmodule Tableau.MixProject do
         Sponsor: "https://github.com/sponsors/mhanberg"
       },
       files: ~w(lib LICENSE mix.exs README.md .formatter.exs)
+    ]
+  end
+
+  defp docs do
+    [
+      main: "Tableau",
+      groups_for_modules: [
+        Site: [
+          Tableau,
+          Tableau.Layout,
+          Tableau.Page,
+          Tableau.Document.Helper
+        ],
+        Extensions: [
+          Tableau.Extension,
+          Tableau.PostExtension,
+          Tableau.RSSExtension,
+          Tableau.DataExtension
+        ]
+      ]
     ]
   end
 end
