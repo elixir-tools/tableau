@@ -1,23 +1,38 @@
-defmodule Tableau.DataExtension.Config do
-  import Schematic
-
-  defstruct enabled: true, dir: "_data"
-
-  def new(input), do: unify(schematic(), input)
-
-  def schematic do
-    schema(
-      __MODULE__,
-      %{
-        optional(:enabled) => bool(),
-        optional(:dir) => str()
-      },
-      convert: false
-    )
-  end
-end
-
 defmodule Tableau.DataExtension do
+  @moduledoc """
+  YAML files and Elixir scripts (.exs) in the confgiured directory will be automatically parsed/executed and made available in an `@data` assign in your templates.
+
+  Elixir scripts will be executed and the last expression returned as the data.
+
+  ## Configuration
+
+  - `:enabled` - boolean - Extension is active or not.
+  - `:dir` - string - Directory to scan for data files. Defaults to `_data`
+
+  ### Example
+
+  ```elixir
+  config :tableau, Tableau.DataExtension,
+    enabled: true,
+    dir: "_facts"
+  ```
+
+  ```yaml
+  # _facts/homies.yaml
+  - name: Mitch
+  - name: Jimbo
+  - name: Bobby
+  ```
+
+  ```heex
+  <ul>
+    <li :for={homie <- @data["homies"]}>
+      <%= homie.name %>
+    </li>
+  </ul>
+  ```
+
+  """
   use Tableau.Extension, key: :data, type: :pre_build, priority: 200
 
   def run(token) do
