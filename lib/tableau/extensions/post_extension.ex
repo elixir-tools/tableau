@@ -68,7 +68,7 @@ defmodule Tableau.PostExtension do
           quote do
             use NimblePublisher,
               build: __MODULE__.Post,
-              from: "#{unquote(@config.dir)}/*.md",
+              from: "#{unquote(@config.dir)}/**/*.md",
               as: :posts,
               highlighters: [:makeup_elixir],
               parser: Tableau.PostExtension.Posts.Post,
