@@ -2,7 +2,7 @@ defmodule Tableau.Layout do
   @moduledoc ~s'''
   A tableau layout.
 
-  Layouts will render `@inner_content` using the `Tableau.Document.Helper.render/2` macro.
+  Layouts will render `@inner_content` using the `Tableau.Document.Helper.render/1` macro.
 
   ```elixir
   defmodule MySite.SidebarLayout do
@@ -17,7 +17,7 @@ defmodule Tableau.Layout do
       </nav>
 
       <p>
-        <%= render @inner_content, foo: "bar" %>
+        <%= render @inner_content %>
       </p>
       """
     end
