@@ -63,7 +63,7 @@ defmodule Tableau.RSSExtension do
     {:ok, token}
   end
 
-  defp version() do
+  defp version do
     case :application.get_key(:tableau, :vsn) do
       {:ok, version} -> to_string(version)
       _ -> "dev"

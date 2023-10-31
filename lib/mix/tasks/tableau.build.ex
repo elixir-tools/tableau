@@ -1,12 +1,12 @@
 defmodule Mix.Tasks.Tableau.Build do
+  @shortdoc "Builds the site"
+
+  @moduledoc "Task to build the tableau site"
   use Mix.Task
 
   require Logger
 
-  @moduledoc "Task to build the tableau site"
-  @shortdoc "Builds the site"
-
-  @config Application.compile_env(:tableau, :config, %{}) |> Map.new()
+  @config :tableau |> Application.compile_env(:config, %{}) |> Map.new()
 
   @impl Mix.Task
   def run(argv) do
@@ -26,12 +26,11 @@ defmodule Mix.Tasks.Tableau.Build do
           config_mod = Module.concat([module, Config])
 
           raw_config =
-            Application.get_env(:tableau, module, %{}) |> Map.new()
+            :tableau |> Application.get_env(module, %{}) |> Map.new()
 
           if raw_config[:enabled] do
             {:ok, config} =
-              raw_config
-              |> config_mod.new()
+              config_mod.new(raw_config)
 
             {:ok, key} = Tableau.Extension.key(module)
 
@@ -82,12 +81,11 @@ defmodule Mix.Tasks.Tableau.Build do
         config_mod = Module.concat([module, Config])
 
         raw_config =
-          Application.get_env(:tableau, module, %{}) |> Map.new()
+          :tableau |> Application.get_env(module, %{}) |> Map.new()
 
         if raw_config[:enabled] do
           {:ok, config} =
-            raw_config
-            |> config_mod.new()
+            config_mod.new(raw_config)
 
           {:ok, key} = Tableau.Extension.key(module)
 
@@ -108,20 +106,24 @@ defmodule Mix.Tasks.Tableau.Build do
   end
 
   defp pre_build_extensions(modules) do
-    for {mod, _, _} <- modules,
-        mod = Module.concat([to_string(mod)]),
-        match?({:ok, :pre_build}, Tableau.Extension.type(mod)) do
-      mod
-    end
-    |> Enum.sort_by(& &1.__tableau_extension_priority__())
+    extensions =
+      for {mod, _, _} <- modules,
+          mod = Module.concat([to_string(mod)]),
+          match?({:ok, :pre_build}, Tableau.Extension.type(mod)) do
+        mod
+      end
+
+    Enum.sort_by(extensions, & &1.__tableau_extension_priority__())
   end
 
   defp post_write_extensions(modules) do
-    for {mod, _, _} <- modules,
-        mod = Module.concat([to_string(mod)]),
-        match?({:ok, :post_write}, Tableau.Extension.type(mod)) do
-      mod
-    end
-    |> Enum.sort_by(& &1.__tableau_extension_priority__())
+    extensions =
+      for {mod, _, _} <- modules,
+          mod = Module.concat([to_string(mod)]),
+          match?({:ok, :post_write}, Tableau.Extension.type(mod)) do
+        mod
+      end
+
+    Enum.sort_by(extensions, & &1.__tableau_extension_priority__())
   end
 end

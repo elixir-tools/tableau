@@ -1,8 +1,8 @@
 defmodule Tableau.Websocket do
   @moduledoc false
-  @reloader_opts Application.compile_env(:tableau, :reloader, patterns: [])
-
   require Logger
+
+  @reloader_opts Application.compile_env(:tableau, :reloader, patterns: [])
 
   def init(_args) do
     :ok = WebDevUtils.LiveReload.init()

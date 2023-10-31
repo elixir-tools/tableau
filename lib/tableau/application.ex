@@ -1,9 +1,9 @@
 defmodule Tableau.Application do
   @moduledoc false
 
-  require Logger
-
   use Application
+
+  require Logger
 
   @impl true
   def start(_type, _args) do

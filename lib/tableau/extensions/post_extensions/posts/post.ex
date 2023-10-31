@@ -4,9 +4,7 @@ defmodule Tableau.PostExtension.Posts.Post do
     {:ok, config} = Tableau.Config.new(Map.new(Application.get_env(:tableau, :config, %{})))
 
     {:ok, post_config} =
-      Tableau.PostExtension.Config.new(
-        Map.new(Application.get_env(:tableau, Tableau.PostExtension, %{}))
-      )
+      Tableau.PostExtension.Config.new(Map.new(Application.get_env(:tableau, Tableau.PostExtension, %{})))
 
     attrs
     |> Map.put(:body, body)
@@ -15,7 +13,7 @@ defmodule Tableau.PostExtension.Posts.Post do
     |> Map.put(
       :date,
       DateTime.from_naive!(
-        Code.eval_string(attrs.date) |> elem(0),
+        attrs.date |> Code.eval_string() |> elem(0),
         config.timezone
       )
     )

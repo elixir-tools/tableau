@@ -1,6 +1,7 @@
 defmodule Tableau.Document do
   @moduledoc false
   defmodule Helper do
+    @moduledoc "Helper functiosn for Tableau documents."
     @doc """
     A macro for rendering nested content within a layout.
 

@@ -2,8 +2,9 @@ defmodule Tableau.Router do
   @moduledoc false
   use Plug.Router, init_mode: :runtime
 
-  require Logger
   import Tableau.Strung
+
+  require Logger
 
   @not_found ~g'''
   <!DOCTYPE html><html lang="en"><head></head><body>Not Found</body></html>

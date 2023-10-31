@@ -1,9 +1,11 @@
 defmodule Mix.Tasks.Tableau.LogExtension do
+  @moduledoc false
+  use Tableau.Extension, key: :log, type: :pre_build, priority: 200
+
   defmodule Config do
+    @moduledoc false
     def new(i), do: {:ok, i}
   end
-
-  use Tableau.Extension, key: :log, type: :pre_build, priority: 200
 
   def run(token) do
     IO.inspect(System.monotonic_time(), label: "second")
@@ -12,11 +14,13 @@ defmodule Mix.Tasks.Tableau.LogExtension do
 end
 
 defmodule Mix.Tasks.Tableau.FailExtension do
+  @moduledoc false
+  use Tableau.Extension, key: :fail, type: :pre_build, priority: 100
+
   defmodule Config do
+    @moduledoc false
     def new(i), do: {:ok, i}
   end
-
-  use Tableau.Extension, key: :fail, type: :pre_build, priority: 100
 
   def run(_site) do
     IO.inspect(System.monotonic_time(), label: "first")
@@ -25,9 +29,12 @@ defmodule Mix.Tasks.Tableau.FailExtension do
 end
 
 defmodule Mix.Tasks.Tableau.BuildTest.About do
+  @moduledoc false
   import Tableau.Strung
-  require EEx
+
   alias Mix.Tasks.Tableau.BuildTest.InnerLayout
+
+  require EEx
 
   def __tableau_type__, do: :page
   def __tableau_parent__, do: InnerLayout
@@ -47,9 +54,12 @@ defmodule Mix.Tasks.Tableau.BuildTest.About do
 end
 
 defmodule Mix.Tasks.Tableau.BuildTest.Index do
+  @moduledoc false
   import Tableau.Strung
-  require EEx
+
   alias Mix.Tasks.Tableau.BuildTest.InnerLayout
+
+  require EEx
 
   def __tableau_type__, do: :page
   def __tableau_parent__, do: InnerLayout
@@ -69,10 +79,13 @@ defmodule Mix.Tasks.Tableau.BuildTest.Index do
 end
 
 defmodule Mix.Tasks.Tableau.BuildTest.InnerLayout do
-  import Tableau.Strung
+  @moduledoc false
   import Tableau.Document.Helper, only: [render: 1]
-  require EEx
+  import Tableau.Strung
+
   alias Mix.Tasks.Tableau.BuildTest.RootLayout
+
+  require EEx
 
   def __tableau_type__, do: :layout
   def __tableau_parent__, do: RootLayout
@@ -90,9 +103,12 @@ defmodule Mix.Tasks.Tableau.BuildTest.InnerLayout do
 end
 
 defmodule Mix.Tasks.Tableau.BuildTest.RootLayout do
-  import Tableau.Strung
+  @moduledoc false
   import Tableau.Document.Helper, only: [render: 1]
+  import Tableau.Strung
+
   require EEx
+
   def __tableau_type__, do: :layout
 
   EEx.function_from_string(

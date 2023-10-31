@@ -52,14 +52,12 @@ defmodule Tableau.PostExtension do
   ```
   """
 
+  use Tableau.Extension, key: :posts, type: :pre_build, priority: 100
+
   {:ok, config} =
-    Tableau.PostExtension.Config.new(
-      Map.new(Application.compile_env(:tableau, Tableau.PostExtension, %{}))
-    )
+    Tableau.PostExtension.Config.new(Map.new(Application.compile_env(:tableau, Tableau.PostExtension, %{})))
 
   @config config
-
-  use Tableau.Extension, key: :posts, type: :pre_build, priority: 100
 
   def run(token) do
     :global.trans(
@@ -83,7 +81,7 @@ defmodule Tableau.PostExtension do
                 if unquote(@config.future) do
                   posts
                 else
-                  Enum.reject(posts, &(DateTime.compare(&1.date, DateTime.utc_now()) == :gt))
+                  Enum.reject(posts, &DateTime.after?(&1.date, DateTime.utc_now()))
                 end
               end)
             end
@@ -97,9 +95,9 @@ defmodule Tableau.PostExtension do
               Module.create(
                 Module.concat([post.id]),
                 quote do
-                  @external_resource unquote(post.file)
                   use Tableau.Page, unquote(Macro.escape(Keyword.new(post)))
 
+                  @external_resource unquote(post.file)
                   def template(_assigns) do
                     unquote(post.body)
                   end

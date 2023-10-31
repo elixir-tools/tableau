@@ -45,11 +45,12 @@ defmodule Tableau.MixProject do
 
       # dev
       {:ex_doc, ">= 0.0.0", only: :dev},
+      {:styler, "~> 0.9", only: :dev},
       {:floki, "~> 0.34", only: :test}
     ]
   end
 
-  defp package() do
+  defp package do
     [
       maintainers: ["Mitchell Hanberg"],
       licenses: ["MIT"],

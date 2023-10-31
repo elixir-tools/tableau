@@ -1,10 +1,10 @@
 defmodule Mix.Tasks.Tableau.Server do
+  @shortdoc "Starts the tableau dev server"
+
+  @moduledoc "Starts the tableau dev server"
   use Mix.Task
 
   require Logger
-
-  @moduledoc "Starts the tableau dev server"
-  @shortdoc "Starts the tableau dev server"
 
   @impl Mix.Task
   def run(_args) do

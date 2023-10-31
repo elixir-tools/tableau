@@ -1,4 +1,5 @@
 defmodule Tableau.PageTest.AboutPage do
+  @moduledoc false
   use Tableau.Page,
     layout: Tableau.GraphTest.InnerLayout,
     permalink: "/about"

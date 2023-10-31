@@ -2,13 +2,15 @@
 # Vendored from github.com/sebastiandedeyne/yaml_front_matter
 
 defmodule Tableau.YamlFrontMatter.Error do
+  @moduledoc false
   defexception message: "Error parsing yaml front matter"
 end
 
 defmodule Tableau.YamlFrontMatter do
+  @moduledoc false
   def parse(string, opts \\ []) do
     string
-    |> split_string
+    |> split_string()
     |> process_parts(opts)
   end
 
@@ -23,9 +25,9 @@ defmodule Tableau.YamlFrontMatter do
     split_pattern = ~r/[\s\r\n]---[\s\r\n]/s
 
     string
-    |> (&String.trim_leading(&1)).()
-    |> (&("\n" <> &1)).()
-    |> (&Regex.split(split_pattern, &1, parts: 3)).()
+    |> then(&String.trim_leading(&1))
+    |> then(&("\n" <> &1))
+    |> then(&Regex.split(split_pattern, &1, parts: 3))
   end
 
   defp process_parts([_, yaml, body], opts) do
@@ -45,12 +47,10 @@ defmodule Tableau.YamlFrontMatter do
   end
 
   defp atomicize(map) when is_map(map) do
-    map
-    |> Enum.map(fn
+    Map.new(map, fn
       {k, v} when is_binary(k) -> {String.to_atom(k), atomicize(v)}
       other -> other
     end)
-    |> Enum.into(%{})
   end
 
   defp atomicize(list) when is_list(list) do

@@ -40,7 +40,7 @@ defmodule Tableau.DataExtension do
       for file <- Path.wildcard(Path.join(token.data.dir, "**/*.{yml,yaml,exs}")), into: %{} do
         case Path.extname(file) do
           ".exs" ->
-            key = file |> Path.basename(".exs")
+            key = Path.basename(file, ".exs")
 
             {result, _binding} = Code.eval_file(file)
 

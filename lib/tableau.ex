@@ -1,4 +1,5 @@
 defmodule Tableau do
+  @moduledoc false
   defdelegate live_reload(assigns), to: WebDevUtils.Components
 
   def markdown(content, overrides \\ []) do

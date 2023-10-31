@@ -4,6 +4,7 @@ defmodule Tableau.Graph.NodeTest do
   alias Tableau.Graph.Node
 
   defmodule About do
+    @moduledoc false
     alias Tableau.Graph.NodeTest.Layout
 
     def __tableau_type__, do: :page
@@ -17,6 +18,7 @@ defmodule Tableau.Graph.NodeTest do
   end
 
   defmodule Layout do
+    @moduledoc false
     def __tableau_type__, do: :layout
 
     def template(_) do
@@ -25,6 +27,7 @@ defmodule Tableau.Graph.NodeTest do
   end
 
   defmodule Math do
+    @moduledoc false
   end
 
   describe "type/1" do

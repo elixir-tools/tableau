@@ -1,7 +1,10 @@
 defmodule Tableau.DocumentTest.About do
+  @moduledoc false
   import Tableau.Strung
-  require EEx
+
   alias Tableau.DocumentTest.InnerLayout
+
+  require EEx
 
   def __tableau_type__, do: :page
   def __tableau_parent__, do: InnerLayout
@@ -21,9 +24,12 @@ defmodule Tableau.DocumentTest.About do
 end
 
 defmodule Tableau.DocumentTest.Index do
+  @moduledoc false
   import Tableau.Strung
-  require EEx
+
   alias Tableau.DocumentTest.InnerLayout
+
+  require EEx
 
   def __tableau_type__, do: :page
   def __tableau_parent__, do: InnerLayout
@@ -43,10 +49,13 @@ defmodule Tableau.DocumentTest.Index do
 end
 
 defmodule Tableau.DocumentTest.InnerLayout do
-  import Tableau.Strung
+  @moduledoc false
   import Tableau.Document.Helper, only: [render: 1]
-  require EEx
+  import Tableau.Strung
+
   alias Tableau.DocumentTest.RootLayout
+
+  require EEx
 
   def __tableau_type__, do: :layout
   def __tableau_parent__, do: RootLayout
@@ -64,9 +73,12 @@ defmodule Tableau.DocumentTest.InnerLayout do
 end
 
 defmodule Tableau.DocumentTest.RootLayout do
-  import Tableau.Strung
+  @moduledoc false
   import Tableau.Document.Helper, only: [render: 1]
+  import Tableau.Strung
+
   require EEx
+
   def __tableau_type__, do: :layout
 
   EEx.function_from_string(

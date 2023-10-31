@@ -2,6 +2,7 @@ defmodule Tableau.GraphTest do
   use ExUnit.Case, async: true
 
   defmodule About do
+    @moduledoc false
     alias Tableau.GraphTest.InnerLayout
 
     def __tableau_type__, do: :page
@@ -13,6 +14,7 @@ defmodule Tableau.GraphTest do
   end
 
   defmodule Careers do
+    @moduledoc false
     alias Tableau.GraphTest.RootLayout
 
     def __tableau_type__, do: :page
@@ -23,6 +25,7 @@ defmodule Tableau.GraphTest do
   end
 
   defmodule InnerLayout do
+    @moduledoc false
     alias Tableau.GraphTest.RootLayout
 
     def __tableau_type__, do: :layout
@@ -31,6 +34,7 @@ defmodule Tableau.GraphTest do
   end
 
   defmodule RootLayout do
+    @moduledoc false
     def __tableau_type__, do: :layout
 
     def template(_), do: ""

@@ -21,7 +21,7 @@ defmodule Tableau.ServerSupervisor do
     end
   end
 
-  def asset_children() do
+  def asset_children do
     for conf <- Application.get_env(:tableau, :assets, []) do
       {WebDevUtils.Assets, conf}
     end
