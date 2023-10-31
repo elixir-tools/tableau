@@ -1,5 +1,22 @@
 # CHANGELOG
 
+## [0.8.0](https://github.com/elixir-tools/tableau/compare/v0.7.1...v0.8.0) (2023-10-31)
+
+
+### Features
+
+* allow nested directories of posts ([588a7d4](https://github.com/elixir-tools/tableau/commit/588a7d401a6ba6c5cea63fcd569b644be6b84e47))
+* arbitrary frontmatter keys in permalink ([2b38b43](https://github.com/elixir-tools/tableau/commit/2b38b43a0bbe7c56035a1059cdfbea1e9add5831))
+* extract web dev utils ([#31](https://github.com/elixir-tools/tableau/issues/31)) ([af98ea8](https://github.com/elixir-tools/tableau/commit/af98ea843521c4af1fcdc7d52dd131cea92277c0))
+* **posts:** global permalink and layout ([#30](https://github.com/elixir-tools/tableau/issues/30)) ([c47e9e5](https://github.com/elixir-tools/tableau/commit/c47e9e5952df91034533eba5d4f1fe8a89b676ab))
+* switch from cowboy to bandit ([36cccc9](https://github.com/elixir-tools/tableau/commit/36cccc9c14b1fc8e27f71fdf7629f029d50c3bac))
+* use MDEx for markdown ([dea822e](https://github.com/elixir-tools/tableau/commit/dea822ee8202832652ad5226f07974e2cfd09b94))
+
+
+### Bug Fixes
+
+* removed dbg from router ([d7961c2](https://github.com/elixir-tools/tableau/commit/d7961c20cbcef0eedc11ea8565e49dd6d5c6f9a3))
+
 ## [0.7.1](https://github.com/elixir-tools/tableau/compare/v0.7.0...v0.7.1) (2023-10-19)
 
 
