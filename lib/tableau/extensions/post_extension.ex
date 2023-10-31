@@ -1,101 +1,3 @@
-defmodule Tableau.PostExtension.Config do
-  @moduledoc """
-  Configuration for PostExtension.
-
-  ## Options
-
-    - `:enabled` - boolean - Extension is active or not.
-    - `:dir` - string - Directory to scan for markdown files. Defaults to `_posts`
-    - `:future` - boolean - Show posts that have dates later than the current timestamp, or time at which the site is generated.
-    - `:permalink` - string - Default output path for posts. Accepts `:title` as a replacement keyword, replaced with the post's provided title. If a post has a `:permalink` provided, that will override this value _for that post_.
-    - `:layout` - string - Elixir module providing page layout for posts. Default is nil
-  """
-
-  import Schematic
-
-  defstruct enabled: true, dir: "_posts", future: false, permalink: nil, layout: nil
-
-  def new(input), do: unify(schematic(), input)
-
-  def schematic do
-    schema(
-      __MODULE__,
-      %{
-        optional(:enabled) => bool(),
-        optional(:dir) => str(),
-        optional(:future) => bool(),
-        optional(:permalink) => str(),
-        optional(:layout) => str()
-      },
-      convert: false
-    )
-  end
-end
-
-defmodule Tableau.PostExtension.Posts.HTMLConverter do
-  def convert(_filepath, body, _attrs, _opts) do
-    {:ok, config} = Tableau.Config.new(Map.new(Application.get_env(:tableau, :config, %{})))
-
-    body |> MDEx.to_html(config.markdown[:mdex])
-  end
-end
-
-defmodule Tableau.PostExtension.Posts.Post do
-  def build(filename, attrs, body) do
-    {:ok, config} = Tableau.Config.new(Map.new(Application.get_env(:tableau, :config, %{})))
-
-    {:ok, post_config} =
-      Tableau.PostExtension.Config.new(
-        Map.new(Application.get_env(:tableau, Tableau.PostExtension, %{}))
-      )
-
-    attrs
-    |> Map.put(:body, body)
-    |> Map.put(:file, filename)
-    |> Map.put(:layout, Module.concat([attrs.layout || post_config.layout]))
-    |> Map.put(
-      :date,
-      DateTime.from_naive!(
-        Code.eval_string(attrs.date) |> elem(0),
-        config.timezone
-      )
-    )
-    |> build_permalink(post_config)
-  end
-
-  def parse(_file_path, content) do
-    Tableau.YamlFrontMatter.parse!(content, atoms: true)
-  end
-
-  defp build_permalink(%{permalink: permalink} = attrs, _config) do
-    permalink
-    |> transform_permalink(attrs)
-    |> then(&Map.put(attrs, :permalink, &1))
-  end
-
-  defp build_permalink(%{title: _title} = attrs, %{permalink: permalink})
-       when not is_nil(permalink) do
-    permalink
-    |> transform_permalink(attrs)
-    |> then(&Map.put(attrs, :permalink, &1))
-  end
-
-  defp build_permalink(%{file: filename} = attrs, _) do
-    filename
-    |> Path.rootname()
-    |> transform_permalink(attrs)
-    |> then(&Map.put(attrs, :permalink, &1))
-  end
-
-  defp transform_permalink(path, attrs) do
-    path
-    |> String.replace(":title", attrs.title)
-    |> String.replace(" ", "-")
-    |> String.replace(~r/[^[:alnum:]\/\-]/, "")
-    |> String.downcase()
-  end
-end
-
 defmodule Tableau.PostExtension do
   @moduledoc """
   Markdown files (with YAML frontmatter) in the configured posts directory will be automatically compiled into Tableau pages.
@@ -104,35 +6,50 @@ defmodule Tableau.PostExtension do
 
   ## Options
 
-  Frontmatter is compiled with `yaml_elixir` and supports atom keys by prefixing a key with a colon `:title:`. Keys are all converted to atoms.
+  Frontmatter is compiled with `yaml_elixir` and all keys are converted to atoms.
 
-  * `:id` - An Elixir module to be used when compiling the backing `Tableau.Page`
+  * `:id` - An Elixir module to be used when compiling the backing `Tableau.Page`. A leaking implementation detail that should be fixed eventually.
   * `:title` - The title of the post
   * `:permalink` - The permalink of the post. `:title` will be replaced with the posts title and non alphanumeric characters removed. Optional.
-  * `:date` - An Elixir `NaiveDateTime`, often presented as a `sigil_N`
-  * `:layout` - A Tableau layout module.
+  * `:date` - A string representation of an Elixir `NaiveDateTime`, often presented as a `sigil_N`. This will be converted to your configured timezone.
+  * `:layout` - A string representation of a Tableau layout module.
 
   ## Example
 
-  ```markdown
-  ---
+  ```yaml
   id: "Update.Volume3"
   title: "The elixir-tools Update Vol. 3"
   permalink: "/news/:title"
   date: "~N[2023-09-19 01:00:00]"
   layout: "ElixirTools.PostLayout"
-  ---
   ```
 
-  ## URL generation
+  ## Permalink
 
-  If a `:permalink` is specified in the front matter, whatever is there _will_ be the post's permalink.
+  The permalink is a string with colon prefixed template variables.
 
-  If a global `:permalink` is set, it's rules will be used. See `Tableau.PostExtension.Config` for details.
+  These variables will be swapped with the corresponding YAML Frontmatter key, with the result being piped through `to_string/1`.
 
-  If permalink is set in either location, the file's name and path will be used
+  In addition, there are `:year`, `:month`, and `:day` template variables.
 
-  In all cases, permalinks are stripped of non-alphanumeric characters.
+  ## Configuration
+
+  - `:enabled` - boolean - Extension is active or not.
+  - `:dir` - string - Directory to scan for markdown files. Defaults to `_posts`
+  - `:future` - boolean - Show posts that have dates later than the current timestamp, or time at which the site is generated.
+  - `:permalink` - string - Default output path for posts. Accepts `:title` as a replacement keyword, replaced with the post's provided title. If a post has a `:permalink` provided, that will override this value _for that post_.
+  - `:layout` - string - Elixir module providing page layout for posts. Default is nil
+
+  ### Example
+
+  ```elixir
+  config :tableau, Tableau.PostExtension,
+    enabled: true,
+    dir: "_articles",
+    future: true,
+    permalink: "/articles/:year/:month/:day/:title",
+    layout: "MyApp.PostLayout"
+  ```
   """
 
   {:ok, config} =
