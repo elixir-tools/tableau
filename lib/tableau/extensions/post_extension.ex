@@ -3,11 +3,12 @@ defmodule Tableau.PostExtension.Config do
   Configuration for PostExtension.
 
   ## Options
+
     - `:enabled` - boolean - Extension is active or not.
     - `:dir` - string - Directory to scan for markdown files. Defaults to `_posts`
     - `:future` - boolean - Show posts that have dates later than the current timestamp, or time at which the site is generated.
     - `:permalink` - string - Default output path for posts. Accepts `:title` as a replacement keyword, replaced with the post's provided title. If a post has a `:permalink` provided, that will override this value _for that post_.
-    - `layout` - string - Elixir module providing page layout for posts. Default is nil
+    - `:layout` - string - Elixir module providing page layout for posts. Default is nil
   """
 
   import Schematic
@@ -28,6 +29,14 @@ defmodule Tableau.PostExtension.Config do
       },
       convert: false
     )
+  end
+end
+
+defmodule Tableau.PostExtension.Posts.HTMLConverter do
+  def convert(_filepath, body, _attrs, _opts) do
+    {:ok, config} = Tableau.Config.new(Map.new(Application.get_env(:tableau, :config, %{})))
+
+    body |> MDEx.to_html(config.markdown[:mdex])
   end
 end
 
@@ -147,7 +156,8 @@ defmodule Tableau.PostExtension do
               from: "#{unquote(@config.dir)}/*.md",
               as: :posts,
               highlighters: [:makeup_elixir],
-              parser: Tableau.PostExtension.Posts.Post
+              parser: Tableau.PostExtension.Posts.Post,
+              html_converter: Tableau.PostExtension.Posts.HTMLConverter
 
             def posts(_opts \\ []) do
               @posts
