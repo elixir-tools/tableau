@@ -70,7 +70,6 @@ defmodule Tableau.PostExtension do
               build: __MODULE__.Post,
               from: "#{unquote(@config.dir)}/**/*.md",
               as: :posts,
-              highlighters: [:makeup_elixir],
               parser: Tableau.PostExtension.Posts.Post,
               html_converter: Tableau.PostExtension.Posts.HTMLConverter
 
