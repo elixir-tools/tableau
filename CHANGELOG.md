@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [0.9.0](https://github.com/elixir-tools/tableau/compare/v0.8.0...v0.9.0) (2023-11-06)
+
+
+### Features
+
+* PageExtension ([162420b](https://github.com/elixir-tools/tableau/commit/162420b01d313dcf77df2dc0b93b5bfed7357581))
+
 ## [0.8.0](https://github.com/elixir-tools/tableau/compare/v0.7.1...v0.8.0) (2023-10-31)
 
 
