@@ -9,7 +9,7 @@ defmodule Tableau.RSSExtension do
   - `:enabled` - boolean - Extension is active or not.
   - `:title` - string (required) - Title of your feed.
   - `:description` - string (required) - Description of your feed.
-  - `:language` - string - Langauge to use in the `<langauge>` tag. Defaults to "en-us"
+  - `:language` - string - Langauge to use in the `<language>` tag. Defaults to "en-us"
 
   ### Example
 
