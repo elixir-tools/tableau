@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [0.10.0](https://github.com/elixir-tools/tableau/compare/v0.9.0...v0.10.0) (2023-11-07)
+
+
+### Features
+
+* fall back to first &lt;h1&gt; as title if no title in frontmatter ([#36](https://github.com/elixir-tools/tableau/issues/36)) ([707f4ef](https://github.com/elixir-tools/tableau/commit/707f4ef33529507cc41a2728a960ba9b84b12ae1))
+
 ## [0.9.0](https://github.com/elixir-tools/tableau/compare/v0.8.0...v0.9.0) (2023-11-06)
 
 
