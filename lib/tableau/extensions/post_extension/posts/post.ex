@@ -11,8 +11,10 @@ defmodule Tableau.PostExtension.Posts.Post do
     |> Map.put(:file, filename)
     |> Map.put(:layout, Module.concat([attrs.layout || post_config.layout]))
     |> Map.put_new_lazy(:title, fn ->
-      case Floki.parse_fragment(body) do
-        {:ok, [{"h1", _, _} = head | _]} -> Floki.text(head)
+      with {:ok, document} <- Floki.parse_fragment(body),
+           [hd | _] <- Floki.find(document, "h1") do
+        Floki.text(hd)
+      else
         _ -> nil
       end
     end)
