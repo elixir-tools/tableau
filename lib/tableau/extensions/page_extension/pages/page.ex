@@ -8,6 +8,14 @@ defmodule Tableau.PageExtension.Pages.Page do
     |> Map.put(:body, body)
     |> Map.put(:file, filename)
     |> Map.put(:layout, Module.concat([attrs.layout || page_config.layout]))
+    |> Map.put_new_lazy(:title, fn ->
+      with {:ok, document} <- Floki.parse_fragment(body),
+           [hd | _] <- Floki.find(document, "h1") do
+        Floki.text(hd)
+      else
+        _ -> nil
+      end
+    end)
     |> build_permalink(page_config)
   end
 

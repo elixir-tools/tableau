@@ -43,11 +43,11 @@ defmodule Tableau.MixProject do
       {:web_dev_utils, "~> 0.1"},
       {:websock_adapter, "~> 0.5"},
       {:yaml_elixir, "~> 2.9"},
+      {:floki, "~> 0.34"},
 
       # dev
       {:ex_doc, ">= 0.0.0", only: :dev},
-      {:styler, "~> 0.9", only: :dev},
-      {:floki, "~> 0.34", only: :test}
+      {:styler, "~> 0.9", only: :dev}
     ]
   end
 
