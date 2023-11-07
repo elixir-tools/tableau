@@ -9,7 +9,7 @@ defmodule Tableau.PostExtension do
   Frontmatter is compiled with `yaml_elixir` and all keys are converted to atoms.
 
   * `:id` - An Elixir module to be used when compiling the backing `Tableau.Page`. A leaking implementation detail that should be fixed eventually.
-  * `:title` - The title of the post
+  * `:title` - The title of the post. If absent and the post starts with a h1 (markdown `#`), then that is used as the post title.
   * `:permalink` - The permalink of the post. `:title` will be replaced with the posts title and non alphanumeric characters removed. Optional.
   * `:date` - A string representation of an Elixir `NaiveDateTime`, often presented as a `sigil_N`. This will be converted to your configured timezone.
   * `:layout` - A string representation of a Tableau layout module.

@@ -10,6 +10,12 @@ defmodule Tableau.PostExtension.Posts.Post do
     |> Map.put(:body, body)
     |> Map.put(:file, filename)
     |> Map.put(:layout, Module.concat([attrs.layout || post_config.layout]))
+    |> Map.put_new_lazy(:title, fn ->
+      case Floki.parse_fragment(body) do
+        {:ok, [{"h1", _, _} = head | _]} -> Floki.text(head)
+        _ -> nil
+      end
+    end)
     |> Map.put(
       :date,
       DateTime.from_naive!(
