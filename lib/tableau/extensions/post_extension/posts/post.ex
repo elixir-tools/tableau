@@ -7,6 +7,7 @@ defmodule Tableau.PostExtension.Posts.Post do
       Tableau.PostExtension.Config.new(Map.new(Application.get_env(:tableau, Tableau.PostExtension, %{})))
 
     attrs
+    |> Map.put(:__tableau_post_extension__, true)
     |> Map.put(:body, body)
     |> Map.put(:file, filename)
     |> Map.put(:layout, Module.concat([attrs[:layout] || post_config.layout]))
