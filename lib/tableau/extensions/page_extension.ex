@@ -8,7 +8,6 @@ defmodule Tableau.PageExtension do
 
   Frontmatter is compiled with `yaml_elixir` and all keys are converted to atoms.
 
-  * `:id` - An Elixir module to be used when compiling the backing `Tableau.Page`. A leaking implementation detail that should be fixed eventually.
   * `:title` - The title of the page
   * `:permalink` - The permalink of the page.
   * `:layout` - A string representation of a Tableau layout module.
@@ -74,11 +73,19 @@ defmodule Tableau.PageExtension do
           Macro.Env.location(__ENV__)
         )
 
+        for {mod, _, _} <- :code.all_available(),
+            mod = Module.concat([to_string(mod)]),
+            Tableau.Graph.Node.type(mod) == :page,
+            mod.__tableau_opts__()[:__tableau_page_extension__] do
+          :code.purge(mod)
+          :code.delete(mod)
+        end
+
         pages =
           for page <- apply(Tableau.PageExtension.Pages, :pages, []) do
             {:module, _module, _binary, _term} =
               Module.create(
-                Module.concat([page.id]),
+                :"#{System.unique_integer()}",
                 quote do
                   use Tableau.Page, unquote(Macro.escape(Keyword.new(page)))
 

@@ -7,6 +7,7 @@ defmodule Tableau.PostExtension.Posts.Post do
       Tableau.PostExtension.Config.new(Map.new(Application.get_env(:tableau, Tableau.PostExtension, %{})))
 
     attrs
+    |> Map.put(:__tableau_post_extension__, true)
     |> Map.put(:body, body)
     |> Map.put(:file, filename)
     |> Map.put(:layout, Module.concat([attrs[:layout] || post_config.layout]))
@@ -18,7 +19,6 @@ defmodule Tableau.PostExtension.Posts.Post do
         _ -> nil
       end
     end)
-    |> maybe_calculate_id()
     |> Map.put(
       :date,
       DateTime.from_naive!(
@@ -67,16 +67,5 @@ defmodule Tableau.PostExtension.Posts.Post do
     |> String.replace(" ", "-")
     |> String.replace(~r/[^[:alnum:]\/\-]/, "")
     |> String.downcase()
-  end
-
-  defp maybe_calculate_id(%{id: _} = attrs), do: attrs
-
-  defp maybe_calculate_id(attrs) do
-    attrs.title
-    |> String.downcase()
-    |> String.replace(~r/[^[:alnum:]]+/u, "_")
-    |> Macro.camelize()
-    |> then(&"AutogenPostID.#{&1}")
-    |> then(&Map.put(attrs, :id, &1))
   end
 end
