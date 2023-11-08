@@ -18,6 +18,7 @@ defmodule Tableau.PostExtension.Posts.Post do
         _ -> nil
       end
     end)
+    |> maybe_calculate_id()
     |> Map.put(
       :date,
       DateTime.from_naive!(
@@ -66,5 +67,16 @@ defmodule Tableau.PostExtension.Posts.Post do
     |> String.replace(" ", "-")
     |> String.replace(~r/[^[:alnum:]\/\-]/, "")
     |> String.downcase()
+  end
+
+  defp maybe_calculate_id(%{id: _} = attrs), do: attrs
+
+  defp maybe_calculate_id(attrs) do
+    attrs.title
+    |> String.downcase()
+    |> String.replace(~r/[^[:alnum:]]+/u, "_")
+    |> Macro.camelize()
+    |> then(&"AutogenPostID.#{&1}")
+    |> then(&Map.put(attrs, :id, &1))
   end
 end

@@ -90,13 +90,9 @@ defmodule Tableau.PostExtension do
 
         posts =
           for post <- apply(Tableau.PostExtension.Posts, :posts, []) do
-            post_id =
-              post.id ||
-                post.title |> String.replace(~r/[^[:alnum:]]+/u, "_") |> Macro.camelize() |> then(&("Post." <> &1))
-
             {:module, _module, _binary, _term} =
               Module.create(
-                Module.concat([post_id]),
+                Module.concat([post.id]),
                 quote do
                   use Tableau.Page, unquote(Macro.escape(Keyword.new(post)))
 
@@ -110,6 +106,25 @@ defmodule Tableau.PostExtension do
 
             post
           end
+
+        generated_posts = Enum.map(posts, & &1.id)
+
+        loaded_posts =
+          Enum.reduce(:code.all_loaded(), [], fn {mod, _}, acc ->
+            mod
+            |> to_string()
+            |> String.split(".")
+            |> then(fn
+              [_, "AutogenPostID" | _] -> mod |> Macro.to_string() |> then(&[&1 | acc])
+              _ -> acc
+            end)
+          end)
+
+        for post <- loaded_posts, post not in generated_posts do
+          post = Module.concat([post])
+          :code.purge(post)
+          :code.delete(post)
+        end
 
         {:ok, Map.put(token, :posts, posts)}
       end,
