@@ -44,6 +44,7 @@ defmodule Tableau.MixProject do
       {:websock_adapter, "~> 0.5"},
       {:yaml_elixir, "~> 2.9"},
       {:floki, "~> 0.34"},
+      {:xml_builder, "~> 2.1"},
 
       # dev
       {:ex_doc, ">= 0.0.0", only: :dev},
