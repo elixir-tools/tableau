@@ -89,7 +89,7 @@ defmodule Tableau.PostExtension do
 
         for {mod, _, _} <- :code.all_available(),
             mod = Module.concat([to_string(mod)]),
-            Tableau.Graph.Node.type(mod) == :page,
+            {:ok, :page} == Tableau.Graph.Node.type(mod),
             mod.__tableau_opts__()[:__tableau_post_extension__] do
           :code.purge(mod)
           :code.delete(mod)
@@ -98,8 +98,9 @@ defmodule Tableau.PostExtension do
         posts =
           for post <- apply(Tableau.PostExtension.Posts, :posts, []) do
             {:module, _module, _binary, _term} =
-              Module.create(
-                :"#{System.unique_integer()}",
+              [:"#{System.unique_integer()}"]
+              |> Module.concat()
+              |> Module.create(
                 quote do
                   use Tableau.Page, unquote(Macro.escape(Keyword.new(post)))
 
