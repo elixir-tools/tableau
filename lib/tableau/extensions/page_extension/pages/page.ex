@@ -6,7 +6,6 @@ defmodule Tableau.PageExtension.Pages.Page do
 
     attrs
     |> Map.put(:__tableau_page_extension__, true)
-    |> Map.put(:module, :"#{System.unique_integer()}")
     |> Map.put(:body, body)
     |> Map.put(:file, filename)
     |> Map.put(:layout, Module.concat([attrs.layout || page_config.layout]))
