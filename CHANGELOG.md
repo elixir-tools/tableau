@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## [0.11.0](https://github.com/elixir-tools/tableau/compare/v0.10.1...v0.11.0) (2023-11-08)
+
+
+### Features
+
+* automatically generate post ids ([#33](https://github.com/elixir-tools/tableau/issues/33)) ([b5bf6df](https://github.com/elixir-tools/tableau/commit/b5bf6dfc24a2c83288262c10604a1e86defafe3b))
+
+
+### Bug Fixes
+
+* typos ([#41](https://github.com/elixir-tools/tableau/issues/41)) ([8e47467](https://github.com/elixir-tools/tableau/commit/8e47467ba060891e520d89d51789a502447e7436))
+
 ## [0.10.1](https://github.com/elixir-tools/tableau/compare/v0.10.0...v0.10.1) (2023-11-08)
 
 
