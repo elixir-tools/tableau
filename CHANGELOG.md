@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [0.10.1](https://github.com/elixir-tools/tableau/compare/v0.10.0...v0.10.1) (2023-11-08)
+
+
+### Bug Fixes
+
+* make frontmatter layout optional ([#38](https://github.com/elixir-tools/tableau/issues/38)) ([b5ae96b](https://github.com/elixir-tools/tableau/commit/b5ae96b67699aa6db2ae90ec82b7c9787d518b97))
+
 ## [0.10.0](https://github.com/elixir-tools/tableau/compare/v0.9.0...v0.10.0) (2023-11-07)
 
 
