@@ -1,6 +1,6 @@
 defmodule Tableau.RSSExtension do
   @moduledoc """
-  YAML files and Elixir scripts (.exs) in the confgiured directory will be automatically parsed/executed and made available in an `@data` assign in your templates.
+  YAML files and Elixir scripts (.exs) in the configured directory will be automatically parsed/executed and made available in an `@data` assign in your templates.
 
   Elixir scripts will be executed and the last expression returned as the data.
 
@@ -9,7 +9,7 @@ defmodule Tableau.RSSExtension do
   - `:enabled` - boolean - Extension is active or not.
   - `:title` - string (required) - Title of your feed.
   - `:description` - string (required) - Description of your feed.
-  - `:language` - string - Langauge to use in the `<language>` tag. Defaults to "en-us"
+  - `:language` - string - Language to use in the `<language>` tag. Defaults to "en-us"
 
   ### Example
 
