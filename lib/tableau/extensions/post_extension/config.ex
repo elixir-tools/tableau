@@ -3,7 +3,7 @@ defmodule Tableau.PostExtension.Config do
 
   import Schematic
 
-  defstruct enabled: true, dir: "_posts", future: false, permalink: nil, layout: nil
+  defstruct enabled: true, dir: "_posts", future: false, permalink: nil, layout: nil, strip_h1_titles: false
 
   def new(input), do: unify(schematic(), input)
 
@@ -15,7 +15,8 @@ defmodule Tableau.PostExtension.Config do
         optional(:dir) => str(),
         optional(:future) => bool(),
         optional(:permalink) => str(),
-        optional(:layout) => str()
+        optional(:layout) => str(),
+        optional(:strip_h1_titles) => bool()
       },
       convert: false
     )

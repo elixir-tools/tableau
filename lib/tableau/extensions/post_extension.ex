@@ -39,6 +39,7 @@ defmodule Tableau.PostExtension do
   - `:future` - boolean - Show posts that have dates later than the current timestamp, or time at which the site is generated.
   - `:permalink` - string - Default output path for posts. Accepts `:title` as a replacement keyword, replaced with the post's provided title. If a post has a `:permalink` provided, that will override this value _for that post_.
   - `:layout` - string - Elixir module providing page layout for posts. Default is nil
+  - `:strip_h1_titles` - boolean - Strip the first h1 encountered in the document if no `title` frontmatter is specified and the title is auto-generated. Optional
 
   ### Example
 

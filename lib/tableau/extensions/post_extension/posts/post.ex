@@ -10,14 +10,7 @@ defmodule Tableau.PostExtension.Posts.Post do
     |> Map.put(:body, body)
     |> Map.put(:file, filename)
     |> Map.put(:layout, Module.concat([attrs[:layout] || post_config.layout]))
-    |> Map.put_new_lazy(:title, fn ->
-      with {:ok, document} <- Floki.parse_fragment(body),
-           [hd | _] <- Floki.find(document, "h1") do
-        Floki.text(hd)
-      else
-        _ -> nil
-      end
-    end)
+    |> maybe_handle_title(post_config)
     |> Map.put(
       :date,
       DateTime.from_naive!(
@@ -66,5 +59,27 @@ defmodule Tableau.PostExtension.Posts.Post do
     |> String.replace(" ", "-")
     |> String.replace(~r/[^[:alnum:]\/\-]/, "")
     |> String.downcase()
+  end
+
+  defp maybe_handle_title(%{title: _} = attrs, _config), do: attrs
+
+  defp maybe_handle_title(%{body: body} = attrs, config) do
+    with {:ok, document} <- Floki.parse_fragment(body),
+         [hd | _] <- Floki.find(document, "h1:first-of-type") do
+      body =
+        if config.strip_h1_titles do
+          document
+          |> Floki.find_and_update("h1:first-of-type", fn _ -> :delete end)
+          |> Floki.raw_html()
+        else
+          body
+        end
+
+      title = Floki.text(hd)
+
+      Map.merge(attrs, %{title: title, body: body})
+    else
+      _ -> attrs
+    end
   end
 end
