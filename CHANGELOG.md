@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [0.11.1](https://github.com/elixir-tools/tableau/compare/v0.11.0...v0.11.1) (2023-11-08)
+
+
+### Bug Fixes
+
+* correctly create page modules ([8ea0936](https://github.com/elixir-tools/tableau/commit/8ea09369396e21f51336eaca05ee64bf57623038))
+
 ## [0.11.0](https://github.com/elixir-tools/tableau/compare/v0.10.1...v0.11.0) (2023-11-08)
 
 
