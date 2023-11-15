@@ -8,7 +8,7 @@ defmodule Tableau.MixProject do
       app: :tableau,
       description: "Static site generator for elixir",
       source_url: @source_url,
-      version: "0.11.1",
+      version: "0.12.0",
       elixir: "~> 1.12",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,

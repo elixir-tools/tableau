@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [0.12.0](https://github.com/elixir-tools/tableau/compare/v0.11.1...v0.12.0) (2023-11-15)
+
+
+### Features
+
+* sitemap extension ([#45](https://github.com/elixir-tools/tableau/issues/45)) ([f9a97a3](https://github.com/elixir-tools/tableau/commit/f9a97a3536ba547012882222c39da80eb907addf))
+
 ## [0.11.1](https://github.com/elixir-tools/tableau/compare/v0.11.0...v0.11.1) (2023-11-08)
 
 
