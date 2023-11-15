@@ -6,82 +6,92 @@ end
 
 defmodule Tableau.SitemapExtension do
   @moduledoc """
-  Generate a sitemap.xml for your tableau site, for improved search-engine indexing.
+  Generate a sitemap.xml for your site, for improved search-engine indexing.
 
-  Any page may add information to its sitemap `<url>` entry by adding a `sitemap` entry, with a map of elements to add
+  ## Configuration
 
-  With frontmatter:
+  - `:enabled` - boolean - Extension is active or not.
+
+  ### Example
+
+  ```elixir
+  config :tableau, Tableau.SitemapExtension,
+    enabled: true,
   ```
-  ---
+
+  ## Custom attributes
+
+  Any page may add attributes to its sitemap `<url>` entry by adding a `sitemap` entry, with a map of elements to add
+
+  ### Frontmatter
+
+  ```yaml
   title: "Some Page"
   sitemap:
     priority: 0.8
     changefreq: hourly
-  ---
   ```
 
-  In a `Tableau.Page`
+  ### `Tableau.Page`
 
-  ```
+  ```elixir
   defmodule MySite.AboutPage do
     use Tableau.Page,
       layout: MySite.RootLayout,
       permalink: "/about",
-      sitemap: %{changefreq: "monthly"}
+      sitemap: %{priority: 0.8, changefreq: "monthly"}
 
+    # ...
+  end
   ```
 
-  Generated sitemap is stored in the root of your site, at /sitemap.xml
+  Generated sitemap is stored in the root of your site, at /sitemap.xml.
 
-  For more information about sitemaps, see <https://www.sitemaps.org>
-
+  For more information about sitemaps, see <https://www.sitemaps.org>.
   """
 
   use Tableau.Extension, key: :sitemap, type: :post_write, priority: 300
 
   def run(%{site: %{config: %{url: root}, pages: pages}} = token) do
-    for_result =
+    urls =
       for page <- pages, uniq: true do
-        [{:loc, nil, URI.merge(root, page.permalink)}]
-        |> maybe_add_lastmod(page)
-        |> maybe_add_sitemap_assigns(page)
-        |> Enum.reverse()
-        |> then(&{:url, nil, &1})
+        loc =
+          [{:loc, nil, URI.merge(root, page.permalink)}]
+          |> prepend_lastmod(page)
+          |> prepend_sitemap_assigns(page)
+
+        {:url, nil, loc}
       end
 
-    sitemap =
-      for_result
-      |> then(
-        &XmlBuilder.document(
-          :urlset,
-          [
-            xmlns: "http://www.sitemaps.org/schemas/sitemap/0.9",
-            "xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
-            "xsi:schemaLocation":
-              "http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd"
-          ],
-          &1
-        )
+    xml =
+      XmlBuilder.document(
+        :urlset,
+        [
+          xmlns: "http://www.sitemaps.org/schemas/sitemap/0.9",
+          "xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
+          "xsi:schemaLocation":
+            "http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd"
+        ],
+        urls
       )
-      |> XmlBuilder.generate_iodata()
 
     File.mkdir_p!("_site")
-    File.write!("_site/sitemap.xml", sitemap)
+    File.write!("_site/sitemap.xml", XmlBuilder.generate_iodata(xml))
 
     {:ok, token}
   end
 
-  defp maybe_add_lastmod(body, %{date: date}) do
+  defp prepend_lastmod(body, %{date: date}) do
     [{:lastmod, nil, DateTime.to_iso8601(date)} | body]
   end
 
-  defp maybe_add_lastmod(body, _), do: body
+  defp prepend_lastmod(body, _), do: body
 
-  defp maybe_add_sitemap_assigns(body, %{sitemap: sitemap_data}) do
+  defp prepend_sitemap_assigns(body, %{sitemap: sitemap_data}) do
     for {key, value} <- sitemap_data, reduce: body do
       acc -> [{key, [], value} | acc]
     end
   end
 
-  defp maybe_add_sitemap_assigns(body, _), do: body
+  defp prepend_sitemap_assigns(body, _), do: body
 end
