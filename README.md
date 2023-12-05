@@ -13,31 +13,26 @@ Static Site Generator for Elixir.
 - [ ] Handles stuff like Posts, RSS, sitemap, SEO.
     - [x] Posts
     - [x] RSS
-    - [ ] Sitemap
+    - [x] Sitemap
     - [ ] SEO
 
 ## Installation
 
 This package can be installed by adding `tableau` to your list of dependencies in `mix.exs`:
 
-<!-- x-release-please-start-version -->
-
 ```elixir
 def deps do
   [
-    {:tableau, "~> 0.7"}
+    {:tableau, "~> 0.12"}
   ]
 end
 ```
-<!-- x-release-please-end -->
 
 Documentation can be found at <https://hexdocs.pm/tableau>.
-
 
 ## Demo
 
 For a real world demo of Tableau, you can see [www.elixir-tools.dev](https://www.elixir-tools.dev) ([source code](https://github.com/elixir-tools/elixir-tools.dev)).
-
 
 ## Getting Started
 
