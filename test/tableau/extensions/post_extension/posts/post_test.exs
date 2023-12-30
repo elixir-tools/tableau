@@ -26,16 +26,16 @@ defmodule Tableau.PostExtension.Posts.PostTest do
         Post.build(
           "some/file/name.md",
           %{
-            title: "foo man chu",
+            title: "foo man chu_foo.js",
             type: "articles",
             permalink: "/:year/:month/:day/:title",
             layout: Some.Layout,
-            date: "2023-10-31 00:01:00"
+            date: "2023-02-01 00:01:00"
           },
           "hi"
         )
 
-      assert %{permalink: "/2023/10/31/foo-man-chu"} = actual
+      assert %{permalink: "/2023/02/01/foo-man-chu-foo.js"} = actual
     end
   end
 end
