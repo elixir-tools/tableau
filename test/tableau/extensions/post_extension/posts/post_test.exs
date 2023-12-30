@@ -13,7 +13,7 @@ defmodule Tableau.PostExtension.Posts.PostTest do
             type: "articles",
             permalink: "/blog/:type/:title",
             layout: Some.Layout,
-            date: inspect(DateTime.utc_now())
+            date: "2023-10-13"
           },
           "hi"
         )
@@ -30,7 +30,7 @@ defmodule Tableau.PostExtension.Posts.PostTest do
             type: "articles",
             permalink: "/:year/:month/:day/:title",
             layout: Some.Layout,
-            date: "~N[2023-10-31 00:01:00]"
+            date: "2023-10-31 00:01:00"
           },
           "hi"
         )
