@@ -50,7 +50,8 @@ defmodule Tableau.PageExtension.Pages.Page do
     path
     |> String.replace(Map.keys(vars), &to_string(Map.fetch!(vars, &1)))
     |> String.replace(" ", "-")
-    |> String.replace(~r/[^[:alnum:]\/\-]/, "")
+    |> String.replace("_", "-")
+    |> String.replace(~r/[^[:alnum:]\/\-.]/, "")
     |> String.downcase()
   end
 end

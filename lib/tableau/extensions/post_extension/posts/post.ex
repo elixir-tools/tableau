@@ -51,15 +51,16 @@ defmodule Tableau.PostExtension.Posts.Post do
       attrs
       |> Map.new(fn {k, v} -> {":#{k}", v} end)
       |> Map.merge(%{
-        ":day" => attrs.date.day,
-        ":month" => attrs.date.month,
+        ":day" => attrs.date.day |> to_string() |> String.pad_leading(2, "0"),
+        ":month" => attrs.date.month |> to_string() |> String.pad_leading(2, "0"),
         ":year" => attrs.date.year
       })
 
     path
     |> String.replace(Map.keys(vars), &to_string(Map.fetch!(vars, &1)))
     |> String.replace(" ", "-")
-    |> String.replace(~r/[^[:alnum:]\/\-]/, "")
+    |> String.replace("_", "-")
+    |> String.replace(~r/[^[:alnum:]\/\-.]/, "")
     |> String.downcase()
   end
 end
