@@ -1,10 +1,10 @@
 defmodule Tableau.PostExtension.Posts.Post do
   @moduledoc false
   def build(filename, attrs, body) do
-    {:ok, config} = Tableau.Config.new(Map.new(Application.get_env(:tableau, :config, %{})))
-
     {:ok, post_config} =
       Tableau.PostExtension.Config.new(Map.new(Application.get_env(:tableau, Tableau.PostExtension, %{})))
+
+    Application.put_env(:date_time_parser, :include_zones_from, ~N[2010-01-01T00:00:00])
 
     attrs
     |> Map.put(:__tableau_post_extension__, true)
@@ -19,13 +19,7 @@ defmodule Tableau.PostExtension.Posts.Post do
         _ -> nil
       end
     end)
-    |> Map.put(
-      :date,
-      DateTime.from_naive!(
-        attrs.date |> Code.eval_string() |> elem(0),
-        config.timezone
-      )
-    )
+    |> Map.put(:date, DateTimeParser.parse_datetime!(attrs.date, assume_time: true, assume_utc: true))
     |> build_permalink(post_config)
   end
 

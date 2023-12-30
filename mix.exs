@@ -34,6 +34,8 @@ defmodule Tableau.MixProject do
   defp deps do
     [
       {:bandit, "~> 1.0"},
+      {:date_time_parser, "~> 1.2"},
+      {:floki, "~> 0.34"},
       {:libgraph, "~> 0.16.0"},
       {:mdex, "~> 0.1"},
       {:nimble_publisher, "~> 1.0"},
@@ -42,9 +44,8 @@ defmodule Tableau.MixProject do
       {:tz, "~> 0.26.2"},
       {:web_dev_utils, "~> 0.1"},
       {:websock_adapter, "~> 0.5"},
-      {:yaml_elixir, "~> 2.9"},
-      {:floki, "~> 0.34"},
       {:xml_builder, "~> 2.1"},
+      {:yaml_elixir, "~> 2.9"},
 
       # dev
       {:ex_doc, ">= 0.0.0", only: :dev},
