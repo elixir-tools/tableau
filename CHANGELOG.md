@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## [0.13.0](https://github.com/elixir-tools/tableau/compare/v0.12.0...v0.13.0) (2023-12-30)
+
+
+### ⚠ BREAKING CHANGES
+
+* use DateTimeParser for date property ([#49](https://github.com/elixir-tools/tableau/issues/49))
+
+### Features
+
+* use DateTimeParser for date property ([#49](https://github.com/elixir-tools/tableau/issues/49)) ([78cb446](https://github.com/elixir-tools/tableau/commit/78cb446e87a1b9097042d140888fe61406224ed3))
+
 ## [0.12.0](https://github.com/elixir-tools/tableau/compare/v0.11.1...v0.12.0) (2023-11-15)
 
 
