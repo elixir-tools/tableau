@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## [0.14.0](https://github.com/elixir-tools/tableau/compare/v0.13.0...v0.14.0) (2023-12-30)
+
+
+### ⚠ BREAKING CHANGES
+
+* improve slug generation ([#51](https://github.com/elixir-tools/tableau/issues/51))
+
+### Bug Fixes
+
+* improve slug generation ([#51](https://github.com/elixir-tools/tableau/issues/51)) ([bbc702d](https://github.com/elixir-tools/tableau/commit/bbc702dcaf3fde50d73b851a2df07900400e0ef6))
+
 ## [0.13.0](https://github.com/elixir-tools/tableau/compare/v0.12.0...v0.13.0) (2023-12-30)
 
 
