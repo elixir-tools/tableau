@@ -30,9 +30,16 @@ end
 
 Documentation can be found at <https://hexdocs.pm/tableau>.
 
-## Demo
+## Tableau Demo Sites 
 
-For a real world demo of Tableau, you can see [www.elixir-tools.dev](https://www.elixir-tools.dev) ([source code](https://github.com/elixir-tools/elixir-tools.dev)).
+| Site                                                 | Template    | Source                                                                            |
+|------------------------------------------------------|-------------|-----------------------------------------------------------------------------------|
+| [www.elixir-tools.dev](https://www.elixir-tools.dev) | [temple][1] | [elixir-tools/elixir-tools.dev](https://github.com/elixir-tools/elixir-tools.dev) |
+| [pdx.su](https://pdx.su)                             | [temple][1] | [paradox460/pdx.su](https://github.com/paradox460/pdx.su)                         |
+| HEEX Demo                                            | [heex][2]   | [mhanberg/tableau_demo_heex](https://github.com/mhanberg/tableau_demo_heex)       |
+
+[1]: https://github.com/mhanberg/temple 
+[2]: https://www.google.com/search?q=elixir+liveview+heex 
 
 ## Getting Started
 
