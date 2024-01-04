@@ -1,8 +1,6 @@
 defmodule Tableau.RSSExtension do
   @moduledoc """
-  YAML files and Elixir scripts (.exs) in the configured directory will be automatically parsed/executed and made available in an `@data` assign in your templates.
-
-  Elixir scripts will be executed and the last expression returned as the data.
+  Generate RSS data and write to `_site/feed.xml`.
 
   ## Configuration
 
