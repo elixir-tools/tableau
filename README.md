@@ -92,7 +92,7 @@ defmodule MySite.RootLayout do
         end
 
         if Mix.env() == :dev do
-          c &Tableau.Components.live_reload/1
+          c &Tableau.live_reload/1
         end
       end
     end
@@ -147,7 +147,7 @@ config :tableau, :reloader,
   ]
 ```
 
-All you need to do is render the `Tableau.Components.LiveReload` component right after your `body` tag.
+All you need to do is render the `Tableau.live_reload/1` component right after your `body` tag.
 
 ```elixir
 # lib/layouts/app.ex
@@ -177,7 +177,7 @@ defmodule YourApp.Layouts.App do
         end
 
         if Mix.env() == :dev do
-          c &Tableau.Components.live_reload/1
+          c &Tableau.live_reload/1
         end
       end
     end
