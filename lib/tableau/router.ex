@@ -6,7 +6,7 @@ defmodule Tableau.Router do
 
   require Logger
 
-  basepath = Application.get_env(:tableau, :config)[:base_path]
+  @base_path Path.join("/", Application.compile_env(:tableau, :config)[:base_path] || "")
 
   @not_found ~g'''
   <!DOCTYPE html><html lang="en"><head></head><body>Not Found</body></html>
@@ -16,7 +16,7 @@ defmodule Tableau.Router do
   plug :rerender
 
   plug Tableau.IndexHtml
-  plug Plug.Static, at: "/#{basepath}", from: "_site", cache_control_for_etags: "no-cache"
+  plug Plug.Static, at: @base_path, from: "_site", cache_control_for_etags: "no-cache"
 
   plug :match
   plug :dispatch
