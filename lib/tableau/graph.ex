@@ -10,8 +10,17 @@ defmodule Tableau.Graph do
         Node.type(mod) != :error,
         reduce: graph do
       graph ->
-        {:ok, parent} = Node.parent(mod)
-        Graph.add_edge(graph, mod, parent)
+        case Node.type(mod) do
+          {:ok, :pages} ->
+            for page <- mod.pages(), reduce: graph do
+              graph ->
+                Graph.add_edge(graph, page, page.parent)
+            end
+
+          _ ->
+            {:ok, parent} = Node.parent(mod)
+            Graph.add_edge(graph, mod, parent)
+        end
     end
   end
 end

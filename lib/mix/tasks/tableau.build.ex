@@ -52,11 +52,12 @@ defmodule Mix.Tasks.Tableau.Build do
 
     mods = :code.all_available()
     graph = Tableau.Graph.new(mods)
+
     File.mkdir_p!(out)
 
     pages =
-      for mod <- Graph.vertices(graph), {:ok, :page} == Tableau.Graph.Node.type(mod) do
-        {mod, Map.new(mod.__tableau_opts__() || [])}
+      for mod <- Graph.vertices(graph), {:ok, :page} == Tableau.Graph.Nodable.type(mod) do
+        {mod, Map.new(Tableau.Graph.Nodable.opts(mod) || [])}
       end
 
     {page_mods, pages} = Enum.unzip(pages)
@@ -65,7 +66,7 @@ defmodule Mix.Tasks.Tableau.Build do
 
     for mod <- page_mods do
       content = Tableau.Document.render(graph, mod, token)
-      permalink = mod.__tableau_permalink__()
+      permalink = Tableau.Graph.Nodable.permalink(mod)
       dir = Path.join(out, permalink)
 
       File.mkdir_p!(dir)

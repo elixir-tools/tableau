@@ -47,64 +47,8 @@ defmodule Tableau.PageExtension do
 
   use Tableau.Extension, key: :pages, type: :pre_build, priority: 100
 
-  {:ok, config} =
-    Tableau.PageExtension.Config.new(Map.new(Application.compile_env(:tableau, Tableau.PageExtension, %{})))
-
-  @config config
-
   def run(token) do
-    :global.trans(
-      {:create_pages_module, make_ref()},
-      fn ->
-        Module.create(
-          Tableau.PageExtension.Pages,
-          quote do
-            use NimblePublisher,
-              build: __MODULE__.Page,
-              from: "#{unquote(@config.dir)}/**/*.md",
-              as: :pages,
-              parser: Tableau.PageExtension.Pages.Page,
-              html_converter: Tableau.PageExtension.Pages.HTMLConverter
-
-            def pages(_opts \\ []) do
-              @pages
-            end
-          end,
-          Macro.Env.location(__ENV__)
-        )
-
-        for {mod, _, _} <- :code.all_available(),
-            mod = Module.concat([to_string(mod)]),
-            {:ok, :page} == Tableau.Graph.Node.type(mod),
-            mod.__tableau_opts__()[:__tableau_page_extension__] do
-          :code.purge(mod)
-          :code.delete(mod)
-        end
-
-        pages =
-          for page <- apply(Tableau.PageExtension.Pages, :pages, []) do
-            {:module, _module, _binary, _term} =
-              [:"#{System.unique_integer()}"]
-              |> Module.concat()
-              |> Module.create(
-                quote do
-                  use Tableau.Page, unquote(Macro.escape(Keyword.new(page)))
-
-                  @external_resource unquote(page.file)
-                  def template(_assigns) do
-                    unquote(page.body)
-                  end
-                end,
-                Macro.Env.location(__ENV__)
-              )
-
-            page
-          end
-
-        {:ok, Map.put(token, :pages, pages)}
-      end,
-      [Node.self()],
-      :infinity
-    )
+    token = put_in(token.pages, Tableau.PageExtension.Pages.pages())
+    {:ok, token}
   end
 end

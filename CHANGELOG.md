@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [0.14.3](https://github.com/elixir-tools/tableau/compare/v0.14.2...v0.14.3) (2024-01-07)
+
+
+### Performance Improvements
+
+* speed up page and post extensions ([#64](https://github.com/elixir-tools/tableau/issues/64)) ([357d0f9](https://github.com/elixir-tools/tableau/commit/357d0f9b2fb46be8cbb87793704a93c92b9130c6)), closes [#48](https://github.com/elixir-tools/tableau/issues/48)
+
 ## [0.14.2](https://github.com/elixir-tools/tableau/compare/v0.14.1...v0.14.2) (2024-01-07)
 
 
