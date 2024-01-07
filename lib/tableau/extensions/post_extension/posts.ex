@@ -25,6 +25,7 @@ defmodule Tableau.PostExtension.Posts do
       Tableau.PostExtension.Config.new(@config)
 
     opts = Keyword.put_new(opts, :html_converter, Tableau.PostExtension.Posts.HTMLConverter)
+
     config.dir
     |> Path.join("**/*.md")
     |> Common.paths()

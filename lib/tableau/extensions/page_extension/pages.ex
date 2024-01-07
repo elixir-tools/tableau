@@ -25,6 +25,7 @@ defmodule Tableau.PageExtension.Pages do
       Tableau.PageExtension.Config.new(@config)
 
     opts = Keyword.put_new(opts, :html_converter, Tableau.PageExtension.Pages.HTMLConverter)
+
     config.dir
     |> Path.join("**/*.md")
     |> Common.paths()
