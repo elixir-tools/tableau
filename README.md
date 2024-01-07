@@ -32,11 +32,12 @@ Documentation can be found at <https://hexdocs.pm/tableau>.
 
 ## Built with Tableau
 
-| Site                                                 | Template    | Source                                                                            |
-|------------------------------------------------------|-------------|-----------------------------------------------------------------------------------|
-| [www.elixir-tools.dev](https://www.elixir-tools.dev) | [Temple](https://github.com/mhanberg/temple) | [elixir-tools/elixir-tools.dev](https://github.com/elixir-tools/elixir-tools.dev) |
-| [pdx.su](https://pdx.su)                             | [Temple](https://github.com/mhanberg/temple) | [paradox460/pdx.su](https://github.com/paradox460/pdx.su)                         |
-| HEEx Demo                                            | [HEEx](https://hexdocs.pm/phoenix_live_view/Phoenix.Component.html#sigil_H/2)   | [mhanberg/tableau_demo_heex](https://github.com/mhanberg/tableau_demo_heex)       |
+| Site                                                 | Template                                                                      | Styling  | Source                                                                            |
+|------------------------------------------------------|-------------------------------------------------------------------------------|----------|-----------------------------------------------------------------------------------|
+| [www.elixir-tools.dev](https://www.elixir-tools.dev) | [Temple](https://github.com/mhanberg/temple)                                  | Tailwind | [elixir-tools/elixir-tools.dev](https://github.com/elixir-tools/elixir-tools.dev) |
+| [pdx.su](https://pdx.su)                             | [Temple](https://github.com/mhanberg/temple)                                  | CSS      | [paradox460/pdx.su](https://github.com/paradox460/pdx.su)                         |
+| [Xmeyers](https://andyl.github.io/xmeyers)           | [HEEx](https://hexdocs.pm/phoenix_live_view/Phoenix.Component.html#sigil_H/2) | Tailwind | [andyl/xmeyers](https://github.com/andyl/xmeyers)                                 |
+| HEEx Demo                                            | [HEEx](https://hexdocs.pm/phoenix_live_view/Phoenix.Component.html#sigil_H/2) | None     | [mhanberg/tableau_demo_heex](https://github.com/mhanberg/tableau_demo_heex)       |
 
 ## Getting Started
 
@@ -92,7 +93,7 @@ defmodule MySite.RootLayout do
         end
 
         if Mix.env() == :dev do
-          c &Tableau.Components.live_reload/1
+          c &Tableau.live_reload/1
         end
       end
     end
@@ -147,7 +148,7 @@ config :tableau, :reloader,
   ]
 ```
 
-All you need to do is render the `Tableau.Components.LiveReload` component right after your `body` tag.
+All you need to do is render the `Tableau.live_reload/1` component right after your `body` tag.
 
 ```elixir
 # lib/layouts/app.ex
@@ -177,7 +178,7 @@ defmodule YourApp.Layouts.App do
         end
 
         if Mix.env() == :dev do
-          c &Tableau.Components.live_reload/1
+          c &Tableau.live_reload/1
         end
       end
     end
