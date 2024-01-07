@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [0.14.2](https://github.com/elixir-tools/tableau/compare/v0.14.1...v0.14.2) (2024-01-07)
+
+
+### Bug Fixes
+
+* start telemetry app to handle warning logs ([#62](https://github.com/elixir-tools/tableau/issues/62)) ([97e1fba](https://github.com/elixir-tools/tableau/commit/97e1fba6f91f0b7872bcd904b90286572974ce77)), closes [#61](https://github.com/elixir-tools/tableau/issues/61)
+
 ## [0.14.1](https://github.com/elixir-tools/tableau/compare/v0.14.0...v0.14.1) (2024-01-04)
 
 
