@@ -10,6 +10,7 @@ defmodule Mix.Tasks.Tableau.Build do
 
   @impl Mix.Task
   def run(argv) do
+    Application.ensure_all_started(:telemetry)
     {:ok, config} = Tableau.Config.new(@config)
     token = %{site: %{config: config}}
     Mix.Task.run("app.start", ["--preload-modules"])
