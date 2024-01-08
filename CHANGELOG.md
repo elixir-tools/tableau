@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [0.15.0](https://github.com/elixir-tools/tableau/compare/v0.14.3...v0.15.0) (2024-01-08)
+
+
+### Features
+
+* configurable development server root  ([#59](https://github.com/elixir-tools/tableau/issues/59)) ([641cb20](https://github.com/elixir-tools/tableau/commit/641cb2062cf146c5c3b66553667d1b933321f75a))
+
 ## [0.14.3](https://github.com/elixir-tools/tableau/compare/v0.14.2...v0.14.3) (2024-01-07)
 
 
