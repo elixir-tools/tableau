@@ -58,7 +58,7 @@ defmodule Tableau do
 
   ```elixir
   def template(assigns) do
-    ~H"""
+    ~H\"""
     <!DOCTYPE html>
     <html>
       <head>
