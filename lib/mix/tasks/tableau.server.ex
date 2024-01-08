@@ -19,9 +19,6 @@ defmodule Mix.Tasks.Tableau.Server do
   end
 
   defp basepath do
-    case Application.get_env(:tableau, :config)[:base_path] do
-      "" -> ""
-      path -> Path.join("/", path)
-    end
+    Path.join("/", Application.get_env(:tableau, :config)[:base_path])
   end
 end
