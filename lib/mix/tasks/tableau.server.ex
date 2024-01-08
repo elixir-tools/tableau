@@ -11,10 +11,14 @@ defmodule Mix.Tasks.Tableau.Server do
     Application.put_env(:tableau, :server, true)
     Code.put_compiler_option(:ignore_module_conflict, true)
 
-    Logger.debug("server started on http://localhost:4999")
+    Logger.debug("server started on http://localhost:4999#{basepath()}")
 
     Mix.Task.run("app.start", ["--preload-modules"])
 
     Mix.Tasks.Run.run(["--no-halt"])
+  end
+
+  defp basepath do
+    Path.join("/", Application.get_env(:tableau, :config)[:base_path] || "")
   end
 end

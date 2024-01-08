@@ -5,6 +5,7 @@ defmodule Tableau.Config do
 
   defstruct [
     :url,
+    base_path: "",
     include_dir: "extra",
     timezone: "Etc/UTC",
     reload_log: false,
