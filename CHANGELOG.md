@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [0.15.1](https://github.com/elixir-tools/tableau/compare/v0.15.0...v0.15.1) (2024-01-22)
+
+
+### Bug Fixes
+
+* urls in rss output ([#47](https://github.com/elixir-tools/tableau/issues/47)) ([66d15d4](https://github.com/elixir-tools/tableau/commit/66d15d41049fc5e7b72c7d5514c150e401600542))
+
 ## [0.15.0](https://github.com/elixir-tools/tableau/compare/v0.14.3...v0.15.0) (2024-01-08)
 
 
