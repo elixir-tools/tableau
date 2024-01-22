@@ -40,9 +40,9 @@ defmodule Tableau.RSSExtension do
         """
             <item>
                <title>#{post.title}</title>
-               <link>https://#{Path.join(url, post.permalink)}</link>
+               <link>#{URI.merge(url, post.permalink)}</link>
                <pubDate>#{Calendar.strftime(post.date, "%a, %d %b %Y %X %Z")}</pubDate>
-               <guid>http://#{Path.join(url, post.permalink)}</guid>
+               <guid>#{URI.merge(url, post.permalink)}</guid>
                <description><![CDATA[ #{post.body} ]]></description>
             </item>
         """
