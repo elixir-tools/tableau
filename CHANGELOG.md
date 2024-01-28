@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [0.15.2](https://github.com/elixir-tools/tableau/compare/v0.15.1...v0.15.2) (2024-01-28)
+
+
+### Bug Fixes
+
+* add base_path to config schema ([#68](https://github.com/elixir-tools/tableau/issues/68)) ([03a43d4](https://github.com/elixir-tools/tableau/commit/03a43d4d9e992d4f9268d482d3cd427a99b3f7e0))
+
 ## [0.15.1](https://github.com/elixir-tools/tableau/compare/v0.15.0...v0.15.1) (2024-01-22)
 
 
