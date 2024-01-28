@@ -24,6 +24,7 @@ defmodule Tableau.Config do
         optional(:timezone) => str(),
         optional(:reload_log) => bool(),
         optional(:markdown) => list(oneof([tuple([:mdex, list()])])),
+        optional(:base_path) => str(),
         url: str()
       },
       convert: false
