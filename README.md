@@ -3,7 +3,7 @@
 [![Discord](https://img.shields.io/badge/Discord-5865F3?style=flat&logo=discord&logoColor=white&link=https://discord.gg/nNDMwTJ8)](https://discord.gg/6XdGnxVA2A)
 [![Hex.pm](https://img.shields.io/hexpm/v/tableau)](https://hex.pm/packages/tableau)
 [![Hex Docs](https://img.shields.io/badge/hex-docs-lightgreen.svg)](https://hexdocs.pm/tableau/)
-[![GitHub Discussions](https://img.shields.io/github/discussions/elixir-tools/discussions)](https://github.com/orgs/elixir-tools/discussions)
+[![GitHub Discussions](https://img.shields.io/github/discussions/elixir-tools/tableau)](https://github.com/elixir-tools/tableau/discussions)
 
 Static Site Generator for Elixir.
 
