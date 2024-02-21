@@ -12,7 +12,7 @@ Static Site Generator for Elixir.
 - [x] Good code and browser reloading on file change
 - [x] Easy to use the current Node.js JS/CSS tooling
 - [x] Extensions
-- [ ] Ability to work with "data" (either dynamic data or static files)
+- [x] Ability to work with "data" (either dynamic data or static files)
     - [x] YAML Files
     - [x] Elixir scripts (.exs files)
 - [ ] Handles stuff like Posts, RSS, sitemap, SEO.
@@ -20,10 +20,31 @@ Static Site Generator for Elixir.
     - [x] RSS
     - [x] Sitemap
     - [ ] SEO
+- [x] Project generator
 
 ## Installation
 
-This package can be installed by adding `tableau` to your list of dependencies in `mix.exs`:
+The easiest way to get started is to generate a new project using the `tableau.new` mix task.
+
+Currently the generator can create a website using several different template syntaxes and assets frameworks.
+
+- Templates
+  - [HEEx](https://github.com/phoenixframework/phoenix)
+  - [Temple](https://github.com/mhanberg/temple)
+  - EEx
+- Assets
+  - [TailwindCSS](https://tailwindcss.com)
+  - Vanilla (Just a regular CSS file)
+
+Please run `mix help tableau.new` or `mix tableau.new --help` to see all of the possible flags.
+
+```
+mix archive.install hex tableau_new
+
+mix tableau.new my_awesome_site
+```
+
+Otherwise, you can just install Tableau into a new mix project.
 
 ```elixir
 def deps do
