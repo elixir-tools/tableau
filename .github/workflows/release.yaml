@@ -5,6 +5,7 @@ on:
       - main
     paths-ignore:
       - 'tableau_new/**/*'
+      - '.github/**/*'
       - 'README.md'
 
 permissions:
