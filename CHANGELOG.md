@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [0.16.0](https://github.com/elixir-tools/tableau/compare/v0.15.2...v0.16.0) (2024-02-21)
+
+
+### Features
+
+* **tableau_new:** mix tableau.new ([#75](https://github.com/elixir-tools/tableau/issues/75)) ([28a59aa](https://github.com/elixir-tools/tableau/commit/28a59aada363af86be3fa47488e654c2bf7a2f33)), closes [#44](https://github.com/elixir-tools/tableau/issues/44)
+
 ## [0.15.2](https://github.com/elixir-tools/tableau/compare/v0.15.1...v0.15.2) (2024-01-28)
 
 
