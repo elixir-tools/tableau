@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [0.15.3](https://github.com/elixir-tools/tableau/compare/v0.15.2...v0.15.3) (2024-02-26)
+
+
+### Bug Fixes
+
+* remove unused dep ([d626cb8](https://github.com/elixir-tools/tableau/commit/d626cb841cb97ed16d94fcfcce1da9453c108fe6))
+
 ## [0.15.2](https://github.com/elixir-tools/tableau/compare/v0.15.1...v0.15.2) (2024-01-28)
 
 
