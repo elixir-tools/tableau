@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## [0.16.0](https://github.com/elixir-tools/tableau/compare/v0.15.3...v0.16.0) (2024-03-10)
+
+
+### ⚠ BREAKING CHANGES
+
+* uri encode permalink
+
+  This is a breaking change because previously un-encoded characters might be encoded now. Please check your pages and add redirects for any that have changed.
+
+### Bug Fixes
+
+* uri encode permalink ([3fbc2c7](https://github.com/elixir-tools/tableau/commit/3fbc2c7ad885209dc1cf92a1265519e59bc96d9f)), closes [#80](https://github.com/elixir-tools/tableau/issues/80)
+
 ## [0.15.3](https://github.com/elixir-tools/tableau/compare/v0.15.2...v0.15.3) (2024-02-26)
 
 
