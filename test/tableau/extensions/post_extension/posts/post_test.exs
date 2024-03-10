@@ -21,6 +21,23 @@ defmodule Tableau.PostExtension.Posts.PostTest do
       assert %{permalink: "/blog/articles/foo-man-chu"} = actual
     end
 
+    test "handles fancy characters in permalink" do
+      actual =
+        Post.build(
+          "some/file/name.md",
+          %{
+            title: "¿Qué es la programación funcional?",
+            type: "articles",
+            permalink: "/blog/:type/:title",
+            layout: Some.Layout,
+            date: "2023-10-13"
+          },
+          "hi"
+        )
+
+      assert %{permalink: "/blog/articles/%C2qu%C3-es-la-programaci%C3n-funcional"} = actual
+    end
+
     test "substitutes date pieces into permalink" do
       actual =
         Post.build(

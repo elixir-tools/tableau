@@ -62,5 +62,6 @@ defmodule Tableau.PostExtension.Posts.Post do
     |> String.replace("_", "-")
     |> String.replace(~r/[^[:alnum:]\/\-.]/, "")
     |> String.downcase()
+    |> URI.encode()
   end
 end
