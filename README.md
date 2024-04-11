@@ -64,6 +64,7 @@ Documentation can be found at <https://hexdocs.pm/tableau>.
 | [pdx.su](https://pdx.su)                             | [Temple](https://github.com/mhanberg/temple)                                  | CSS      | [paradox460/pdx.su](https://github.com/paradox460/pdx.su)                         |
 | [Xmeyers](https://andyl.github.io/xmeyers)           | [HEEx](https://hexdocs.pm/phoenix_live_view/Phoenix.Component.html#sigil_H/2) | Tailwind | [andyl/xmeyers](https://github.com/andyl/xmeyers)                                 |
 | HEEx Demo                                            | [HEEx](https://hexdocs.pm/phoenix_live_view/Phoenix.Component.html#sigil_H/2) | None     | [mhanberg/tableau_demo_heex](https://github.com/mhanberg/tableau_demo_heex)       |
+| [0x7f](https://0x7f.dev)                             | [HEEx](https://hexdocs.pm/phoenix_live_view/Phoenix.Component.html#sigil_H/2) | None     | [0x7fdev/site](https://github.com/0x7fdev/site)                                   |
 
 ## Getting Started
 
