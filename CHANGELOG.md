@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## [0.17.0](https://github.com/elixir-tools/tableau/compare/v0.16.0...v0.17.0) (2024-07-17)
+
+
+### Features
+
+* **extensions:** pre-write extensions ([#83](https://github.com/elixir-tools/tableau/issues/83)) ([12d1c7f](https://github.com/elixir-tools/tableau/commit/12d1c7f8f0c566fc469e6abb3415c21a3c989b10))
+
+
+### Bug Fixes
+
+* **extensions:** don't require a config module ([12d1c7f](https://github.com/elixir-tools/tableau/commit/12d1c7f8f0c566fc469e6abb3415c21a3c989b10))
+
 ## [0.16.0](https://github.com/elixir-tools/tableau/compare/v0.15.3...v0.16.0) (2024-03-10)
 
 
