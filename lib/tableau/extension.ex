@@ -16,6 +16,7 @@ defmodule Tableau.Extension do
   There are currently the following extension types:
 
   - `:pre_build` - executed before tableau builds your site and writes anything to disk.
+  - `:pre_write` - executed after tableau builds your site but before it writes anything to disk.
   - `:post_write` - executed after tableau builds your site and writes everything to disk.
 
   ## Example

@@ -15,7 +15,7 @@ defmodule Tableau.DocumentTest.About do
     :def,
     :template,
     ~g'''
-    <div id="<%= @page.yo %>">
+    <div id="<%= @page.yo %>" class="<%= @page.foo %>">
       hi
     </div>
     '''html,
@@ -103,7 +103,7 @@ defmodule Tableau.DocumentTest do
 
   test "renders a document" do
     graph = Tableau.Graph.new(:code.all_available())
-    content = Document.render(graph, __MODULE__.About, %{site: %{}})
+    content = Document.render(graph, __MODULE__.About, %{site: %{}}, %{foo: "bar"})
 
     assert Floki.parse_document!(content) ===
              [
@@ -112,7 +112,7 @@ defmodule Tableau.DocumentTest do
                   {"head", [], []},
                   {"body", [],
                    [
-                     {"div", [{"id", "inner-layout"}], [{"div", [{"id", "lo"}], ["\n  hi\n"]}]}
+                     {"div", [{"id", "inner-layout"}], [{"div", [{"id", "lo"}, {"class", "bar"}], ["\n  hi\n"]}]}
                    ]}
                 ]}
              ]

@@ -20,7 +20,7 @@ defmodule Tableau.Document do
     end
   end
 
-  def render(graph, module, assigns) do
+  def render(graph, module, assigns, page) do
     [root | mods] =
       case Graph.dijkstra(graph, module, :root) do
         path when is_list(path) ->
@@ -32,7 +32,7 @@ defmodule Tableau.Document do
           raise "Failed to find layout path for #{inspect(module)}"
       end
 
-    page_assigns = Map.new(Tableau.Graph.Nodable.opts(module) || [])
+    page_assigns = (Tableau.Graph.Nodable.opts(module) || []) |> Map.new() |> Map.merge(page)
     mods = for mod <- mods, do: {mod, page_assigns, assigns}
 
     Tableau.Graph.Nodable.template(root, Map.merge(assigns, %{inner_content: mods, page: page_assigns}))
