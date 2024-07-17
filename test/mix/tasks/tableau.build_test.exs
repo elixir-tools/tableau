@@ -17,14 +17,23 @@ defmodule Mix.Tasks.Tableau.FailExtension do
   @moduledoc false
   use Tableau.Extension, key: :fail, type: :pre_build, priority: 100
 
-  defmodule Config do
-    @moduledoc false
-    def new(i), do: {:ok, i}
-  end
-
   def run(_site) do
     IO.inspect(System.monotonic_time(), label: "first")
     :error
+  end
+end
+
+defmodule Mix.Tasks.Tableau.FooExtension do
+  @moduledoc false
+  use Tableau.Extension, key: :foo, type: :pre_write, priority: 100
+
+  def run(token) do
+    pages =
+      for page <- token.site.pages do
+        Map.put(page, :foo, "bar")
+      end
+
+    {:ok, put_in(token.site.pages, pages)}
   end
 end
 
