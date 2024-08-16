@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [0.17.1](https://github.com/elixir-tools/tableau/compare/v0.17.0...v0.17.1) (2024-08-16)
+
+
+### Bug Fixes
+
+* properly encode title in rss feed ([#85](https://github.com/elixir-tools/tableau/issues/85)) ([9382afa](https://github.com/elixir-tools/tableau/commit/9382afa3ca14149a9fac1b6a4f8b2044d6e0f946))
+
 ## [0.17.0](https://github.com/elixir-tools/tableau/compare/v0.16.0...v0.17.0) (2024-07-17)
 
 
