@@ -27,9 +27,9 @@ defmodule Tableau.RSSExtension do
       <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
       <channel>
         <atom:link href="#{url}/feed.xml" rel="self" type="application/rss+xml" />
-        <title>#{rss.title}</title>
+        <title>#{HtmlEntities.encode(rss.title)}</title>
         <link>#{url}</link>
-        <description>#{rss.description}</description>
+        <description>#{HtmlEntities.encode(rss.description)}</description>
         <language>#{rss.language}</language>
         <generator>Tableau v#{version()}</generator>
       """
@@ -39,7 +39,7 @@ defmodule Tableau.RSSExtension do
       for post <- posts, into: "" do
         """
             <item>
-               <title>#{post.title}</title>
+               <title>#{HtmlEntities.encode(post.title)}</title>
                <link>#{URI.merge(url, post.permalink)}</link>
                <pubDate>#{Calendar.strftime(post.date, "%a, %d %b %Y %X %Z")}</pubDate>
                <guid>#{URI.merge(url, post.permalink)}</guid>

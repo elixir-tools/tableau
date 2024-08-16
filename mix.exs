@@ -36,6 +36,7 @@ defmodule Tableau.MixProject do
       {:bandit, "~> 1.0"},
       {:date_time_parser, "~> 1.2"},
       {:floki, "~> 0.34"},
+      {:html_entities, "~> 0.5.2"},
       {:libgraph, "~> 0.16.0"},
       {:mdex, "~> 0.1"},
       {:plug_static_index_html, "~> 1.0"},
