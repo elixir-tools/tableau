@@ -3,7 +3,11 @@ defmodule Tableau.PageExtension.Config do
 
   import Schematic
 
-  defstruct enabled: true, dir: "_pages", permalink: nil, layout: nil
+  defstruct enabled: true,
+            dir: "_pages",
+            permalink: nil,
+            layout: nil,
+            html_converter: "Tableau.PostExtension.Posts.HTMLConverter"
 
   def new(input), do: unify(schematic(), input)
 
@@ -14,7 +18,8 @@ defmodule Tableau.PageExtension.Config do
         optional(:enabled) => bool(),
         optional(:dir) => str(),
         optional(:permalink) => str(),
-        optional(:layout) => str()
+        optional(:layout) => str(),
+        optional(:html_converter) => str()
       },
       convert: false
     )

@@ -24,7 +24,10 @@ defmodule Tableau.PageExtension.Pages do
     {:ok, config} =
       Tableau.PageExtension.Config.new(@config)
 
-    opts = Keyword.put_new(opts, :html_converter, Tableau.PageExtension.Pages.HTMLConverter)
+    opts =
+      Keyword.put_new_lazy(opts, :html_converter, fn ->
+        Module.concat([config.html_converter])
+      end)
 
     config.dir
     |> Path.join("**/*.md")
