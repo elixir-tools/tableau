@@ -65,8 +65,11 @@ Documentation can be found at <https://hexdocs.pm/tableau>.
 | [pdx.su](https://pdx.su)                                   | [Temple](https://github.com/mhanberg/temple)                                  | CSS        |          | [paradox460/pdx.su](https://github.com/paradox460/pdx.su)                         |
 | [Xmeyers](https://andyl.github.io/xmeyers)                 | [HEEx](https://hexdocs.pm/phoenix_live_view/Phoenix.Component.html#sigil_H/2) | Tailwind   |          | [andyl/xmeyers](https://github.com/andyl/xmeyers)                                 |
 | [0x7f](https://0x7f.dev)                                   | [HEEx](https://hexdocs.pm/phoenix_live_view/Phoenix.Component.html#sigil_H/2) | magick.css |          | [0x7fdev/site](https://github.com/0x7fdev/site)                                   |
-| Hackery                                                    | [HEEx](https://hexdocs.pm/phoenix_live_view/Phoenix.Component.html#sigil_H/2) | Tailwind   |    ✅    | [mhanberg/hackery](https://github.com/mhanberg/hackery)                           |
-
+| Hackery                                                    | [HEEx](https://hexdocs.pm/phoenix_live_view/Phoenix.Component.html#sigil_H/2) | Tailwind   | ✅       | [mhanberg/hackery](https://github.com/mhanberg/hackery)                           |
+| [doneth.dev](https://doneth.dev)                           | [HEEx](https://hexdocs.pm/phoenix_live_view/Phoenix.Component.html#sigil_H/2) | Tailwind   |          | [JohnDoneth/doneth.dev](https://github.com/JohnDoneth/doneth.dev)                 |
+| [joelkoch.dev](https://joelkoch.dev)                       | [HEEx](https://hexdocs.pm/phoenix_live_view/Phoenix.Component.html#sigil_H/2) | Tailwind   |          | [joelpaulkoch/joelkoch.dev](https://github.com/joelpaulkoch/joelkoch.dev)         |
+| [www.ethangunderson.com](https://www.ethangunderson.com/)  | [HEEx](https://hexdocs.pm/phoenix_live_view/Phoenix.Component.html#sigil_H/2) | Tailwind   |          | [ethangunderson/website](https://github.com/ethangunderson/website)               |
+| [https://adrienanselme.com/](https://adrienanselme.com/)   | [HEEx](https://hexdocs.pm/phoenix_live_view/Phoenix.Component.html#sigil_H/2) | Tailwind   |          | [adanselm/adanselm.github.io](https://github.com/adanselm/adanselm.github.io)     |
 
 ## Getting Started
 
