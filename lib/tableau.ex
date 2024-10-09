@@ -4,7 +4,7 @@ defmodule Tableau do
 
   * `:include_dir` - string - Directory that is just copied to the output directory. Defaults to `extra`.
   * `:timezone` - string - Timezone to use when parsing date times. Defaults to `Etc/UTC`.
-  * `:base_path - string - Development server root.  Defaults to '/'.
+  * `:base_path` - string - Development server root.  Defaults to '/'.
   * `:url` - string (required) - The URL of your website.
   * `:markdown` - keyword
       * `:mdex` - keyword - Options to pass to `MDEx.to_html/2`
