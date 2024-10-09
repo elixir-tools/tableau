@@ -1,6 +1,7 @@
 defmodule Tableau.PostExtension.Posts do
   @moduledoc false
   alias Tableau.Extension.Common
+  alias Tableau.PostExtension.Posts.Post
 
   @config Map.new(Application.compile_env(:tableau, Tableau.PostExtension, %{}))
 
@@ -29,7 +30,7 @@ defmodule Tableau.PostExtension.Posts do
     config.dir
     |> Path.join("**/*.md")
     |> Common.paths()
-    |> Common.entries(Tableau.PostExtension.Posts.Post, Tableau.PostExtension.Posts.Post, opts)
+    |> Common.entries(Post, Post, opts)
     |> Enum.sort_by(& &1.date, {:desc, DateTime})
     |> then(fn posts ->
       if config.future do

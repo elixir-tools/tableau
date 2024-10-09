@@ -49,7 +49,7 @@ defmodule Tableau.MixProject do
 
       # dev
       {:ex_doc, ">= 0.0.0", only: :dev},
-      {:styler, "~> 0.9", only: :dev}
+      {:styler, styler_constraint(), only: :dev}
     ]
   end
 
@@ -58,6 +58,14 @@ defmodule Tableau.MixProject do
       "~> 0.34.0 or ~> 0.35.0"
     else
       "~> 0.34"
+    end
+  end
+
+  defp styler_constraint do
+    if Version.compare(System.version(), "1.15.0") == :lt do
+      "~> 0.9"
+    else
+      "~> 1.0"
     end
   end
 
