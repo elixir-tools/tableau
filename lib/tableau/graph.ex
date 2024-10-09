@@ -1,26 +1,12 @@
 defmodule Tableau.Graph do
   @moduledoc false
-  alias Tableau.Graph.Node
+  alias Tableau.Graph.Nodable
 
-  def new(modules) do
-    graph = Graph.new()
-
-    for {mod, _, _} <- modules,
-        mod = Module.concat([to_string(mod)]),
-        Node.type(mod) != :error,
-        reduce: graph do
+  def insert(graph, nodes) do
+    for node <- nodes, Nodable.type(node) != :error, reduce: graph do
       graph ->
-        case Node.type(mod) do
-          {:ok, :pages} ->
-            for page <- mod.pages(), reduce: graph do
-              graph ->
-                Graph.add_edge(graph, page, page.parent)
-            end
-
-          _ ->
-            {:ok, parent} = Node.parent(mod)
-            Graph.add_edge(graph, mod, parent)
-        end
+        {:ok, parent} = Nodable.parent(node)
+        Graph.add_edge(graph, node, parent)
     end
   end
 end

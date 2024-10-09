@@ -48,7 +48,19 @@ defmodule Tableau.PageExtension do
   use Tableau.Extension, key: :pages, type: :pre_build, priority: 100
 
   def run(token) do
-    token = put_in(token.pages, Tableau.PageExtension.Pages.pages())
-    {:ok, token}
+    pages = Tableau.PageExtension.Pages.pages()
+
+    graph =
+      Tableau.Graph.insert(
+        token.graph,
+        Enum.map(pages, fn page ->
+          %Tableau.Page{parent: page.layout, permalink: page.permalink, template: page.body, opts: page}
+        end)
+      )
+
+    {:ok,
+     token
+     |> Map.put(:pages, pages)
+     |> Map.put(:graph, graph)}
   end
 end

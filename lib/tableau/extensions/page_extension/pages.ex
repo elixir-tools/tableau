@@ -4,23 +4,7 @@ defmodule Tableau.PageExtension.Pages do
 
   @config Map.new(Application.compile_env(:tableau, Tableau.PageExtension, %{}))
 
-  def __tableau_type__, do: :pages
-
   def pages(opts \\ []) do
-    opts
-    |> pages2()
-    |> Enum.map(fn page ->
-      %{
-        type: :page,
-        parent: page.layout,
-        permalink: page.permalink,
-        template: page.body,
-        opts: page
-      }
-    end)
-  end
-
-  def pages2(opts \\ []) do
     {:ok, config} =
       Tableau.PageExtension.Config.new(@config)
 

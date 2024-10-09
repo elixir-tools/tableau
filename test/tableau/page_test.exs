@@ -7,10 +7,26 @@ defmodule Tableau.PageTest.AboutPage do
   def template(_), do: ""
 end
 
+defmodule Tableau.PageTest.InnerLayout do
+  @moduledoc false
+  use Tableau.Layout
+
+  def template(_), do: ""
+end
+
 defmodule Tableau.PageTest do
   use ExUnit.Case, async: true
 
+  import Tableau.TestHelpers
+
   alias Tableau.PageTest.AboutPage
+
+  setup do
+    purge_on_exit([
+      Tableau.PageTest.AboutPage,
+      Tableau.PageTest.InnerLayout
+    ])
+  end
 
   test "dsl" do
     assert :page == AboutPage.__tableau_type__()

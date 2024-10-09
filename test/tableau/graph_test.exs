@@ -1,6 +1,8 @@
 defmodule Tableau.GraphTest do
   use ExUnit.Case, async: true
 
+  import Tableau.TestHelpers
+
   defmodule About do
     @moduledoc false
     alias Tableau.GraphTest.InnerLayout
@@ -41,8 +43,21 @@ defmodule Tableau.GraphTest do
   end
 
   describe "graph/1" do
-    test "creates a graph of nodes" do
-      graph = Tableau.Graph.new(:code.all_available())
+    setup do
+      mods = [
+        Tableau.GraphTest.About,
+        Tableau.GraphTest.Careers,
+        Tableau.GraphTest.InnerLayout,
+        Tableau.GraphTest.RootLayout
+      ]
+
+      purge_on_exit(mods)
+
+      [mods: mods]
+    end
+
+    test "creates a graph of nodes", %{mods: mods} do
+      graph = Tableau.Graph.insert(Graph.new(), mods)
       edges = Graph.edges(graph)
 
       for e <- [

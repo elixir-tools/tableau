@@ -1,6 +1,7 @@
 defmodule Tableau.DocumentTest.About do
   @moduledoc false
   import Tableau.Strung
+  import Tableau.TestHelpers
 
   alias Tableau.DocumentTest.InnerLayout
 
@@ -99,10 +100,27 @@ end
 defmodule Tableau.DocumentTest do
   use ExUnit.Case, async: true
 
+  import Tableau.TestHelpers
+
   alias Tableau.Document
 
-  test "renders a document" do
-    graph = Tableau.Graph.new(:code.all_available())
+  setup do
+    mods = [
+      Tableau.DocumentTest.About,
+      Tableau.DocumentTest.Index,
+      Tableau.DocumentTest.InnerLayout,
+      Tableau.DocumentTest.RootLayout
+    ]
+
+    purge_on_exit(mods)
+
+    [mods: mods]
+  end
+
+  test "renders a document", %{mods: mods} do
+    graph = Graph.new()
+
+    graph = Tableau.Graph.insert(graph, mods)
     content = Document.render(graph, __MODULE__.About, %{site: %{}}, %{foo: "bar"})
 
     assert Floki.parse_document!(content) ===
