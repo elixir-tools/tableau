@@ -1,9 +1,3 @@
-defmodule Tableau.SitemapExtension.Config do
-  @moduledoc false
-
-  def new(input), do: {:ok, input}
-end
-
 defmodule Tableau.SitemapExtension do
   @moduledoc """
   Generate a sitemap.xml for your site, for improved search-engine indexing.
@@ -52,6 +46,8 @@ defmodule Tableau.SitemapExtension do
 
   use Tableau.Extension, key: :sitemap, type: :post_write, priority: 300
 
+  require Logger
+
   def run(%{site: %{config: %{url: root}, pages: pages}} = token) do
     urls =
       for page <- pages, uniq: true do
@@ -79,6 +75,10 @@ defmodule Tableau.SitemapExtension do
     File.write!("_site/sitemap.xml", XmlBuilder.generate_iodata(xml))
 
     {:ok, token}
+  rescue
+    e ->
+      Logger.error(Exception.format(:error, e, __STACKTRACE__))
+      {:error, :fail}
   end
 
   defp prepend_lastmod(body, %{date: date}) do

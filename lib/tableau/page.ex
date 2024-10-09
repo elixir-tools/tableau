@@ -27,6 +27,19 @@ defmodule Tableau.Page do
   @type template :: any()
 
   @doc """
+  The page struct allows you to create pages as data structures and manually insert them into the Graph.
+  """
+  defstruct [:parent, :permalink, :template, :opts]
+
+  defimpl Tableau.Graph.Nodable do
+    def template(nodable, _assigns), do: nodable.template
+    def type(_nodable), do: {:ok, :page}
+    def parent(nodable), do: {:ok, nodable.parent}
+    def opts(nodable), do: nodable.opts
+    def permalink(nodable), do: nodable.permalink
+  end
+
+  @doc """
   The page template.
   """
   @callback template(assigns()) :: template()

@@ -12,19 +12,22 @@ defmodule Mix.Tasks.Tableau.Build do
   def run(argv) do
     Application.ensure_all_started(:telemetry)
     {:ok, config} = Tableau.Config.new(@config)
-    token = %{site: %{config: config}}
+    token = %{site: %{config: config}, graph: Graph.new()}
     Mix.Task.run("app.start", ["--preload-modules"])
 
     {opts, _argv} = OptionParser.parse!(argv, strict: [out: :string])
 
     out = Keyword.get(opts, :out, "_site")
 
-    mods = :code.all_available()
+    mods =
+      :code.all_available()
+      |> Task.async_stream(fn {mod, _, _} -> Module.concat([to_string(mod)]) end)
+      |> Stream.map(fn {:ok, mod} -> mod end)
+      |> Enum.to_list()
 
-    token = mods |> pre_build_extensions() |> run_extensions(token)
+    token = mods |> extensions_for(:pre_build) |> run_extensions(token)
 
-    mods = :code.all_available()
-    graph = Tableau.Graph.new(mods)
+    graph = Tableau.Graph.insert(token.graph, mods)
 
     File.mkdir_p!(out)
 
@@ -37,7 +40,7 @@ defmodule Mix.Tasks.Tableau.Build do
 
     token = put_in(token.site[:pages], just_pages)
 
-    token = mods |> pre_write_extensions() |> run_extensions(token)
+    token = mods |> extensions_for(:pre_write) |> run_extensions(token)
 
     for {mod, page} <- Enum.zip(page_mods, token.site.pages) do
       content = Tableau.Document.render(graph, mod, token, page)
@@ -53,7 +56,7 @@ defmodule Mix.Tasks.Tableau.Build do
       File.cp_r!(config.include_dir, out)
     end
 
-    token = run_extensions(post_write_extensions(mods), token)
+    token = mods |> extensions_for(:post_write) |> run_extensions(token)
 
     token
   end
@@ -66,33 +69,9 @@ defmodule Mix.Tasks.Tableau.Build do
     end
   end
 
-  defp pre_build_extensions(modules) do
+  defp extensions_for(modules, type) do
     extensions =
-      for {mod, _, _} <- modules,
-          mod = Module.concat([to_string(mod)]),
-          match?({:ok, :pre_build}, Tableau.Extension.type(mod)) do
-        mod
-      end
-
-    Enum.sort_by(extensions, & &1.__tableau_extension_priority__())
-  end
-
-  defp pre_write_extensions(modules) do
-    extensions =
-      for {mod, _, _} <- modules,
-          mod = Module.concat([to_string(mod)]),
-          match?({:ok, :pre_write}, Tableau.Extension.type(mod)) do
-        mod
-      end
-
-    Enum.sort_by(extensions, & &1.__tableau_extension_priority__())
-  end
-
-  defp post_write_extensions(modules) do
-    extensions =
-      for {mod, _, _} <- modules,
-          mod = Module.concat([to_string(mod)]),
-          match?({:ok, :post_write}, Tableau.Extension.type(mod)) do
+      for mod <- modules, {:ok, type} == Tableau.Extension.type(mod) do
         mod
       end
 

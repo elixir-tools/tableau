@@ -38,7 +38,7 @@ defmodule Tableau.MixProject do
       {:floki, floki_constraint()},
       {:html_entities, "~> 0.5.2"},
       {:libgraph, "~> 0.16.0"},
-      {:mdex, "~> 0.1"},
+      {:mdex, "~> 0.2.0"},
       {:plug_static_index_html, "~> 1.0"},
       {:schematic, "~> 0.3.1"},
       {:tz, "~> 0.28.1"},

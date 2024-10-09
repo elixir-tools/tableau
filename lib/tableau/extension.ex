@@ -19,22 +19,39 @@ defmodule Tableau.Extension do
   - `:pre_write` - executed after tableau builds your site but before it writes anything to disk.
   - `:post_write` - executed after tableau builds your site and writes everything to disk.
 
+  ## The Graph
+
+  Tableau pages and layuts are a DAG, a Directed Acyclic Graph, and this graph is used to build each page when writing to disk.
+
+  Your extension can create data to to insert into the extension token and can also inserted pages into the graph to be written to disk when the time comes.
+
   ## Example
+
+  In this example, we create a simple post extension that reads markdown files from disk, inserts them into the graph, and inserts them into the token.
+
+  By inserting them into the token, you are able to access them inside your templates, for example, a posts listing page.
 
   ```elixir
   defmodule MySite.PostsExtension do
     use Tableau.Extension, key: :posts, type: :pre_build, priority: 300
 
     def run(token) do
-      posts = Path.wildcard("_posts/**/*.md")
+      posts = 
+        for post <- Path.wildcard("_posts/**/*.md") do
+          %Tableau.Page{
+            parent: MySite.RootLayout,
+            permalink: Path.join("posts", Path.rootname(post)),
+            template: Markdown.render(post),
+            opts: %{}
+          }
+        end
 
-      for post <- post do
-        post
-        |> Markdown.render()
-        |> then(&File.write(Path.join(Path.rootname(post), "index.html"), &1))
-      end
+      graph = Tableau.Graph.insert(token.graph, posts)
 
-      {:ok, token}
+      {:ok,
+       token
+       |> Map.put(:posts, posts)
+       |> Map.put(:graph, graph)}
     end
   end
   ```

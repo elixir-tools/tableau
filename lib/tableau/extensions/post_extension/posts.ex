@@ -4,22 +4,6 @@ defmodule Tableau.PostExtension.Posts do
 
   @config Map.new(Application.compile_env(:tableau, Tableau.PostExtension, %{}))
 
-  def __tableau_type__, do: :pages
-
-  def pages(opts \\ []) do
-    opts
-    |> posts()
-    |> Enum.map(fn post ->
-      %{
-        type: :page,
-        parent: post.layout,
-        permalink: post.permalink,
-        template: post.body,
-        opts: post
-      }
-    end)
-  end
-
   def posts(opts \\ []) do
     {:ok, config} =
       Tableau.PostExtension.Config.new(@config)

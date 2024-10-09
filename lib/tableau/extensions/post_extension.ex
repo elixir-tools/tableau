@@ -54,7 +54,19 @@ defmodule Tableau.PostExtension do
   use Tableau.Extension, key: :posts, type: :pre_build, priority: 100
 
   def run(token) do
-    token = put_in(token.posts, Tableau.PostExtension.Posts.posts())
-    {:ok, token}
+    posts = Tableau.PostExtension.Posts.posts()
+
+    graph =
+      Tableau.Graph.insert(
+        token.graph,
+        Enum.map(posts, fn post ->
+          %Tableau.Page{parent: post.layout, permalink: post.permalink, template: post.body, opts: post}
+        end)
+      )
+
+    {:ok,
+     token
+     |> Map.put(:posts, posts)
+     |> Map.put(:graph, graph)}
   end
 end
