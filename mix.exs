@@ -35,13 +35,13 @@ defmodule Tableau.MixProject do
     [
       {:bandit, "~> 1.0"},
       {:date_time_parser, "~> 1.2"},
-      {:floki, "~> 0.34"},
+      {:floki, floki_constraint()},
       {:html_entities, "~> 0.5.2"},
       {:libgraph, "~> 0.16.0"},
       {:mdex, "~> 0.1"},
       {:plug_static_index_html, "~> 1.0"},
       {:schematic, "~> 0.3.1"},
-      {:tz, "~> 0.26.2"},
+      {:tz, "~> 0.28.1"},
       {:web_dev_utils, "~> 0.1"},
       {:websock_adapter, "~> 0.5"},
       {:xml_builder, "~> 2.1"},
@@ -51,6 +51,14 @@ defmodule Tableau.MixProject do
       {:ex_doc, ">= 0.0.0", only: :dev},
       {:styler, "~> 0.9", only: :dev}
     ]
+  end
+
+  defp floki_constraint do
+    if Version.compare(System.version(), "1.13.0") == :lt do
+      "~> 0.34.0 or ~> 0.35.0"
+    else
+      "~> 0.34"
+    end
   end
 
   defp package do
