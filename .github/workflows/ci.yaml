@@ -6,28 +6,36 @@ on:
 
 jobs:
   tests:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     name: Test (${{matrix.elixir}}/${{matrix.otp}})
 
     strategy:
+      fail-fast: false
       matrix:
-        otp: [23.x, 24.x, 25.x]
-        elixir: [1.13.x, 1.14.x]
+        elixir: [1.15.x, 1.16.x, 1.17.x]
+        otp: [25.x, 26.x]
+
+        include:
+          - elixir: 1.15.x
+            otp: 24.x
+          - elixir: 1.17.x
+            otp: 27.x
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - uses: erlef/setup-beam@v1
+      id: install
       with:
         otp-version: ${{matrix.otp}}
         elixir-version: ${{matrix.elixir}}
-    - uses: actions/cache@v3
+    - uses: actions/cache@v4
       id: cache
       with:
         path: |
           deps
-        key: ${{ runner.os }}-mix-${{matrix.otp}}-${{matrix.elixir}}-${{ hashFiles('**/mix.lock') }}
+        key: ${{ runner.os }}-mix-${{steps.install.outputs.otp-version}}-${{steps.install.outputs.elixir-version}}-${{ hashFiles('**/mix.lock') }}
         restore-keys: |
-          ${{ runner.os }}-mix-${{matrix.otp}}-${{matrix.elixir}}-
+          ${{ runner.os }}-mix-${{steps.install.outputs.otp-version}}-${{steps.install.outputs.elixir-version}}-
 
     - name: Install Dependencies
       if: steps.cache.outputs.cache-hit != 'true'
@@ -38,23 +46,29 @@ jobs:
 
   formatter:
     runs-on: ubuntu-latest
-    name: Formatter (1.15.x/26.x)
+    name: Formatter (${{matrix.elixir}}/${{matrix.otp}})
+
+    strategy:
+      matrix:
+        otp: [27.x]
+        elixir: [1.17.x]
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - uses: erlef/setup-beam@v1
+      id: install
       with:
-        otp-version: 26.x
-        elixir-version: 1.15.x
-    - uses: actions/cache@v3
+        otp-version: ${{matrix.otp}}
+        elixir-version: ${{matrix.elixir}}
+    - uses: actions/cache@v4
       id: cache
       with:
         path: |
           deps
           _build
-        key: ${{ runner.os }}-mix-23-1.14-${{ hashFiles('**/mix.lock') }}
+        key: ${{ runner.os }}-mix-${{steps.install.outputs.otp-version}}-${{steps.install.outputs.elixir-version}}-${{ hashFiles('**/mix.lock') }}
         restore-keys: |
-          ${{ runner.os }}-mix-23-1.14-
+          ${{ runner.os }}-mix-${{steps.install.outputs.otp-version}}-${{steps.install.outputs.elixir-version}}-
 
     - name: Install Dependencies
       if: steps.cache.outputs.cache-hit != 'true'
