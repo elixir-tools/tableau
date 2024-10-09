@@ -25,7 +25,7 @@ defmodule Tableau.YamlFrontMatter do
     split_pattern = ~r/[\s\r\n]---[\s\r\n]/s
 
     string
-    |> then(&String.trim_leading(&1))
+    |> String.trim_leading()
     |> then(&("\n" <> &1))
     |> then(&Regex.split(split_pattern, &1, parts: 3))
   end

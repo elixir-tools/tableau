@@ -9,7 +9,7 @@ defmodule Tableau.MixProject do
       description: "Static site generator for elixir",
       source_url: @source_url,
       version: "0.17.1",
-      elixir: "~> 1.12",
+      elixir: "~> 1.15",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       package: package(),
@@ -35,7 +35,7 @@ defmodule Tableau.MixProject do
     [
       {:bandit, "~> 1.0"},
       {:date_time_parser, "~> 1.2"},
-      {:floki, floki_constraint()},
+      {:floki, "~> 0.34"},
       {:html_entities, "~> 0.5.2"},
       {:libgraph, "~> 0.16.0"},
       {:mdex, "~> 0.2.0"},
@@ -49,16 +49,8 @@ defmodule Tableau.MixProject do
 
       # dev
       {:ex_doc, ">= 0.0.0", only: :dev},
-      {:styler, "~> 0.9", only: :dev}
+      {:styler, "~> 1.0", only: :dev}
     ]
-  end
-
-  defp floki_constraint do
-    if Version.compare(System.version(), "1.13.0") == :lt do
-      "~> 0.34.0 or ~> 0.35.0"
-    else
-      "~> 0.34"
-    end
   end
 
   defp package do

@@ -4,6 +4,8 @@ defmodule Mix.Tasks.Tableau.Build do
   @moduledoc "Task to build the tableau site"
   use Mix.Task
 
+  alias Tableau.Graph.Nodable
+
   require Logger
 
   @config :tableau |> Application.compile_env(:config, %{}) |> Map.new()
@@ -32,8 +34,8 @@ defmodule Mix.Tasks.Tableau.Build do
     File.mkdir_p!(out)
 
     pages =
-      for mod <- Graph.vertices(graph), {:ok, :page} == Tableau.Graph.Nodable.type(mod) do
-        {mod, Map.new(Tableau.Graph.Nodable.opts(mod) || [])}
+      for mod <- Graph.vertices(graph), {:ok, :page} == Nodable.type(mod) do
+        {mod, Map.new(Nodable.opts(mod) || [])}
       end
 
     {page_mods, just_pages} = Enum.unzip(pages)
@@ -44,7 +46,7 @@ defmodule Mix.Tasks.Tableau.Build do
 
     for {mod, page} <- Enum.zip(page_mods, token.site.pages) do
       content = Tableau.Document.render(graph, mod, token, page)
-      permalink = Tableau.Graph.Nodable.permalink(mod)
+      permalink = Nodable.permalink(mod)
       dir = Path.join(out, permalink)
 
       File.mkdir_p!(dir)

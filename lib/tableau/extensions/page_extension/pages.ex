@@ -1,6 +1,7 @@
 defmodule Tableau.PageExtension.Pages do
   @moduledoc false
   alias Tableau.Extension.Common
+  alias Tableau.PageExtension.Pages.Page
 
   @config Map.new(Application.compile_env(:tableau, Tableau.PageExtension, %{}))
 
@@ -13,6 +14,6 @@ defmodule Tableau.PageExtension.Pages do
     config.dir
     |> Path.join("**/*.md")
     |> Common.paths()
-    |> Common.entries(Tableau.PageExtension.Pages.Page, Tableau.PageExtension.Pages.Page, opts)
+    |> Common.entries(Page, Page, opts)
   end
 end

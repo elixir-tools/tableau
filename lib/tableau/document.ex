@@ -1,5 +1,7 @@
 defmodule Tableau.Document do
   @moduledoc false
+  alias Tableau.Graph.Nodable
+
   defmodule Helper do
     @moduledoc "Helper functions for Tableau documents."
     @doc """
@@ -11,7 +13,7 @@ defmodule Tableau.Document do
       quote do
         case unquote(inner_content) do
           [{module, page_assigns, assigns} | rest] ->
-            Tableau.Graph.Nodable.template(module, Map.merge(assigns, %{page: page_assigns, inner_content: rest}))
+            Nodable.template(module, Map.merge(assigns, %{page: page_assigns, inner_content: rest}))
 
           [] ->
             nil
@@ -32,9 +34,9 @@ defmodule Tableau.Document do
           raise "Failed to find layout path for #{inspect(module)}"
       end
 
-    page_assigns = (Tableau.Graph.Nodable.opts(module) || []) |> Map.new() |> Map.merge(page)
+    page_assigns = (Nodable.opts(module) || []) |> Map.new() |> Map.merge(page)
     mods = for mod <- mods, do: {mod, page_assigns, assigns}
 
-    Tableau.Graph.Nodable.template(root, Map.merge(assigns, %{inner_content: mods, page: page_assigns}))
+    Nodable.template(root, Map.merge(assigns, %{inner_content: mods, page: page_assigns}))
   end
 end
