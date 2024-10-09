@@ -7,7 +7,7 @@ defmodule Tableau do
   * `:base_path` - string - Development server root.  Defaults to '/'.
   * `:url` - string (required) - The URL of your website.
   * `:markdown` - keyword
-      * `:mdex` - keyword - Options to pass to `MDEx.to_html/2`
+      * `:mdex` - keyword - Options to pass to `MDEx.to_html!/2`
   """
 
   @doc """
@@ -20,13 +20,13 @@ defmodule Tableau do
   defdelegate live_reload(assigns), to: WebDevUtils.Components
 
   @doc """
-  Convert markdown content to HTML using `MDEx.to_html/2`.
+  Convert markdown content to HTML using `MDEx.to_html!/2`.
 
   Will use the globally configured options, but you can also pass it overrides.
   """
   def markdown(content, overrides \\ []) do
     {:ok, config} = Tableau.Config.new(Map.new(Application.get_env(:tableau, :config, %{})))
 
-    MDEx.to_html(content, Keyword.merge(config.markdown[:mdex], overrides))
+    MDEx.to_html!(content, Keyword.merge(config.markdown[:mdex], overrides))
   end
 end
