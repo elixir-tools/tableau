@@ -75,9 +75,15 @@ defmodule Tableau.MixProject do
           Tableau.Page,
           Tableau.Document.Helper
         ],
+        Converters: [
+          Tableau.Converter,
+          Tableau.MDExConverter
+        ],
         Extensions: [
           Tableau.Extension,
           Tableau.PostExtension,
+          Tableau.PageExtension,
+          Tableau.SitemapExtension,
           Tableau.RSSExtension,
           Tableau.DataExtension
         ]

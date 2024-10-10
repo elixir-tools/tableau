@@ -20,10 +20,6 @@ defmodule Tableau.PageExtension.Pages.Page do
     |> build_permalink(page_config)
   end
 
-  def parse(_file_path, content) do
-    Tableau.YamlFrontMatter.parse!(content, atoms: true)
-  end
-
   defp build_permalink(%{permalink: permalink} = attrs, _config) do
     permalink
     |> transform_permalink(attrs)

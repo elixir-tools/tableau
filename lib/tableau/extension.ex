@@ -21,9 +21,9 @@ defmodule Tableau.Extension do
 
   ## The Graph
 
-  Tableau pages and layuts are a DAG, a Directed Acyclic Graph, and this graph is used to build each page when writing to disk.
+  Tableau pages and layouts form a DAG, a Directed Acyclic Graph, and this graph is used to build each page when writing to disk.
 
-  Your extension can create data to to insert into the extension token and can also inserted pages into the graph to be written to disk when the time comes.
+  Your extension can create data to insert into the site token and can also inserted pages into the graph to be written to disk when the time comes.
 
   ## Example
 

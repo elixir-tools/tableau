@@ -23,10 +23,6 @@ defmodule Tableau.PostExtension.Posts.Post do
     |> build_permalink(post_config)
   end
 
-  def parse(_file_path, content) do
-    Tableau.YamlFrontMatter.parse!(content, atoms: true)
-  end
-
   defp build_permalink(%{permalink: permalink} = attrs, _config) do
     permalink
     |> transform_permalink(attrs)

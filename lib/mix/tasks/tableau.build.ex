@@ -8,12 +8,10 @@ defmodule Mix.Tasks.Tableau.Build do
 
   require Logger
 
-  @config :tableau |> Application.compile_env(:config, %{}) |> Map.new()
-
   @impl Mix.Task
   def run(argv) do
     Application.ensure_all_started(:telemetry)
-    {:ok, config} = Tableau.Config.new(@config)
+    {:ok, config} = Tableau.Config.get()
     token = %{site: %{config: config}, graph: Graph.new()}
     Mix.Task.run("app.start", ["--preload-modules"])
 
