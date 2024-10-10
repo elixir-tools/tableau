@@ -32,7 +32,10 @@ defmodule Tableau.Page do
   defstruct [:parent, :permalink, :template, :opts]
 
   defimpl Tableau.Graph.Nodable do
-    def template(nodable, _assigns), do: nodable.template
+    def template(nodable, assigns) do
+      nodable.template.(assigns)
+    end
+
     def type(_nodable), do: {:ok, :page}
     def parent(nodable), do: {:ok, nodable.parent}
     def opts(nodable), do: nodable.opts

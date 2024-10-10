@@ -1,6 +1,6 @@
 defmodule Tableau.PageExtension do
   @moduledoc """
-  Markdown files (with YAML frontmatter) in the configured pages directory will be automatically compiled into Tableau pages.
+  Content files (with YAML frontmatter) in the configured pages directory will be automatically compiled into Tableau pages.
 
   Certain frontmatter keys are required and all keys are passed as options to the `Tableau.Page`.
 
@@ -44,7 +44,7 @@ defmodule Tableau.PageExtension do
     layout: "MyApp.PageLayout"
   ```
 
-  ## Other markup formats
+  ## Content formats
 
   If you're interested in authoring your content in something other than markdown (or you want to use a different markdown parser), you can configure
   a converter for your format in the global configuration.
@@ -63,20 +63,39 @@ defmodule Tableau.PageExtension do
 
   use Tableau.Extension, key: :pages, type: :pre_build, priority: 100
 
+  alias Tableau.Extension.Common
+  alias Tableau.PageExtension.Page
+
+  @config Map.new(Application.compile_env(:tableau, Tableau.PageExtension, %{}))
+
   def run(token) do
-    pages = Tableau.PageExtension.Pages.pages()
+    {:ok, config} = Tableau.PageExtension.Config.new(@config)
+
+    {:ok, %{converters: converters}} = Tableau.Config.get()
+
+    exts = Enum.map_join(converters, ",", fn {ext, _} -> to_string(ext) end)
+
+    pages =
+      config.dir
+      |> Path.join("**/*.{#{exts}}")
+      |> Common.paths()
+      |> Common.entries(fn %{path: path, ext: ext, front_matter: front_matter, pre_convert_body: pre_convert_body} ->
+        renderer = fn assigns -> converters[ext].convert(path, front_matter, pre_convert_body, assigns) end
+
+        {Page.build(path, front_matter, pre_convert_body), renderer}
+      end)
 
     graph =
       Tableau.Graph.insert(
         token.graph,
-        Enum.map(pages, fn page ->
-          %Tableau.Page{parent: page.layout, permalink: page.permalink, template: page.body, opts: page}
+        Enum.map(pages, fn {page, renderer} ->
+          %Tableau.Page{parent: page.layout, permalink: page.permalink, template: renderer, opts: page}
         end)
       )
 
     {:ok,
      token
-     |> Map.put(:pages, pages)
+     |> Map.put(:pages, pages |> Enum.unzip() |> elem(0))
      |> Map.put(:graph, graph)}
   end
 end
