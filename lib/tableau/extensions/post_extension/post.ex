@@ -1,14 +1,16 @@
-defmodule Tableau.PageExtension.Pages.Page do
+defmodule Tableau.PostExtension.Post do
   @moduledoc false
   def build(filename, attrs, body) do
-    {:ok, page_config} =
-      Tableau.PageExtension.Config.new(Map.new(Application.get_env(:tableau, Tableau.PageExtension, %{})))
+    {:ok, post_config} =
+      Tableau.PostExtension.Config.new(Map.new(Application.get_env(:tableau, Tableau.PostExtension, %{})))
+
+    Application.put_env(:date_time_parser, :include_zones_from, ~N[2010-01-01T00:00:00])
 
     attrs
-    |> Map.put(:__tableau_page_extension__, true)
+    |> Map.put(:__tableau_post_extension__, true)
     |> Map.put(:body, body)
     |> Map.put(:file, filename)
-    |> Map.put(:layout, Module.concat([attrs.layout || page_config.layout]))
+    |> Map.put(:layout, Module.concat([attrs[:layout] || post_config.layout]))
     |> Map.put_new_lazy(:title, fn ->
       with {:ok, document} <- Floki.parse_fragment(body),
            [hd | _] <- Floki.find(document, "h1") do
@@ -17,7 +19,8 @@ defmodule Tableau.PageExtension.Pages.Page do
         _ -> nil
       end
     end)
-    |> build_permalink(page_config)
+    |> Map.put(:date, DateTimeParser.parse_datetime!(attrs.date, assume_time: true, assume_utc: true))
+    |> build_permalink(post_config)
   end
 
   defp build_permalink(%{permalink: permalink} = attrs, _config) do
@@ -32,16 +35,22 @@ defmodule Tableau.PageExtension.Pages.Page do
     |> then(&Map.put(attrs, :permalink, &1))
   end
 
-  defp build_permalink(%{file: filename} = attrs, config) do
+  defp build_permalink(%{file: filename} = attrs, _) do
     filename
     |> Path.rootname()
-    |> String.replace_prefix(config.dir, "")
     |> transform_permalink(attrs)
     |> then(&Map.put(attrs, :permalink, &1))
   end
 
   defp transform_permalink(path, attrs) do
-    vars = Map.new(attrs, fn {k, v} -> {":#{k}", v} end)
+    vars =
+      attrs
+      |> Map.new(fn {k, v} -> {":#{k}", v} end)
+      |> Map.merge(%{
+        ":day" => attrs.date.day |> to_string() |> String.pad_leading(2, "0"),
+        ":month" => attrs.date.month |> to_string() |> String.pad_leading(2, "0"),
+        ":year" => attrs.date.year
+      })
 
     path
     |> String.replace(Map.keys(vars), &to_string(Map.fetch!(vars, &1)))
@@ -49,5 +58,6 @@ defmodule Tableau.PageExtension.Pages.Page do
     |> String.replace("_", "-")
     |> String.replace(~r/[^[:alnum:]\/\-.]/, "")
     |> String.downcase()
+    |> URI.encode()
   end
 end

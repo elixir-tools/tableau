@@ -1,7 +1,7 @@
-defmodule Tableau.PostExtension.Posts.PostTest do
+defmodule Tableau.PostExtension.PostTest do
   use ExUnit.Case, async: true
 
-  alias Tableau.PostExtension.Posts.Post
+  alias Tableau.PostExtension.Post
 
   describe "build/3" do
     test "substitutes arbitrary front matter into permalink" do

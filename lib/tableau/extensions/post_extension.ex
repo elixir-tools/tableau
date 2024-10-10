@@ -1,6 +1,6 @@
 defmodule Tableau.PostExtension do
   @moduledoc """
-  Markdown files (with YAML frontmatter) in the configured posts directory will be automatically compiled into Tableau pages.
+  Content files (with YAML frontmatter) in the configured posts directory will be automatically compiled into Tableau pages.
 
   Certain frontmatter keys are required and all keys are passed as options to the `Tableau.Page`.
 
@@ -8,7 +8,7 @@ defmodule Tableau.PostExtension do
 
   Frontmatter is compiled with `yaml_elixir` and all keys are converted to atoms.
 
-  * `:title` - The title of the post. Falls back to the first `<h1>` tag if present in the body.
+  * `:title` - The title of the post.
   * `:permalink` - The permalink of the post. `:title` will be replaced with the posts title and non alphanumeric characters removed. Optional.
   * `:date` - A string representation of an Elixir `NaiveDateTime`, often presented as a `sigil_N`. This will be converted to your configured timezone.
   * `:layout` - A string representation of a Tableau layout module.
@@ -51,7 +51,7 @@ defmodule Tableau.PostExtension do
   ```
 
 
-  ## Other markup formats
+  ## Content formats
 
   If you're interested in authoring your content in something other than markdown (or you want to use a different markdown parser), you can configure
   a converter for your format in the global configuration.
@@ -70,20 +70,46 @@ defmodule Tableau.PostExtension do
 
   use Tableau.Extension, key: :posts, type: :pre_build, priority: 100
 
+  alias Tableau.Extension.Common
+  alias Tableau.PostExtension.Post
+
+  @config Map.new(Application.compile_env(:tableau, Tableau.PostExtension, %{}))
+
   def run(token) do
-    posts = Tableau.PostExtension.Posts.posts()
+    {:ok, config} = Tableau.PostExtension.Config.new(@config)
+
+    {:ok, %{converters: converters}} = Tableau.Config.get()
+
+    exts = Enum.map_join(converters, ",", fn {ext, _} -> to_string(ext) end)
+
+    posts =
+      config.dir
+      |> Path.join("**/*.{#{exts}}")
+      |> Common.paths()
+      |> Common.entries(fn %{path: path, ext: ext, front_matter: front_matter, pre_convert_body: pre_convert_body} ->
+        renderer = fn assigns -> converters[ext].convert(path, front_matter, pre_convert_body, assigns) end
+
+        {Post.build(path, front_matter, pre_convert_body), renderer}
+      end)
+      |> then(fn posts ->
+        if config.future do
+          posts
+        else
+          Enum.reject(posts, fn {post, _} -> DateTime.after?(post.date, DateTime.utc_now()) end)
+        end
+      end)
 
     graph =
       Tableau.Graph.insert(
         token.graph,
-        Enum.map(posts, fn post ->
-          %Tableau.Page{parent: post.layout, permalink: post.permalink, template: post.body, opts: post}
+        Enum.map(posts, fn {post, renderer} ->
+          %Tableau.Page{parent: post.layout, permalink: post.permalink, template: renderer, opts: post}
         end)
       )
 
     {:ok,
      token
-     |> Map.put(:posts, posts)
+     |> Map.put(:posts, posts |> Enum.unzip() |> elem(0))
      |> Map.put(:graph, graph)}
   end
 end

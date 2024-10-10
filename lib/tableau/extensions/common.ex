@@ -5,14 +5,11 @@ defmodule Tableau.Extension.Common do
     wildcard |> Path.wildcard() |> Enum.sort()
   end
 
-  def entries(paths, builder, opts) do
+  def entries(paths, callback) do
     for path <- paths do
       {front_matter, body} = Tableau.YamlFrontMatter.parse!(File.read!(path), atoms: true)
       "." <> ext = Path.extname(path)
-      converter = opts[:converters][String.to_atom(ext)]
-      body = converter.convert(path, body, front_matter, opts)
-
-      builder.build(path, front_matter, body)
+      callback.(%{path: path, ext: String.to_atom(ext), front_matter: front_matter, pre_convert_body: body})
     end
   end
 end
