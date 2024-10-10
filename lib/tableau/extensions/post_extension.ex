@@ -91,6 +91,7 @@ defmodule Tableau.PostExtension do
 
         {Post.build(path, front_matter, pre_convert_body), renderer}
       end)
+      |> Enum.sort_by(fn {post, _} -> post.date end, {:desc, DateTime})
       |> then(fn posts ->
         if config.future do
           posts
