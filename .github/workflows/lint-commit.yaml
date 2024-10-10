@@ -17,4 +17,6 @@ jobs:
       - name: Install Deps
         run: yarn install
       - name: Lint PR Title
-        run: echo "${{ github.event.pull_request.title }}" | yarn commitlint
+        run: echo "${PULL_REQUEST_TITLE}" | yarn commitlint
+        env:
+          PULL_REQUEST_TITLE: ${{ github.event.pull_request.title }}

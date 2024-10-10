@@ -20,10 +20,11 @@ jobs:
       - uses: googleapis/release-please-action@v4
         id: release
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         if: ${{ steps.release.outputs.release_created }}
 
       - uses: erlef/setup-beam@v1
+        id: install
         with:
           otp-version: ${{matrix.otp}}
           elixir-version: ${{matrix.elixir}}
@@ -36,9 +37,9 @@ jobs:
           path: |
             deps
             _build
-          key: ${{ runner.os }}-mix-${{ matrix.otp }}-${{ matrix.elixir }}-${{ hashFiles('**/mix.lock') }}
+          key: ${{ runner.os }}-mix-${{steps.install.outputs.otp-version}}-${{steps.install.outputs.elixir-version}}-${{ hashFiles('**/mix.lock') }}
           restore-keys: |
-            ${{ runner.os }}-mix-${{ matrix.otp }}-${{ matrix.elixir }}-
+            ${{ runner.os }}-mix-${{steps.install.outputs.otp-version}}-${{steps.install.outputs.elixir-version}}-
 
       - name: Install Dependencies
         if: steps.release.outputs.release_created && steps.cache.outputs.cache-hit != 'true'
