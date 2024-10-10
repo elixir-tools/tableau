@@ -9,12 +9,16 @@ defmodule Tableau.PostExtension.Posts do
     {:ok, config} =
       Tableau.PostExtension.Config.new(@config)
 
-    opts = Keyword.put_new(opts, :html_converter, Tableau.PostExtension.Posts.HTMLConverter)
+    {:ok, %{converters: converters}} = Tableau.Config.get()
+
+    opts = Keyword.put_new(opts, :converters, converters)
+
+    exts = Enum.map_join(converters, ",", fn {ext, _} -> to_string(ext) end)
 
     config.dir
-    |> Path.join("**/*.md")
+    |> Path.join("**/*.{#{exts}}")
     |> Common.paths()
-    |> Common.entries(Post, Post, opts)
+    |> Common.entries(Post, opts)
     |> Enum.sort_by(& &1.date, {:desc, DateTime})
     |> then(fn posts ->
       if config.future do

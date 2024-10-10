@@ -9,11 +9,15 @@ defmodule Tableau.PageExtension.Pages do
     {:ok, config} =
       Tableau.PageExtension.Config.new(@config)
 
-    opts = Keyword.put_new(opts, :html_converter, Tableau.PageExtension.Pages.HTMLConverter)
+    {:ok, %{converters: converters}} = Tableau.Config.get()
+
+    opts = Keyword.put_new(opts, :converters, converters)
+
+    exts = Enum.map_join(converters, ",", fn {ext, _} -> to_string(ext) end)
 
     config.dir
-    |> Path.join("**/*.md")
+    |> Path.join("**/*.{#{exts}}")
     |> Common.paths()
-    |> Common.entries(Page, Page, opts)
+    |> Common.entries(Page, opts)
   end
 end

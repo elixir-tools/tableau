@@ -9,11 +9,24 @@ defmodule Tableau.Config do
     include_dir: "extra",
     timezone: "Etc/UTC",
     reload_log: false,
+    converters: [md: Tableau.MDExConverter],
     markdown: [mdex: []]
   ]
 
   def new(config) do
     unify(schematic(), config)
+  end
+
+  def get do
+    Tableau.Config.new(Map.new(Application.get_env(:tableau, :config, %{})))
+  end
+
+  defp atom do
+    raw(&is_atom/1, message: "expected an atom")
+  end
+
+  defp keyword(value) do
+    list(tuple([atom(), value]))
   end
 
   defp schematic do
@@ -23,7 +36,8 @@ defmodule Tableau.Config do
         optional(:include_dir) => str(),
         optional(:timezone) => str(),
         optional(:reload_log) => bool(),
-        optional(:markdown) => list(oneof([tuple([:mdex, list()])])),
+        optional(:converters) => keyword(atom()),
+        optional(:markdown) => keyword(list()),
         optional(:base_path) => str(),
         url: str()
       },

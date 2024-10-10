@@ -26,7 +26,7 @@ defmodule Tableau.SitemapExtension do
     changefreq: hourly
   ```
 
-  ### `Tableau.Page`
+  ### Tableau.Page
 
   ```elixir
   defmodule MySite.AboutPage do

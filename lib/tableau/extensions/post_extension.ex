@@ -49,6 +49,23 @@ defmodule Tableau.PostExtension do
     permalink: "/articles/:year/:month/:day/:title",
     layout: "MyApp.PostLayout"
   ```
+
+
+  ## Other markup formats
+
+  If you're interested in authoring your content in something other than markdown (or you want to use a different markdown parser), you can configure
+  a converter for your format in the global configuration.
+
+  Currently the `Tableau.MDExConverter` is the only builtin converter, but you are free to write your own!
+
+  ```elixir
+  # configs/config.exs
+  config :tableau, :config,
+    converters: [
+      md: Tableau.MDExConverter,
+      adoc: MySite.AsciiDocConverter
+    ],
+  ```
   """
 
   use Tableau.Extension, key: :posts, type: :pre_build, priority: 100
