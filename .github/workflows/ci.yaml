@@ -12,12 +12,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        elixir: [1.15.x, 1.16.x, 1.17.x]
+        elixir: [1.16.x, 1.17.x]
         otp: [25.x, 26.x]
 
         include:
-          - elixir: 1.15.x
-            otp: 24.x
           - elixir: 1.17.x
             otp: 27.x
 
