@@ -73,7 +73,7 @@ defmodule Tableau.PageExtension do
         optional(:enabled, true) => bool(),
         optional(:dir, "_pages") => str(),
         optional(:permalink) => str(),
-        optional(:layout) => str()
+        optional(:layout) => oneof([str(), atom()])
       }),
       input
     )
@@ -113,7 +113,7 @@ defmodule Tableau.PageExtension do
     |> Map.put(:__tableau_page_extension__, true)
     |> Map.put(:body, body)
     |> Map.put(:file, filename)
-    |> Map.put(:layout, Module.concat([front_matter.layout || pages_config.layout]))
+    |> Map.put(:layout, Module.concat([front_matter[:layout] || pages_config.layout]))
     |> Common.build_permalink(pages_config)
   end
 end

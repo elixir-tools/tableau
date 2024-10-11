@@ -13,7 +13,7 @@ defmodule Tableau.PageExtensionTest do
 
   describe "run" do
     setup %{tmp_dir: dir} do
-      assert {:ok, config} = PageExtension.config(%{dir: dir, enabled: true})
+      assert {:ok, config} = PageExtension.config(%{dir: dir, enabled: true, layout: Blog.DefaultPageLayout})
 
       token = %{
         site: %{config: %{converters: [md: Tableau.MDExConverter]}},
@@ -195,6 +195,34 @@ defmodule Tableau.PageExtensionTest do
                    layout: Some.Layout,
                    permalink: "/articles/foo-man-chu-foo.js",
                    title: "foo man chu_foo.js",
+                   type: "articles"
+                 }
+               ]
+             } = token
+    end
+
+    test "inherits layout from page extension config", %{tmp_dir: dir, token: token} do
+      File.write(Path.join(dir, "a-page.md"), """
+      ---
+      title: missing layout key
+      type: articles
+      permalink: /:type/:title
+      ---
+
+      A great page
+      """)
+
+      assert {:ok, token} = PageExtension.run(token)
+
+      assert %{
+               pages: [
+                 %{
+                   __tableau_page_extension__: true,
+                   body: "\nA great page\n",
+                   file: ^dir <> "/a-page.md",
+                   layout: Blog.DefaultPageLayout,
+                   permalink: "/articles/missing-layout-key",
+                   title: "missing layout key",
                    type: "articles"
                  }
                ]

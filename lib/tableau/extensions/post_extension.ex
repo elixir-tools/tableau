@@ -81,7 +81,7 @@ defmodule Tableau.PostExtension do
         optional(:dir, "_posts") => str(),
         optional(:future, false) => bool(),
         optional(:permalink) => str(),
-        optional(:layout) => str()
+        optional(:layout) => oneof([atom(), str()])
       }),
       config
     )
