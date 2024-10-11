@@ -84,7 +84,7 @@ defmodule Tableau.Extension do
       quote do
         def __tableau_extension_type__, do: unquote(opts)[:type]
         def __tableau_extension_key__, do: unquote(opts)[:key]
-        def __tableau_extension_enabled__, do: unquote(opts)[:enabled] || true
+        def __tableau_extension_enabled__, do: Keyword.get(unquote(opts), :enabled, true)
         def __tableau_extension_priority__, do: unquote(opts)[:priority] || 0
       end
 

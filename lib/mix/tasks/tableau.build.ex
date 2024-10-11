@@ -39,20 +39,27 @@ defmodule Mix.Tasks.Tableau.Build do
         {mod, Map.new(Nodable.opts(mod) || [])}
       end
 
-    {page_mods, just_pages} = Enum.unzip(pages)
+    pages =
+      pages
+      |> Task.async_stream(fn {mod, page} ->
+        content = Tableau.Document.render(graph, mod, token, page)
+        permalink = Nodable.permalink(mod)
 
-    token = put_in(token.site[:pages], just_pages)
+        Map.merge(page, %{body: content, permalink: permalink})
+      end)
+      |> Stream.map(fn {:ok, result} -> result end)
+      |> Enum.to_list()
+
+    token = put_in(token.site[:pages], pages)
 
     token = mods |> extensions_for(:pre_write) |> run_extensions(token)
 
-    for {mod, page} <- Enum.zip(page_mods, token.site.pages) do
-      content = Tableau.Document.render(graph, mod, token, page)
-      permalink = Nodable.permalink(mod)
+    for %{body: body, permalink: permalink} <- pages do
       dir = Path.join(out, permalink)
 
       File.mkdir_p!(dir)
 
-      File.write!(Path.join(dir, "index.html"), content)
+      File.write!(Path.join(dir, "index.html"), body)
     end
 
     if File.exists?(config.include_dir) do
@@ -85,7 +92,10 @@ defmodule Mix.Tasks.Tableau.Build do
     for module <- extensions, reduce: token do
       token ->
         raw_config =
-          :tableau |> Application.get_env(module, %{enabled: true}) |> Map.new()
+          Map.merge(
+            %{enabled: Tableau.Extension.enabled?(module)},
+            :tableau |> Application.get_env(module, %{}) |> Map.new()
+          )
 
         if raw_config[:enabled] do
           {:ok, config} = validate_config(module, raw_config)
