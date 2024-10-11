@@ -21,7 +21,7 @@ defmodule TableauDevServer.Router do
 
   get "/ws/index.html" do
     conn
-    |> WebSockAdapter.upgrade(Tableau.Websocket, [], timeout: 60_000)
+    |> WebSockAdapter.upgrade(TableauDevServer.Websocket, [], timeout: 60_000)
     |> halt()
   end
 
