@@ -57,9 +57,21 @@ defmodule Tableau.DataExtension do
   """
   use Tableau.Extension, key: :data, type: :pre_build, priority: 200
 
+  import Schematic
+
+  def config(config) do
+    unify(
+      map(%{
+        optional(:enabled, true) => bool(),
+        optional(:dir, "_data") => str()
+      }),
+      config
+    )
+  end
+
   def run(token) do
     data =
-      for file <- Path.wildcard(Path.join(token.data.dir, "**/*.{yml,yaml,exs}")), into: %{} do
+      for file <- Path.wildcard(Path.join(token.extensions.data.config.dir, "**/*.{yml,yaml,exs}")), into: %{} do
         case Path.extname(file) do
           ".exs" ->
             key = Path.basename(file, ".exs")

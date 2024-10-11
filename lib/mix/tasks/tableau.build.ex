@@ -25,6 +25,9 @@ defmodule Mix.Tasks.Tableau.Build do
       |> Stream.map(fn {:ok, mod} -> mod end)
       |> Enum.to_list()
 
+    {:ok, config} = Tableau.Config.get()
+    token = Map.put(token, :extensions, %{})
+
     token = mods |> extensions_for(:pre_build) |> run_extensions(token)
 
     graph = Tableau.Graph.insert(token.graph, mods)
@@ -61,9 +64,9 @@ defmodule Mix.Tasks.Tableau.Build do
     token
   end
 
-  defp validate_config(config_mod, raw_config) do
-    if Code.ensure_loaded?(config_mod) do
-      config_mod.new(raw_config)
+  defp validate_config(module, raw_config) do
+    if function_exported?(module, :config, 1) do
+      module.config(raw_config)
     else
       {:ok, raw_config}
     end
@@ -81,17 +84,15 @@ defmodule Mix.Tasks.Tableau.Build do
   defp run_extensions(extensions, token) do
     for module <- extensions, reduce: token do
       token ->
-        config_mod = Module.concat([module, Config])
-
         raw_config =
           :tableau |> Application.get_env(module, %{enabled: true}) |> Map.new()
 
         if raw_config[:enabled] do
-          {:ok, config} = validate_config(config_mod, raw_config)
+          {:ok, config} = validate_config(module, raw_config)
 
           {:ok, key} = Tableau.Extension.key(module)
 
-          token = put_in(token[key], config)
+          token = put_in(token.extensions[key], %{config: config})
 
           case module.run(token) do
             {:ok, token} ->

@@ -12,4 +12,4 @@ defmodule Tableau.TestHelpers do
   end
 end
 
-ExUnit.start()
+ExUnit.start(exclude: [skip: true])

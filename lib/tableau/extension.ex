@@ -67,6 +67,16 @@ defmodule Tableau.Extension do
   """
   @callback run(token()) :: {:ok, token()} | :error
 
+  @doc """
+  Optional callback to validate the config for an extension. Useful for 
+  providing more useful error messages for misconfigurations.
+  """
+  @callback config(Keyword.t() | map()) :: {:ok, map()} | {:error, any()}
+
+  @optional_callbacks [
+    config: 1
+  ]
+
   defmacro __using__(opts) do
     opts = Keyword.validate!(opts, [:key, :enabled, :type, :priority])
 
