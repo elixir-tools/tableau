@@ -1,6 +1,6 @@
 defmodule Tableau.DocumentTest.About do
   @moduledoc false
-  
+
   import Tableau.TestHelpers
 
   alias Tableau.DocumentTest.InnerLayout
@@ -26,7 +26,6 @@ end
 
 defmodule Tableau.DocumentTest.Index do
   @moduledoc false
-  
 
   alias Tableau.DocumentTest.InnerLayout
 
@@ -52,7 +51,6 @@ end
 defmodule Tableau.DocumentTest.InnerLayout do
   @moduledoc false
   import Tableau.Document.Helper, only: [render: 1]
-  
 
   alias Tableau.DocumentTest.RootLayout
 
@@ -76,7 +74,6 @@ end
 defmodule Tableau.DocumentTest.RootLayout do
   @moduledoc false
   import Tableau.Document.Helper, only: [render: 1]
-  
 
   require EEx
 
