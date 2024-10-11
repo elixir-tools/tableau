@@ -13,7 +13,7 @@ defmodule Tableau.PostExtensionTest do
 
   describe "run" do
     setup %{tmp_dir: dir} do
-      assert {:ok, config} = PostExtension.config(%{dir: dir, enabled: true})
+      assert {:ok, config} = PostExtension.config(%{dir: dir, enabled: true, layout: Blog.DefaultPostLayout})
 
       token = %{
         site: %{config: %{converters: [md: Tableau.MDExConverter]}},
@@ -228,6 +228,34 @@ defmodule Tableau.PostExtensionTest do
                    layout: Blog.PostLayout,
                    permalink: "/%C2qu%C3-es-la-programaci%C3n-funcional",
                    title: "¿Qué es la programación funcional?"
+                 }
+               ]
+             } = token
+    end
+
+    test "inherits layout from post extension config", %{tmp_dir: dir, token: token} do
+      File.write(Path.join(dir, "a-post.md"), """
+      ---
+      title: Missing layout key
+      date: 2018-02-28
+      permalink: /:title
+      ---
+
+      A great post
+      """)
+
+      assert {:ok, token} = PostExtension.run(token)
+
+      assert %{
+               posts: [
+                 %{
+                   __tableau_post_extension__: true,
+                   body: "\nA great post\n",
+                   date: ~U[2018-02-28 00:00:00Z],
+                   file: ^dir <> "/a-post.md",
+                   layout: Blog.DefaultPostLayout,
+                   permalink: "/missing-layout-key",
+                   title: "Missing layout key"
                  }
                ]
              } = token
