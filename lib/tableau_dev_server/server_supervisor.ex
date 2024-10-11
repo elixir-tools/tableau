@@ -11,7 +11,7 @@ defmodule TableauDevServer.ServerSupervisor do
     if Application.get_env(:tableau, :server) do
       children = [
         WebDevUtils.FileSystem,
-        Tableau.Server,
+        TableauDevServer.Server,
         WebDevUtils.CodeReloader
       ]
 
