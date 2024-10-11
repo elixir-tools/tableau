@@ -21,10 +21,6 @@ defmodule Tableau.Config do
     Tableau.Config.new(Map.new(Application.get_env(:tableau, :config, %{})))
   end
 
-  defp atom do
-    raw(&is_atom/1, message: "expected an atom")
-  end
-
   defp keyword(value) do
     list(tuple([atom(), value]))
   end

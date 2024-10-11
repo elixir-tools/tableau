@@ -50,7 +50,6 @@ defmodule Tableau.PostExtension do
     layout: "MyApp.PostLayout"
   ```
 
-
   ## Content formats
 
   If you're interested in authoring your content in something other than markdown (or you want to use a different markdown parser), you can configure
@@ -70,16 +69,27 @@ defmodule Tableau.PostExtension do
 
   use Tableau.Extension, key: :posts, type: :pre_build, priority: 100
 
+  import Schematic
+
   alias Tableau.Extension.Common
-  alias Tableau.PostExtension.Post
 
-  @config Map.new(Application.compile_env(:tableau, Tableau.PostExtension, %{}))
+  @impl Tableau.Extension
+  def config(config) do
+    unify(
+      map(%{
+        optional(:enabled) => bool(),
+        optional(:dir, "_posts") => str(),
+        optional(:future, false) => bool(),
+        optional(:permalink) => str(),
+        optional(:layout) => str()
+      }),
+      config
+    )
+  end
 
+  @impl Tableau.Extension
   def run(token) do
-    {:ok, config} = Tableau.PostExtension.Config.new(@config)
-
-    {:ok, %{converters: converters}} = Tableau.Config.get()
-
+    %{site: %{config: %{converters: converters}}, extensions: %{posts: %{config: config}}} = token
     exts = Enum.map_join(converters, ",", fn {ext, _} -> to_string(ext) end)
 
     posts =
@@ -89,7 +99,7 @@ defmodule Tableau.PostExtension do
       |> Common.entries(fn %{path: path, ext: ext, front_matter: front_matter, pre_convert_body: pre_convert_body} ->
         renderer = fn assigns -> converters[ext].convert(path, front_matter, pre_convert_body, assigns) end
 
-        {Post.build(path, front_matter, pre_convert_body), renderer}
+        {build(path, front_matter, pre_convert_body, config), renderer}
       end)
       |> Enum.sort_by(fn {post, _} -> post.date end, {:desc, DateTime})
       |> then(fn posts ->
@@ -112,5 +122,17 @@ defmodule Tableau.PostExtension do
      token
      |> Map.put(:posts, posts |> Enum.unzip() |> elem(0))
      |> Map.put(:graph, graph)}
+  end
+
+  defp build(filename, attrs, body, posts_config) do
+    Application.put_env(:date_time_parser, :include_zones_from, ~N[2010-01-01T00:00:00])
+
+    attrs
+    |> Map.put(:__tableau_post_extension__, true)
+    |> Map.put(:body, body)
+    |> Map.put(:file, filename)
+    |> Map.put(:layout, Module.concat([attrs[:layout] || posts_config.layout]))
+    |> Map.put(:date, DateTimeParser.parse_datetime!(attrs.date, assume_time: true, assume_utc: true))
+    |> Common.build_permalink(posts_config)
   end
 end

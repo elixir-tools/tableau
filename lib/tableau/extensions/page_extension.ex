@@ -63,15 +63,24 @@ defmodule Tableau.PageExtension do
 
   use Tableau.Extension, key: :pages, type: :pre_build, priority: 100
 
-  alias Tableau.Extension.Common
-  alias Tableau.PageExtension.Page
+  import Schematic
 
-  @config Map.new(Application.compile_env(:tableau, Tableau.PageExtension, %{}))
+  alias Tableau.Extension.Common
+
+  def config(input) do
+    unify(
+      map(%{
+        optional(:enabled, true) => bool(),
+        optional(:dir, "_pages") => str(),
+        optional(:permalink) => str(),
+        optional(:layout) => str()
+      }),
+      input
+    )
+  end
 
   def run(token) do
-    {:ok, config} = Tableau.PageExtension.Config.new(@config)
-
-    {:ok, %{converters: converters}} = Tableau.Config.get()
+    %{site: %{config: %{converters: converters}}, extensions: %{pages: %{config: config}}} = token
 
     exts = Enum.map_join(converters, ",", fn {ext, _} -> to_string(ext) end)
 
@@ -82,7 +91,7 @@ defmodule Tableau.PageExtension do
       |> Common.entries(fn %{path: path, ext: ext, front_matter: front_matter, pre_convert_body: pre_convert_body} ->
         renderer = fn assigns -> converters[ext].convert(path, front_matter, pre_convert_body, assigns) end
 
-        {Page.build(path, front_matter, pre_convert_body), renderer}
+        {build(path, front_matter, pre_convert_body, config), renderer}
       end)
 
     graph =
@@ -97,5 +106,14 @@ defmodule Tableau.PageExtension do
      token
      |> Map.put(:pages, pages |> Enum.unzip() |> elem(0))
      |> Map.put(:graph, graph)}
+  end
+
+  defp build(filename, front_matter, body, pages_config) do
+    front_matter
+    |> Map.put(:__tableau_page_extension__, true)
+    |> Map.put(:body, body)
+    |> Map.put(:file, filename)
+    |> Map.put(:layout, Module.concat([front_matter.layout || pages_config.layout]))
+    |> Common.build_permalink(pages_config)
   end
 end

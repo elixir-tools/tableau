@@ -21,6 +21,20 @@ defmodule Tableau.RSSExtension do
   """
   use Tableau.Extension, key: :rss, type: :post_write, priority: 200
 
+  import Schematic
+
+  def config(config) do
+    unify(
+      map(%{
+        optional(:enabled, true) => bool(),
+        optional(:language, "en-us") => str(),
+        title: str(),
+        description: str()
+      }),
+      config
+    )
+  end
+
   def run(%{site: %{config: %{url: url}}, posts: posts, rss: rss} = token) do
     prelude =
       """
