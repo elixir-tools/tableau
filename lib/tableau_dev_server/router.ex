@@ -21,7 +21,7 @@ defmodule TableauDevServer.Router do
 
   get "/ws/index.html" do
     conn
-    |> WebSockAdapter.upgrade(Tableau.Websocket, [], timeout: 60_000)
+    |> WebSockAdapter.upgrade(TableauDevServer.Websocket, [], timeout: 60_000)
     |> halt()
   end
 
@@ -32,12 +32,17 @@ defmodule TableauDevServer.Router do
   end
 
   defp recompile(conn, _) do
-    WebDevUtils.CodeReloader.reload()
+    if conn.request_path != "/ws" do
+      WebDevUtils.CodeReloader.reload()
+    end
+
     conn
   end
 
   defp rerender(conn, _) do
-    Mix.Task.rerun("tableau.build", ["--out", "_site"])
+    if conn.request_path != "/ws" do
+      Mix.Task.rerun("tableau.build", ["--out", "_site"])
+    end
 
     conn
   end
