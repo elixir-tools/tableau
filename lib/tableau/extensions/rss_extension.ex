@@ -35,7 +35,7 @@ defmodule Tableau.RSSExtension do
     )
   end
 
-  def run(%{site: %{config: %{url: url}}, posts: posts, rss: rss} = token) do
+  def run(%{site: %{config: %{url: url}}, posts: posts, extensions: %{rss: %{config: rss}}} = token) do
     prelude =
       """
       <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
