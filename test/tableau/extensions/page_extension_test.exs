@@ -3,7 +3,7 @@ defmodule Tableau.PageExtensionTest do
 
   alias Tableau.PageExtension
 
-  @moduletag :tmp_dir
+  @moduletag tmp_dir: true, skip: Version.compare(System.version(), "1.16.0") == :lt
 
   describe "config" do
     test "provides defaults for dir and future fields" do
