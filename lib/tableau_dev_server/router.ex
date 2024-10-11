@@ -1,21 +1,19 @@
-defmodule Tableau.Router do
+defmodule TableauDevServer.Router do
   @moduledoc false
   use Plug.Router, init_mode: :runtime
-
-  import Tableau.Strung
 
   require Logger
 
   @base_path Path.join("/", Application.compile_env(:tableau, [:config, :base_path], ""))
 
-  @not_found ~g'''
+  @not_found ~s'''
   <!DOCTYPE html><html lang="en"><head></head><body>Not Found</body></html>
-  '''html
+  '''
 
   plug :recompile
   plug :rerender
 
-  plug Tableau.IndexHtml
+  plug TableauDevServer.IndexHtml
   plug Plug.Static, at: @base_path, from: "_site", cache_control_for_etags: "no-cache"
 
   plug :match

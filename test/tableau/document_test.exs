@@ -1,6 +1,6 @@
 defmodule Tableau.DocumentTest.About do
   @moduledoc false
-  import Tableau.Strung
+
   import Tableau.TestHelpers
 
   alias Tableau.DocumentTest.InnerLayout
@@ -15,18 +15,17 @@ defmodule Tableau.DocumentTest.About do
   EEx.function_from_string(
     :def,
     :template,
-    ~g'''
+    ~s'''
     <div id="<%= @page.yo %>" class="<%= @page.foo %>">
       hi
     </div>
-    '''html,
+    ''',
     [:assigns]
   )
 end
 
 defmodule Tableau.DocumentTest.Index do
   @moduledoc false
-  import Tableau.Strung
 
   alias Tableau.DocumentTest.InnerLayout
 
@@ -40,11 +39,11 @@ defmodule Tableau.DocumentTest.Index do
   EEx.function_from_string(
     :def,
     :template,
-    ~g'''
+    ~s'''
     <div id="home">
       Home page!
     </div>
-    '''html,
+    ''',
     [:_assigns]
   )
 end
@@ -52,7 +51,6 @@ end
 defmodule Tableau.DocumentTest.InnerLayout do
   @moduledoc false
   import Tableau.Document.Helper, only: [render: 1]
-  import Tableau.Strung
 
   alias Tableau.DocumentTest.RootLayout
 
@@ -64,11 +62,11 @@ defmodule Tableau.DocumentTest.InnerLayout do
   EEx.function_from_string(
     :def,
     :template,
-    ~g'''
+    ~s'''
     <div id="inner-layout">
       <%= render(@inner_content) %>
     </div>
-    '''html,
+    ''',
     [:assigns]
   )
 end
@@ -76,7 +74,6 @@ end
 defmodule Tableau.DocumentTest.RootLayout do
   @moduledoc false
   import Tableau.Document.Helper, only: [render: 1]
-  import Tableau.Strung
 
   require EEx
 
@@ -85,14 +82,14 @@ defmodule Tableau.DocumentTest.RootLayout do
   EEx.function_from_string(
     :def,
     :template,
-    ~g'''
+    ~s'''
     <html>
       <head></head>
       <body>
         <%= render @inner_content %>
       </body>
     </html>
-    '''html,
+    ''',
     [:assigns]
   )
 end

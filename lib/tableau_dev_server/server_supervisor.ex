@@ -1,4 +1,4 @@
-defmodule Tableau.ServerSupervisor do
+defmodule TableauDevServer.ServerSupervisor do
   @moduledoc false
   use Supervisor
 

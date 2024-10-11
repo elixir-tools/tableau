@@ -34,8 +34,6 @@ end
 
 defmodule Mix.Tasks.Tableau.BuildTest.About do
   @moduledoc false
-  import Tableau.Strung
-
   alias Mix.Tasks.Tableau.BuildTest.InnerLayout
 
   require EEx
@@ -48,18 +46,17 @@ defmodule Mix.Tasks.Tableau.BuildTest.About do
   EEx.function_from_string(
     :def,
     :template,
-    ~g'''
+    ~s'''
     <div>
       hi
     </div>
-    '''html,
+    ''',
     [:_assigns]
   )
 end
 
 defmodule Mix.Tasks.Tableau.BuildTest.Index do
   @moduledoc false
-  import Tableau.Strung
 
   alias Mix.Tasks.Tableau.BuildTest.InnerLayout
 
@@ -73,11 +70,11 @@ defmodule Mix.Tasks.Tableau.BuildTest.Index do
   EEx.function_from_string(
     :def,
     :template,
-    ~g'''
+    ~s'''
     <div id="home">
       Home page!
     </div>
-    '''html,
+    ''',
     [:_assigns]
   )
 end
@@ -85,7 +82,6 @@ end
 defmodule Mix.Tasks.Tableau.BuildTest.InnerLayout do
   @moduledoc false
   import Tableau.Document.Helper, only: [render: 1]
-  import Tableau.Strung
 
   alias Mix.Tasks.Tableau.BuildTest.RootLayout
 
@@ -97,11 +93,11 @@ defmodule Mix.Tasks.Tableau.BuildTest.InnerLayout do
   EEx.function_from_string(
     :def,
     :template,
-    ~g'''
+    ~s'''
     <div id="inner-layout">
       <%= render(@inner_content) %>
     </div>
-    '''html,
+    ''',
     [:assigns]
   )
 end
@@ -109,7 +105,6 @@ end
 defmodule Mix.Tasks.Tableau.BuildTest.RootLayout do
   @moduledoc false
   import Tableau.Document.Helper, only: [render: 1]
-  import Tableau.Strung
 
   require EEx
 
@@ -118,14 +113,14 @@ defmodule Mix.Tasks.Tableau.BuildTest.RootLayout do
   EEx.function_from_string(
     :def,
     :template,
-    ~g'''
+    ~s'''
     <html>
       <head></head>
       <body>
         <%= render @inner_content %>
       </body>
     </html>
-    '''html,
+    ''',
     [:assigns]
   )
 end

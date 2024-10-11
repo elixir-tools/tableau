@@ -1,4 +1,4 @@
-defmodule Tableau.Server do
+defmodule TableauDevServer.Server do
   @moduledoc false
   def child_spec(_) do
     Supervisor.child_spec(
