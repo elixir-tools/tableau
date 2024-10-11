@@ -74,7 +74,7 @@ defmodule Mix.Tasks.Tableau.Build do
 
   defp extensions_for(modules, type) do
     extensions =
-      for mod <- modules, {:ok, type} == Tableau.Extension.type(mod) do
+      for mod <- modules, Code.ensure_loaded?(mod), {:ok, type} == Tableau.Extension.type(mod) do
         mod
       end
 

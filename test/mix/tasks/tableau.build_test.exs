@@ -2,13 +2,8 @@ defmodule Mix.Tasks.Tableau.LogExtension do
   @moduledoc false
   use Tableau.Extension, key: :log, type: :pre_build, priority: 200
 
-  defmodule Config do
-    @moduledoc false
-    def new(i), do: {:ok, i}
-  end
-
   def run(token) do
-    IO.inspect(System.monotonic_time(), label: "second")
+    IO.write(:stderr, "second: #{System.monotonic_time()}\n")
     {:ok, token}
   end
 end
@@ -18,7 +13,7 @@ defmodule Mix.Tasks.Tableau.FailExtension do
   use Tableau.Extension, key: :fail, type: :pre_build, priority: 100
 
   def run(_site) do
-    IO.inspect(System.monotonic_time(), label: "first")
+    IO.write(:stderr, "first: #{System.monotonic_time()}\n")
     :error
   end
 end
@@ -145,8 +140,38 @@ defmodule Mix.Tasks.Tableau.BuildTest do
 
   @tag :tmp_dir
   test "renders all pages", %{tmp_dir: out} do
+    posts = out |> Path.join("_posts") |> tap(&File.mkdir_p!/1)
+    pages = out |> Path.join("_pages") |> tap(&File.mkdir_p!/1)
+    Application.put_env(:tableau, Tableau.PostExtension, enabled: true, dir: posts)
+    Application.put_env(:tableau, Tableau.PageExtension, enabled: true, dir: pages)
+
+    File.write(Path.join(posts, "my-post.md"), """
+    ---
+    layout: Mix.Tasks.Tableau.BuildTest.RootLayout
+    title: A Bing Bong Blog Post
+    date: 2017-02-28
+    categories: post
+    permalink: /:title/
+    ---
+
+    ## Bing
+
+    Bong!
+    """)
+
+    page_path = pages |> Path.join("some/deeply/nested/page") |> tap(&File.mkdir_p!/1) |> Path.join("/my-page.md")
+
+    File.write(page_path, """
+    ---
+    layout: Mix.Tasks.Tableau.BuildTest.RootLayout
+    title: Beginner Tutorial
+    ---
+
+    ## How to get started
+    """)
+
     {log, io} =
-      with_io(fn ->
+      with_io(:stderr, fn ->
         {_, log} =
           with_log(fn ->
             _documents = Build.run(["--out", out])
@@ -171,5 +196,7 @@ defmodule Mix.Tasks.Tableau.BuildTest do
 
     assert File.exists?(Path.join(out, "/index.html"))
     assert File.exists?(Path.join(out, "/about/index.html"))
+    assert File.exists?(Path.join(out, "/a-bing-bong-blog-post/index.html"))
+    assert File.exists?(Path.join(out, "/some/deeply/nested/page/my-page/index.html"))
   end
 end
