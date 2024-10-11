@@ -1,4 +1,4 @@
-defmodule Tableau.IndexHtml do
+defmodule TableauDevServer.IndexHtml do
   @moduledoc false
 
   @behaviour Plug

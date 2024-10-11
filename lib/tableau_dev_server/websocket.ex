@@ -1,4 +1,4 @@
-defmodule Tableau.Websocket do
+defmodule TableauDevServer.Websocket do
   @moduledoc false
   require Logger
 

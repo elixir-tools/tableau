@@ -22,7 +22,7 @@ defmodule Tableau.MixProject do
   def application do
     [
       extra_applications: [:logger, :inets],
-      mod: {Tableau.Application, []}
+      mod: {TableauDevServer.Application, []}
     ]
   end
 
