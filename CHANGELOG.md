@@ -1,5 +1,38 @@
 # CHANGELOG
 
+## [0.18.0](https://github.com/elixir-tools/tableau/compare/v0.17.1...v0.18.0) (2024-10-11)
+
+
+### ⚠ BREAKING CHANGES
+
+* :pre_write extensions now are run after rendering the graph, but before writing to disk. Previously, the body content of each page would not have been converted yet, but now it will. This should enable anyone to modify the HTML after other extensions converter it.
+* pass assigns to post/page extension rendering ([#102](https://github.com/elixir-tools/tableau/issues/102))
+
+### Features
+
+* add optional config/1 callback to extensions ([#104](https://github.com/elixir-tools/tableau/issues/104)) ([d1a5480](https://github.com/elixir-tools/tableau/commit/d1a548096a44b89e6b62ebdbc76d002f9be7481c))
+* allow extensions to manually insert pages into the graph ([#96](https://github.com/elixir-tools/tableau/issues/96)) ([19f4ce5](https://github.com/elixir-tools/tableau/commit/19f4ce5f66916a57d3e4e5d16f1aeb844408a0b3))
+* allow other markup formats ([#100](https://github.com/elixir-tools/tableau/issues/100)) ([0d9959f](https://github.com/elixir-tools/tableau/commit/0d9959f6300609da0bf2874742512d0e751bea90))
+* pass assigns to post/page extension rendering ([#102](https://github.com/elixir-tools/tableau/issues/102)) ([896bf7f](https://github.com/elixir-tools/tableau/commit/896bf7f1dd3ce0c4f94a8e80de9fedbbca29c3fc))
+* run pre-write extensions after render but before write ([#111](https://github.com/elixir-tools/tableau/issues/111)) ([b09ce49](https://github.com/elixir-tools/tableau/commit/b09ce49c6213fcddcfc99c32b41a15528337887e))
+
+
+### Bug Fixes
+
+* actually respect the "enabled" key in `use Tableau.Extension` ([b09ce49](https://github.com/elixir-tools/tableau/commit/b09ce49c6213fcddcfc99c32b41a15528337887e))
+* allow atom layout module names ([#108](https://github.com/elixir-tools/tableau/issues/108)) ([c128593](https://github.com/elixir-tools/tableau/commit/c1285938d06d2e7ce6b053ae788cdad47670ed2a))
+* bump MDEx and fix breaking change ([19f4ce5](https://github.com/elixir-tools/tableau/commit/19f4ce5f66916a57d3e4e5d16f1aeb844408a0b3))
+* ensure extensions are loading ([9585d16](https://github.com/elixir-tools/tableau/commit/9585d1631240b1992bb3f6e51b5e5477eccadaee))
+* handle token format correctly in MDExConverter ([#105](https://github.com/elixir-tools/tableau/issues/105)) ([9585d16](https://github.com/elixir-tools/tableau/commit/9585d1631240b1992bb3f6e51b5e5477eccadaee))
+* handle token format correctly in RSSExtension ([9585d16](https://github.com/elixir-tools/tableau/commit/9585d1631240b1992bb3f6e51b5e5477eccadaee))
+* **posts,regression:** sort posts ([0677ce6](https://github.com/elixir-tools/tableau/commit/0677ce67985e193d41e61f88045dc118236dd4ad))
+
+
+### Performance Improvements
+
+* improve live reload performance ([#110](https://github.com/elixir-tools/tableau/issues/110)) ([e0cc106](https://github.com/elixir-tools/tableau/commit/e0cc106343d1762ccc2f438a967e19194d5417b1))
+* render the graph in parallel ([b09ce49](https://github.com/elixir-tools/tableau/commit/b09ce49c6213fcddcfc99c32b41a15528337887e))
+
 ## [0.17.1](https://github.com/elixir-tools/tableau/compare/v0.17.0...v0.17.1) (2024-08-16)
 
 
