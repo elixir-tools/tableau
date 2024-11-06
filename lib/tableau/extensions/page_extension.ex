@@ -11,6 +11,7 @@ defmodule Tableau.PageExtension do
   * `:title` - The title of the page
   * `:permalink` - The permalink of the page.
   * `:layout` - A string representation of a Tableau layout module.
+  * `:converter` - A string representation of a converter module. (optional)
 
   ## Example
 
@@ -19,6 +20,7 @@ defmodule Tableau.PageExtension do
   title: "Getting Started"
   permalink: "/docs/:title"
   layout: "ElixirTools.PageLayout"
+  converter: "MyConverter"
   ```
 
   ## Permalink
@@ -59,6 +61,8 @@ defmodule Tableau.PageExtension do
       adoc: MySite.AsciiDocConverter
     ],
   ```
+
+  As noted above, a converter can be overridden on a specific page, using the frontmatter `:converter` key.
   """
 
   use Tableau.Extension, key: :pages, type: :pre_build, priority: 100
@@ -88,10 +92,11 @@ defmodule Tableau.PageExtension do
       config.dir
       |> Path.join("**/*.{#{exts}}")
       |> Common.paths()
-      |> Common.entries(fn %{path: path, ext: ext, front_matter: front_matter, pre_convert_body: pre_convert_body} ->
-        renderer = fn assigns -> converters[ext].convert(path, front_matter, pre_convert_body, assigns) end
-
-        {build(path, front_matter, pre_convert_body, config), renderer}
+      |> Common.entries(fn pathmap ->
+        {
+          build(pathmap.path, pathmap.front_matter, pathmap.pre_convert_body, config),
+          fn assigns -> pick_module_and_convert(converters, pathmap, assigns) end
+        }
       end)
 
     graph =
@@ -106,6 +111,14 @@ defmodule Tableau.PageExtension do
      token
      |> Map.put(:pages, pages |> Enum.unzip() |> elem(0))
      |> Map.put(:graph, graph)}
+  end
+
+  defp to_module(nil), do: nil
+  defp to_module(string) when is_binary(string), do: Module.concat(string, nil)
+
+  defp pick_module_and_convert(converters, pathmap, assigns) do
+    cnv_module = to_module(pathmap.front_matter[:converter]) || converters[pathmap.ext]
+    cnv_module.convert(pathmap.path, pathmap.front_matter, pathmap.pre_convert_body, assigns)
   end
 
   defp build(filename, front_matter, body, pages_config) do

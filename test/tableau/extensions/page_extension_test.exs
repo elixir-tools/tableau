@@ -228,5 +228,34 @@ defmodule Tableau.PageExtensionTest do
                ]
              } = token
     end
+
+    test "renders with a custom converter in frontmatter", %{tmp_dir: dir, token: token} do
+      File.write(Path.join(dir, "a-page.md"), """
+      ---
+      title: missing layout key
+      type: articles
+      permalink: /:type/:title
+      converter: "Tableau.MDExConverter"
+      ---
+
+      A great page
+      """)
+
+      assert {:ok, token} = PageExtension.run(token)
+
+      assert %{
+               pages: [
+                 %{
+                   __tableau_page_extension__: true,
+                   body: "\nA great page\n",
+                   file: ^dir <> "/a-page.md",
+                   layout: Blog.DefaultPageLayout,
+                   permalink: "/articles/missing-layout-key",
+                   title: "missing layout key",
+                   type: "articles"
+                 }
+               ]
+             } = token
+    end
   end
 end

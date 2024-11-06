@@ -12,6 +12,7 @@ defmodule Tableau.PostExtension do
   * `:permalink` - The permalink of the post. `:title` will be replaced with the posts title and non alphanumeric characters removed. Optional.
   * `:date` - A string representation of an Elixir `NaiveDateTime`, often presented as a `sigil_N`. This will be converted to your configured timezone.
   * `:layout` - A string representation of a Tableau layout module.
+  * `:converter` - A string representation of a converter module. (optional)
 
   ## Example
 
@@ -21,6 +22,7 @@ defmodule Tableau.PostExtension do
   permalink: "/news/:title"
   date: "~N[2023-09-19 01:00:00]"
   layout: "ElixirTools.PostLayout"
+  converter: "MyConverter"
   ```
 
   ## Permalink
@@ -65,6 +67,8 @@ defmodule Tableau.PostExtension do
       adoc: MySite.AsciiDocConverter
     ],
   ```
+
+  As noted above, a converter can be overridden on a specific page, using the frontmatter `:converter` key.
   """
 
   use Tableau.Extension, key: :posts, type: :pre_build, priority: 100
@@ -96,10 +100,11 @@ defmodule Tableau.PostExtension do
       config.dir
       |> Path.join("**/*.{#{exts}}")
       |> Common.paths()
-      |> Common.entries(fn %{path: path, ext: ext, front_matter: front_matter, pre_convert_body: pre_convert_body} ->
-        renderer = fn assigns -> converters[ext].convert(path, front_matter, pre_convert_body, assigns) end
-
-        {build(path, front_matter, pre_convert_body, config), renderer}
+      |> Common.entries(fn pathmap ->
+        {
+          build(pathmap.path, pathmap.front_matter, pathmap.pre_convert_body, config),
+          fn assigns -> pick_module_and_convert(converters, pathmap, assigns) end
+        }
       end)
       |> Enum.sort_by(fn {post, _} -> post.date end, {:desc, DateTime})
       |> then(fn posts ->
@@ -122,6 +127,14 @@ defmodule Tableau.PostExtension do
      token
      |> Map.put(:posts, posts |> Enum.unzip() |> elem(0))
      |> Map.put(:graph, graph)}
+  end
+
+  defp to_module(nil), do: nil
+  defp to_module(string) when is_binary(string), do: Module.concat(string, nil)
+
+  defp pick_module_and_convert(converters, pathmap, assigns) do
+    cnv_module = to_module(pathmap.front_matter[:converter]) || converters[pathmap.ext]
+    cnv_module.convert(pathmap.path, pathmap.front_matter, pathmap.pre_convert_body, assigns)
   end
 
   defp build(filename, attrs, body, posts_config) do

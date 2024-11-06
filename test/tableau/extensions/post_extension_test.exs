@@ -291,5 +291,37 @@ defmodule Tableau.PostExtensionTest do
                ]
              } = token
     end
+
+    test "renders with a custom converter in frontmatter", %{tmp_dir: dir, token: token} do
+      File.write(Path.join(dir, "a-post.md"), """
+      ---
+      title: foo man chu_foo.js
+      type: articles
+      layout: Some.Layout
+      date: 2023-02-01 00:01:00
+      permalink: /:type/:year/:month/:day/:title
+      converter: "Tableau.MDExConverter"
+      ---
+
+      A great post
+      """)
+
+      assert {:ok, token} = PostExtension.run(token)
+
+      assert %{
+               posts: [
+                 %{
+                   __tableau_post_extension__: true,
+                   body: "\nA great post\n",
+                   date: ~U[2023-02-01 00:01:00Z],
+                   file: ^dir <> "/a-post.md",
+                   layout: Some.Layout,
+                   permalink: "/articles/2023/02/01/foo-man-chu-foo.js",
+                   title: "foo man chu_foo.js",
+                   type: "articles"
+                 }
+               ]
+             } = token
+    end
   end
 end
