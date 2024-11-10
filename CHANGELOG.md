@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [0.19.0](https://github.com/elixir-tools/tableau/compare/v0.18.0...v0.19.0) (2024-11-10)
+
+
+### Features
+
+* **pages, posts:** use custom converter in frontmatter ([#113](https://github.com/elixir-tools/tableau/issues/113)) ([e39efa4](https://github.com/elixir-tools/tableau/commit/e39efa42c5321ccb7f14384dc15e381bbda138af)), closes [#112](https://github.com/elixir-tools/tableau/issues/112)
+
 ## [0.18.0](https://github.com/elixir-tools/tableau/compare/v0.17.1...v0.18.0) (2024-10-11)
 
 
