@@ -1,3 +1,21 @@
+defmodule Tableau.PostExtensionTest.Layout do
+  @moduledoc false
+  use Tableau.Layout
+
+  require EEx
+
+  EEx.function_from_string(
+    :def,
+    :template,
+    ~s'''
+    <div>
+      <%= render(@inner_content) %>
+    </div>
+    ''',
+    [:assigns]
+  )
+end
+
 defmodule Tableau.PostExtensionTest do
   use ExUnit.Case, async: true
 
@@ -297,10 +315,10 @@ defmodule Tableau.PostExtensionTest do
       ---
       title: foo man chu_foo.js
       type: articles
-      layout: Some.Layout
+      layout: Tableau.PostExtensionTest.Layout
       date: 2023-02-01 00:01:00
       permalink: /:type/:year/:month/:day/:title
-      converter: "Tableau.MDExConverter"
+      converter: Tableau.PostExtensionTest
       ---
 
       A great post
@@ -308,20 +326,25 @@ defmodule Tableau.PostExtensionTest do
 
       assert {:ok, token} = PostExtension.run(token)
 
-      assert %{
-               posts: [
-                 %{
-                   __tableau_post_extension__: true,
-                   body: "\nA great post\n",
-                   date: ~U[2023-02-01 00:01:00Z],
-                   file: ^dir <> "/a-post.md",
-                   layout: Some.Layout,
-                   permalink: "/articles/2023/02/01/foo-man-chu-foo.js",
-                   title: "foo man chu_foo.js",
-                   type: "articles"
-                 }
-               ]
-             } = token
+      assert %{posts: [%{converter: "Tableau.PostExtensionTest"}], graph: graph} = token
+
+      page =
+        graph
+        |> Graph.vertices()
+        |> Enum.find(fn p ->
+          case p do
+            %Tableau.Page{permalink: "/articles/2023/02/01/foo-man-chu-foo.js"} -> true
+            _ -> false
+          end
+        end)
+
+      graph = Tableau.Graph.insert(graph, [Tableau.PostExtensionTest.Layout])
+
+      content = Tableau.Document.render(graph, page, %{}, %{})
+
+      assert content =~ "A GREAT POST"
     end
   end
+
+  def convert(_, _, body, _), do: String.upcase(body)
 end

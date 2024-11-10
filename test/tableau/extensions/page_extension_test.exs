@@ -1,3 +1,21 @@
+defmodule Tableau.PageExtensionTest.Layout do
+  @moduledoc false
+  use Tableau.Layout
+
+  require EEx
+
+  EEx.function_from_string(
+    :def,
+    :template,
+    ~s'''
+    <div>
+      <%= render(@inner_content) %>
+    </div>
+    ''',
+    [:assigns]
+  )
+end
+
 defmodule Tableau.PageExtensionTest do
   use ExUnit.Case, async: true
 
@@ -232,10 +250,11 @@ defmodule Tableau.PageExtensionTest do
     test "renders with a custom converter in frontmatter", %{tmp_dir: dir, token: token} do
       File.write(Path.join(dir, "a-page.md"), """
       ---
-      title: missing layout key
+      title: custom converter
       type: articles
+      layout: Tableau.PageExtensionTest.Layout
       permalink: /:type/:title
-      converter: "Tableau.MDExConverter"
+      converter: Tableau.PageExtensionTest
       ---
 
       A great page
@@ -244,18 +263,27 @@ defmodule Tableau.PageExtensionTest do
       assert {:ok, token} = PageExtension.run(token)
 
       assert %{
-               pages: [
-                 %{
-                   __tableau_page_extension__: true,
-                   body: "\nA great page\n",
-                   file: ^dir <> "/a-page.md",
-                   layout: Blog.DefaultPageLayout,
-                   permalink: "/articles/missing-layout-key",
-                   title: "missing layout key",
-                   type: "articles"
-                 }
-               ]
+               pages: [%{body: "\nA great page\n", converter: "Tableau.PageExtensionTest"}],
+               graph: graph
              } = token
+
+      page =
+        graph
+        |> Graph.vertices()
+        |> Enum.find(fn p ->
+          case p do
+            %Tableau.Page{permalink: "/articles/custom-converter"} -> true
+            _ -> false
+          end
+        end)
+
+      graph = Tableau.Graph.insert(graph, [Tableau.PageExtensionTest.Layout])
+
+      content = Tableau.Document.render(graph, page, %{}, %{})
+
+      assert content =~ "A GREAT PAGE"
     end
   end
+
+  def convert(_, _, body, _), do: String.upcase(body)
 end

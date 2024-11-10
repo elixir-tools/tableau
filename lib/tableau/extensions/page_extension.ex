@@ -92,10 +92,18 @@ defmodule Tableau.PageExtension do
       config.dir
       |> Path.join("**/*.{#{exts}}")
       |> Common.paths()
-      |> Common.entries(fn pathmap ->
+      |> Common.entries(fn %{path: path, front_matter: front_matter, pre_convert_body: body, ext: ext} ->
         {
-          build(pathmap.path, pathmap.front_matter, pathmap.pre_convert_body, config),
-          fn assigns -> pick_module_and_convert(converters, pathmap, assigns) end
+          build(path, front_matter, body, config),
+          fn assigns ->
+            converter =
+              case front_matter[:converter] do
+                nil -> converters[ext]
+                converter -> Module.concat([converter])
+              end
+
+            converter.convert(path, front_matter, body, assigns)
+          end
         }
       end)
 
@@ -111,14 +119,6 @@ defmodule Tableau.PageExtension do
      token
      |> Map.put(:pages, pages |> Enum.unzip() |> elem(0))
      |> Map.put(:graph, graph)}
-  end
-
-  defp to_module(nil), do: nil
-  defp to_module(string) when is_binary(string), do: Module.concat(string, nil)
-
-  defp pick_module_and_convert(converters, pathmap, assigns) do
-    cnv_module = to_module(pathmap.front_matter[:converter]) || converters[pathmap.ext]
-    cnv_module.convert(pathmap.path, pathmap.front_matter, pathmap.pre_convert_body, assigns)
   end
 
   defp build(filename, front_matter, body, pages_config) do
