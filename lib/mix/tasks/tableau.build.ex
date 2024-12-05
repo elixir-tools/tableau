@@ -55,11 +55,12 @@ defmodule Mix.Tasks.Tableau.Build do
     token = mods |> extensions_for(:pre_write) |> run_extensions(token)
 
     for %{body: body, permalink: permalink} <- pages do
-      dir = Path.join(out, permalink)
+      file_path = build_file_path(out, permalink)
+      dir = Path.dirname(file_path)
 
       File.mkdir_p!(dir)
 
-      File.write!(Path.join(dir, "index.html"), body)
+      File.write!(file_path, body)
     end
 
     if File.exists?(config.include_dir) do
@@ -69,6 +70,15 @@ defmodule Mix.Tasks.Tableau.Build do
     token = mods |> extensions_for(:post_write) |> run_extensions(token)
 
     token
+  end
+
+  @file_extensions [".html"]
+  defp build_file_path(out, permalink) do
+    if Path.extname(permalink) in @file_extensions do
+      Path.join(out, permalink)
+    else
+      Path.join([out, permalink, "index.html"])
+    end
   end
 
   defp validate_config(module, raw_config) do
