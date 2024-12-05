@@ -194,4 +194,30 @@ defmodule Mix.Tasks.Tableau.BuildTest do
     assert File.exists?(Path.join(out, "/a-bing-bong-blog-post/index.html"))
     assert File.exists?(Path.join(out, "/some/deeply/nested/page/my-page/index.html"))
   end
+
+  @tag :tmp_dir
+  test "writes page with permalink with .html file extension to corresponding file", %{tmp_dir: out} do
+    pages = out |> Path.join("_pages") |> tap(&File.mkdir_p!/1)
+    Application.put_env(:tableau, Tableau.PageExtension, enabled: true, dir: pages)
+
+    File.write(Path.join(pages, "404.md"), """
+    ---
+    layout: Mix.Tasks.Tableau.BuildTest.RootLayout
+    title: A 404 error page
+    permalink: /404.html
+    ---
+
+    ## Ooops
+
+    Nothing here.
+    """)
+
+    with_io(:stderr, fn ->
+      with_log(fn ->
+        _documents = Build.run(["--out", out])
+      end)
+    end)
+
+    assert File.exists?(Path.join(out, "/404.html"))
+  end
 end
