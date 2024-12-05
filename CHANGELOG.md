@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [0.20.0](https://github.com/elixir-tools/tableau/compare/v0.19.0...v0.20.0) (2024-12-05)
+
+
+### Features
+
+* write pages with .html permalink to corresponding file([#115](https://github.com/elixir-tools/tableau/issues/115)) ([8c5a614](https://github.com/elixir-tools/tableau/commit/8c5a61483e9ee6e7195bb73347eb1ae091dd3dd6))
+
 ## [0.19.0](https://github.com/elixir-tools/tableau/compare/v0.18.0...v0.19.0) (2024-11-10)
 
 
