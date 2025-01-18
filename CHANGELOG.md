@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [0.20.1](https://github.com/elixir-tools/tableau/compare/v0.20.0...v0.20.1) (2025-01-18)
+
+
+### Bug Fixes
+
+* include toke.site.pages earlier in the pipeline ([1c78914](https://github.com/elixir-tools/tableau/commit/1c789148607a67d38ac99773a07f110d506144cc))
+
 ## [0.20.0](https://github.com/elixir-tools/tableau/compare/v0.19.0...v0.20.0) (2024-12-05)
 
 
