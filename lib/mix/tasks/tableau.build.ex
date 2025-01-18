@@ -39,6 +39,8 @@ defmodule Mix.Tasks.Tableau.Build do
         {mod, Map.new(Nodable.opts(mod) || [])}
       end
 
+    token = put_in(token.site[:pages], Enum.map(pages, fn {_mod, page} -> page end))
+
     pages =
       pages
       |> Task.async_stream(fn {mod, page} ->
