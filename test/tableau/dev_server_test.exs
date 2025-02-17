@@ -35,6 +35,7 @@ end
 defmodule Tableau.DevServerTest do
   use ExUnit.Case, async: false
   use Plug.Test
+
   import ExUnit.CaptureIO
   import ExUnit.CaptureLog
 
