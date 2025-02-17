@@ -2,9 +2,9 @@ defmodule TableauDevServer.Router do
   @moduledoc false
   use Plug.Router, init_mode: :runtime
 
-  require Logger
-
   alias TableauDevServer.TaskProxy
+
+  require Logger
 
   @base_path Path.join("/", Application.compile_env(:tableau, [:config, :base_path], ""))
 
@@ -55,14 +55,14 @@ defmodule TableauDevServer.Router do
     end
   end
 
-  defp task_build() do
+  defp task_build do
     proxy_io(fn ->
       try do
         Mix.Task.rerun("tableau.build", ["--out", "_site"])
         :ok
       catch
         :exit, {:shutdown, 1} ->
-        :error
+          :error
 
         kind, reason ->
           IO.puts(Exception.format(kind, reason, __STACKTRACE__))
@@ -160,7 +160,8 @@ defmodule TableauDevServer.Router do
   end
 
   defp format_output(output) do
-    IO.iodata_to_binary(output)
+    output
+    |> IO.iodata_to_binary()
     |> String.trim()
     |> Plug.HTML.html_escape()
   end

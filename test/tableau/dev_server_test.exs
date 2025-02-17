@@ -29,35 +29,39 @@ defmodule Tableau.DevServerTest.BrokenExtension do
   @moduledoc false
   use Tableau.Extension, key: :pages, type: :pre_build, priority: 1, enabled: false
 
-  def run(_token), do: raise "I'm broken"
+  def run(_token), do: raise("I'm broken")
 end
 
 defmodule Tableau.DevServerTest do
   use ExUnit.Case, async: false
-
   use Plug.Test
-  #import Tableau.TestHelpers
-  import ExUnit.CaptureLog
   import ExUnit.CaptureIO
-  alias TableauDevServer.{Router, IndexHtml}
+  import ExUnit.CaptureLog
+
+  alias Mix.Tasks.Tableau.FailExtension
+  alias Mix.Tasks.Tableau.LogExtension
+  alias Tableau.DevServerTest.BrokenExtension
+  alias TableauDevServer.IndexHtml
+  alias TableauDevServer.Router
 
   @router_opts Router.init([])
   @indexhtml_opts IndexHtml.init([])
 
   setup do
     # disable extensions to suppress IO writes
-    Application.put_env(:tableau, Mix.Tasks.Tableau.LogExtension, enabled: false)
-    Application.put_env(:tableau, Mix.Tasks.Tableau.FailExtension, enabled: false)
+    Application.put_env(:tableau, LogExtension, enabled: false)
+    Application.put_env(:tableau, FailExtension, enabled: false)
 
     on_exit(fn ->
-      Application.put_env(:tableau, Mix.Tasks.Tableau.LogExtension, enabled: true)
-      Application.put_env(:tableau, Mix.Tasks.Tableau.FailExtension, enabled: true)
+      Application.put_env(:tableau, LogExtension, enabled: true)
+      Application.put_env(:tableau, FailExtension, enabled: true)
     end)
   end
 
   test "it serves the site" do
     conn =
-      conn(:get, "/home")
+      :get
+      |> conn("/home")
       |> Router.call(@router_opts)
 
     assert conn.status == 200
@@ -66,8 +70,10 @@ defmodule Tableau.DevServerTest do
 
   test "it serves a 404 for missing pages" do
     assert capture_log(fn ->
-             conn = conn(:get, "/missing")
-             |> Router.call(@router_opts)
+             conn =
+               :get
+               |> conn("/missing")
+               |> Router.call(@router_opts)
 
              assert conn.status == 404
              assert conn.resp_body =~ "Not Found"
@@ -75,34 +81,39 @@ defmodule Tableau.DevServerTest do
   end
 
   test "it serves a 500 when compiler crashes" do
-    Application.put_env(:tableau, Tableau.DevServerTest.BrokenExtension, enabled: true)
-    {conn, _log} = with_io(:stdio, fn ->
-     conn(:get, "/home")
-      |> Router.call(@router_opts)
-    end)
+    Application.put_env(:tableau, BrokenExtension, enabled: true)
 
-    Application.delete_env(:tableau, Tableau.DevServerTest.BrokenExtension)
+    {conn, _log} =
+      with_io(:stdio, fn ->
+        :get
+        |> conn("/home")
+        |> Router.call(@router_opts)
+      end)
+
+    Application.delete_env(:tableau, BrokenExtension)
     assert conn.status == 500
     assert conn.resp_body =~ "Tableau Compilation error"
     assert conn.resp_body =~ "Console output is shown below"
-
   end
 
   test "index.html is serverd always when request path is directory" do
     conn =
-      conn(:get, "/contact")
+      :get
+      |> conn("/contact")
       |> IndexHtml.call(@indexhtml_opts)
 
     assert conn.path_info == ["contact", "index.html"]
 
     conn =
-      conn(:get, "/very/deep/path/")
+      :get
+      |> conn("/very/deep/path/")
       |> IndexHtml.call(@indexhtml_opts)
 
     assert conn.path_info == ["very", "deep", "path", "index.html"]
 
     conn =
-      conn(:get, "/assets/style.css")
+      :get
+      |> conn("/assets/style.css")
       |> IndexHtml.call(@indexhtml_opts)
 
     assert conn.path_info == ["assets", "style.css"]

@@ -6,7 +6,7 @@ defmodule TableauDevServer.TaskProxy do
   @moduledoc false
   use GenServer
 
-  def start() do
+  def start do
     GenServer.start(__MODULE__, :ok)
   end
 
