@@ -8,3 +8,4 @@ config :tableau, Tableau.PostExtension, enabled: true
 config :tableau, Tableau.RSSExtension, enabled: false
 config :tableau, Tableau.SitemapExtension, enabled: false
 config :tableau, :config, url: "http://localhost:4999"
+config :tableau, :server, true
