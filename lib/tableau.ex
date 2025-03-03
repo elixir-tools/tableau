@@ -51,3 +51,29 @@ defmodule Tableau do
     MDEx.to_html!(content, Keyword.merge(config.markdown[:mdex], overrides))
   end
 end
+
+defmodule Tableau.BuildException do
+  @moduledoc false
+  @type t :: %__MODULE__{
+          page: map(),
+          exception: any()
+        }
+
+  defexception [:page, :exception]
+
+  @impl true
+  def exception(page: page, exception: exception) do
+    %__MODULE__{page: page, exception: exception}
+  end
+
+  @impl true
+  def message(%__MODULE__{page: page, exception: exception}) do
+    """
+    An exception was raised:
+      #{Exception.format_banner(:error, exception)}
+
+    occurred during the build process on the page:
+      #{inspect(page, pretty: true)}
+    """
+  end
+end

@@ -44,12 +44,17 @@ defmodule Mix.Tasks.Tableau.Build do
     pages =
       pages
       |> Task.async_stream(fn {mod, page} ->
-        content = Tableau.Document.render(graph, mod, token, page)
-        permalink = Nodable.permalink(mod)
+        try do
+          content = Tableau.Document.render(graph, mod, token, page)
+          permalink = Nodable.permalink(mod)
 
-        Map.merge(page, %{body: content, permalink: permalink})
+          Map.merge(page, %{body: content, permalink: permalink})
+        rescue
+          exception ->
+            reraise Tableau.BuildException, [page: page, exception: exception], __STACKTRACE__
+        end
       end)
-      |> Stream.map(fn {:ok, result} -> result end)
+      |> Stream.map(&map_pages/1)
       |> Enum.to_list()
 
     token = put_in(token.site[:pages], pages)
@@ -72,6 +77,12 @@ defmodule Mix.Tasks.Tableau.Build do
     token = mods |> extensions_for(:post_write) |> run_extensions(token)
 
     token
+  end
+
+  defp map_pages({:ok, result}), do: result
+
+  defp map_pages({:exit, {exception, stacktrace}}) do
+    reraise exception, stacktrace
   end
 
   @file_extensions [".html"]
