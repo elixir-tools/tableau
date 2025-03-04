@@ -54,7 +54,10 @@ defmodule Mix.Tasks.Tableau.Build do
             reraise Tableau.BuildException, [page: page, exception: exception], __STACKTRACE__
         end
       end)
-      |> Stream.map(&map_pages/1)
+      |> Stream.map(fn
+        {:ok, result} -> result
+        {:exit, {exception, stacktrace}} -> reraise exception, stacktrace
+      end)
       |> Enum.to_list()
 
     token = put_in(token.site[:pages], pages)
@@ -77,12 +80,6 @@ defmodule Mix.Tasks.Tableau.Build do
     token = mods |> extensions_for(:post_write) |> run_extensions(token)
 
     token
-  end
-
-  defp map_pages({:ok, result}), do: result
-
-  defp map_pages({:exit, {exception, stacktrace}}) do
-    reraise exception, stacktrace
   end
 
   @file_extensions [".html"]

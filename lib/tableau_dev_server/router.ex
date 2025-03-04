@@ -39,7 +39,7 @@ defmodule TableauDevServer.Router do
       case WebDevUtils.CodeReloader.reload() do
         {:error, errors} ->
           errors = Enum.filter(errors, &(&1.severity == :error))
-          message = Enum.reduce(errors, "", fn error, acc -> "#{acc}\n#{error.message}" end)
+          message = Enum.map_join(errors, "\n", & &1.message)
           stacktrace = List.first(errors).stacktrace
 
           reraise CompileError, [description: message], stacktrace
