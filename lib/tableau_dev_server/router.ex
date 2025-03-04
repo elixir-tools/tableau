@@ -1,6 +1,7 @@
 defmodule TableauDevServer.Router do
   @moduledoc false
   use Plug.Router, init_mode: :runtime
+  use Plug.Debugger
 
   require Logger
 
@@ -32,11 +33,21 @@ defmodule TableauDevServer.Router do
   end
 
   defp recompile(conn, _) do
-    if conn.request_path != "/ws" do
-      WebDevUtils.CodeReloader.reload()
-    end
+    if conn.request_path == "/ws" do
+      conn
+    else
+      case WebDevUtils.CodeReloader.reload() do
+        {:error, errors} ->
+          errors = Enum.filter(errors, &(&1.severity == :error))
+          message = Enum.map_join(errors, "\n", & &1.message)
+          stacktrace = List.first(errors).stacktrace
 
-    conn
+          reraise CompileError, [description: message], stacktrace
+
+        _ ->
+          conn
+      end
+    end
   end
 
   defp rerender(conn, _) do
