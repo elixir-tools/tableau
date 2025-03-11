@@ -39,7 +39,12 @@ defmodule TableauDevServer.Router do
       case WebDevUtils.CodeReloader.reload() do
         {:error, errors} ->
           errors = Enum.filter(errors, &(&1.severity == :error))
-          message = Enum.map_join(errors, "\n", & &1.message)
+
+          message =
+            errors
+            |> Enum.map_join("\n", & &1.message)
+            |> String.replace(~r/\x1B\[[0-9;]*m/, "")
+
           stacktrace = List.first(errors).stacktrace
 
           reraise CompileError, [description: message], stacktrace
