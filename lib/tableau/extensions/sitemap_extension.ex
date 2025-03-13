@@ -48,7 +48,7 @@ defmodule Tableau.SitemapExtension do
 
   require Logger
 
-  def run(%{site: %{config: %{url: root}, pages: pages}} = token) do
+  def run(%{site: %{config: %{url: root, out_dir: out_dir}, pages: pages}} = token) do
     urls =
       for page <- pages, uniq: true do
         loc =
@@ -72,8 +72,8 @@ defmodule Tableau.SitemapExtension do
       "</urlset>"
     ]
 
-    File.mkdir_p!("_site")
-    File.write!("_site/sitemap.xml", xml)
+    File.mkdir_p!(out_dir)
+    File.write!("#{out_dir}/sitemap.xml", xml)
 
     {:ok, token}
   rescue

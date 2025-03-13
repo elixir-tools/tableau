@@ -7,6 +7,7 @@ defmodule Tableau.Config do
     :url,
     base_path: "",
     include_dir: "extra",
+    out_dir: "_site",
     timezone: "Etc/UTC",
     reload_log: false,
     converters: [md: Tableau.MDExConverter],
@@ -30,6 +31,7 @@ defmodule Tableau.Config do
       __MODULE__,
       %{
         optional(:include_dir) => str(),
+        optional(:out_dir) => str(),
         optional(:timezone) => str(),
         optional(:reload_log) => bool(),
         optional(:converters) => keyword(atom()),

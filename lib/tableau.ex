@@ -3,6 +3,7 @@ defmodule Tableau do
   ## Global Site Configuration
 
   * `:include_dir` - string - Directory that is just copied to the output directory. Defaults to `extra`.
+  * `:out_dir` - string - The directory to output your website to. Defaults to `_site`.
   * `:timezone` - string - Timezone to use when parsing date times. Defaults to `Etc/UTC`.
   * `:base_path` - string - Development server root.  Defaults to '/'.
   * `:url` - string (required) - The URL of your website.
