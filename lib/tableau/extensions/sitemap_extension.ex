@@ -52,27 +52,28 @@ defmodule Tableau.SitemapExtension do
     urls =
       for page <- pages, uniq: true do
         loc =
-          [{:loc, nil, URI.merge(root, page.permalink)}]
+          ["<loc>", root |> URI.merge(page.permalink) |> URI.to_string(), "</loc>"]
           |> prepend_lastmod(page)
           |> prepend_sitemap_assigns(page)
 
-        {:url, nil, loc}
+        ["<url>", loc, "</url>"]
       end
 
-    xml =
-      XmlBuilder.document(
-        :urlset,
-        [
-          xmlns: "http://www.sitemaps.org/schemas/sitemap/0.9",
-          "xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
-          "xsi:schemaLocation":
-            "http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd"
-        ],
-        urls
-      )
+    xml = [
+      "<urlset ",
+      " ",
+      ~s|xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"|,
+      " ",
+      ~s|xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"|,
+      " ",
+      ~s|xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd"|,
+      ">",
+      urls,
+      "</urlset>"
+    ]
 
     File.mkdir_p!("_site")
-    File.write!("_site/sitemap.xml", XmlBuilder.generate_iodata(xml))
+    File.write!("_site/sitemap.xml", xml)
 
     {:ok, token}
   rescue
@@ -82,14 +83,14 @@ defmodule Tableau.SitemapExtension do
   end
 
   defp prepend_lastmod(body, %{date: date}) do
-    [{:lastmod, nil, DateTime.to_iso8601(date)} | body]
+    ["<lastmod>", DateTime.to_iso8601(date), "</lastmod>" | body]
   end
 
   defp prepend_lastmod(body, _), do: body
 
   defp prepend_sitemap_assigns(body, %{sitemap: sitemap_data}) do
     for {key, value} <- sitemap_data, reduce: body do
-      acc -> [{key, [], value} | acc]
+      acc -> ["<", key, ">", value, "</", key, ">" | acc]
     end
   end
 
