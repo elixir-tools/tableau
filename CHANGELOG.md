@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## [0.21.0](https://github.com/elixir-tools/tableau/compare/v0.20.1...v0.21.0) (2025-03-14)
+
+
+### Features
+
+* **dev_server:** error page for compile and build errors ([#120](https://github.com/elixir-tools/tableau/issues/120)) ([0873535](https://github.com/elixir-tools/tableau/commit/08735357d587b2b1a444fefb00b691dce48d2f3c))
+
+
+### Bug Fixes
+
+* minimize deps ([#122](https://github.com/elixir-tools/tableau/issues/122)) ([91d84c0](https://github.com/elixir-tools/tableau/commit/91d84c03e44e10080723a21918e1296d1b9d0ea2))
+
 ## [0.20.1](https://github.com/elixir-tools/tableau/compare/v0.20.0...v0.20.1) (2025-01-18)
 
 
