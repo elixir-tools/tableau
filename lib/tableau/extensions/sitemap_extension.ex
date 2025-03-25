@@ -91,6 +91,7 @@ defmodule Tableau.SitemapExtension do
   defp prepend_sitemap_assigns(body, %{sitemap: sitemap_data}) do
     for {key, value} <- sitemap_data, reduce: body do
       acc -> ["<", key, ">", value, "</", key, ">" | acc]
+      acc -> ["<#{key}>", "#{value}", "</#{key}>" | acc]
     end
   end
 
