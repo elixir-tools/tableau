@@ -60,7 +60,8 @@ defmodule Tableau.SitemapExtension do
       end
 
     xml = [
-      "<urlset ",
+      ~s|<?xml version="1.0" encoding="UTF-8"?>|,
+      "<urlset",
       " ",
       ~s|xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"|,
       " ",
@@ -90,7 +91,6 @@ defmodule Tableau.SitemapExtension do
 
   defp prepend_sitemap_assigns(body, %{sitemap: sitemap_data}) do
     for {key, value} <- sitemap_data, reduce: body do
-      acc -> ["<", key, ">", value, "</", key, ">" | acc]
       acc -> ["<#{key}>", "#{value}", "</#{key}>" | acc]
     end
   end
