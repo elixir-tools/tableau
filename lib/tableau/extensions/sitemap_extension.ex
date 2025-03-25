@@ -91,6 +91,7 @@ defmodule Tableau.SitemapExtension do
 
   defp prepend_sitemap_assigns(body, %{sitemap: sitemap_data}) do
     sitemap_data = Enum.sort(sitemap_data)
+
     for {key, value} <- sitemap_data, reduce: body do
       acc -> ["<#{key}>", "#{value}", "</#{key}>" | acc]
     end
