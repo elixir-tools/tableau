@@ -22,24 +22,14 @@ defmodule Tableau.SitemapExtensionTest do
     SitemapExtension.run(token)
 
     sitemap = File.read!("_site/sitemap.xml")
-
-    assert Floki.parse_document!(sitemap) === [
-             {:pi, "xml", [{"version", "1.0"}, {"encoding", "UTF-8"}]},
-             {"urlset",
-              [
-                {"xmlns", "http://www.sitemaps.org/schemas/sitemap/0.9"},
-                {"xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance"},
-                {"xsi:schemalocation",
-                 "http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd"}
-              ],
-              [
-                {"url", [],
-                 [
-                   {"lastmod", [], ["2018-02-28T00:00:00Z"]},
-                   {"loc", [], ["http://example.com/about"]}
-                 ]}
-              ]}
-           ]
+    assert sitemap === [~s|<?xml version="1.0" encoding="UTF-8"?>|,
+    ~s|<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">|,
+    "<url>",
+    "<lastmod>2018-02-28T00:00:00Z</lastmod>",
+    "<loc>http://example.com/about</loc>",
+    "</url>",
+    "</urlset>"]
+    |> :erlang.iolist_to_binary()
   end
 
   @tag :tmp_dir
@@ -67,23 +57,14 @@ defmodule Tableau.SitemapExtensionTest do
 
     sitemap = File.read!("#{tmp_dir}/sitemap.xml")
 
-    assert Floki.parse_document!(sitemap) === [
-             {:pi, "xml", [{"version", "1.0"}, {"encoding", "UTF-8"}]},
-             {"urlset",
-              [
-                {"xmlns", "http://www.sitemaps.org/schemas/sitemap/0.9"},
-                {"xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance"},
-                {"xsi:schemalocation",
-                 "http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd"}
-              ],
-              [
-                {"url", [],
-                 [
-                   {"changefreq", [], ["monthly"]},
-                   {"priority", [], ["0.5"]},
-                   {"loc", [], ["http://example.com/about"]}
-                 ]}
-              ]}
-           ]
+    assert sitemap === [~s|<?xml version="1.0" encoding="UTF-8"?>|,
+    ~s|<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">|,
+    "<url>",
+    "<priority>0.5</priority>",
+    "<changefreq>monthly</changefreq>",
+    "<loc>http://example.com/about</loc>",
+    "</url>",
+    "</urlset>"]
+    |> :erlang.iolist_to_binary()
   end
 end
