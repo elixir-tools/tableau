@@ -10,7 +10,8 @@ defmodule Tableau.RSSExtension do
   - `:title` - string (required) - Title of your feed.
   - `:description` - string (required) - Description of your feed.
   - `:language` - string - Language to use in the `<language>` tag. Defaults to "en-us".
-  - `:include` - keyword list - List of front matter keys and values to include in the feed. If a post has any value in the list, it'll be included. Defaults to all posts.
+  - `:include` - keyword list - List of front matter keys and values to include in the feed. If a post has any value in the list, it'll be included. Defaults to including everything.
+  - `:exclude` - keyword list - List of front matter keys and values to exclude from the feed. If a post has any value in the list, it'll be included. Defaults to not excluding anything.
 
   ### Example
 
@@ -24,19 +25,19 @@ defmodule Tableau.RSSExtension do
         title: "The Super Feed",
         description: "Includes all posts on the site"
       ],
-      feed: [
+      posts: [
         enabled: true,
         language: "pt-BR",
         title: "My Elixir Devlog",
         description: "My Journey on Becoming the Best Elixirist",
-        include: [tags: ["elixir", "erlang"]] # includes any posts that include one of these tags
+        exclude: [category: "til"] # excludes posts with this category
       ],
       til: [
         enabled: true,
         language: "en-US",
         title: "Today I Learned",
         description: "Short log of what I learn every day",
-        include: [category: ["til"]]
+        include: [category: "til"]
       ]
     ]
   ```
@@ -48,54 +49,59 @@ defmodule Tableau.RSSExtension do
   @impl Tableau.Extension
   def config(config) do
     unify(
-      map(%{
-        optional(:enabled, true) => bool(),
-        optional(:feeds) => list(feed_s())
-      }),
+      oneof([
+        map(%{enabled: false}),
+        feed_s(&map/1),
+        map(%{
+          enabled: true,
+          feeds: keyword(values: feed_s(&keyword/1))
+        })
+      ]),
       config
     )
   end
 
-  defp feed_s do
-    tuple([
-      atom(),
-      keyword(%{
-        optional(:enabled, true) => bool(),
-        optional(:language, "en-us") => str(),
-        optional(:include) => include_s(),
-        title: str(),
-        description: str()
-      })
-    ])
-  end
-
-  defp keyword(options) do
-    list(oneof(options))
+  defp feed_s(type) do
+    type.(%{
+      optional(:enabled, true) => bool(),
+      optional(:language, "en-us") => str(),
+      optional(:include) => include_s(),
+      optional(:exclude) => include_s(),
+      title: str(),
+      description: str()
+    })
   end
 
   defp include_s do
-    list(tuple([atom(), list()]))
+    keyword(values: list(str()))
   end
 
   @doc """
   The default filter function that is used when including the `:include` option in a feeds configuration.
   """
+
   def filter(post, include_filter) do
     Enum.any?(include_filter, fn {front_matter_key, values_to_accept} ->
-      Enum.any?(post[front_matter_key], fn front_matter_key -> front_matter_key in values_to_accept end)
+      post[front_matter_key]
+      |> List.wrap()
+      |> Enum.any?(fn front_matter_key ->
+        front_matter_key in List.wrap(values_to_accept)
+      end)
     end)
   end
 
   @impl Tableau.Extension
   def run(%{site: %{config: %{url: url, out_dir: out_dir}}, posts: posts, extensions: %{rss: %{config: feeds}}} = token) do
     feeds =
-      if is_list(feeds) do
-        feeds
+      if Map.has_key?(feeds, :feeds) do
+        feeds.feeds
       else
         [feed: feeds]
       end
 
     for {name, feed} <- feeds, feed[:enabled] do
+      feed = Map.new(feed)
+
       prelude =
         """
         <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
@@ -108,9 +114,11 @@ defmodule Tableau.RSSExtension do
           <generator>Tableau v#{version()}</generator>
         """
 
-      # html
       items =
-        for post <- posts, feed[:include] == nil or filter(post, feed[:include]), into: "" do
+        for post <- posts,
+            feed[:include] == nil || filter(post, feed[:include]),
+            feed[:exclude] == nil || not filter(post, feed[:exclude]),
+            into: "" do
           """
               <item>
                  <title>#{HtmlEntities.encode(post.title)}</title>

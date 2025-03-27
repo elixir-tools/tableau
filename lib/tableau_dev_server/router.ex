@@ -6,7 +6,7 @@ defmodule TableauDevServer.Router do
   require Logger
 
   @base_path Path.join("/", Application.compile_env(:tableau, [:config, :base_path], ""))
-  @out_dir Application.compile_env(:tableau, [:config, :out_dir])
+  @out_dir Application.compile_env(:tableau, [:config, :out_dir], "_site")
 
   @not_found ~s'''
   <!DOCTYPE html><html lang="en"><head></head><body>Not Found</body></html>

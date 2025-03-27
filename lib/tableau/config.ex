@@ -22,10 +22,6 @@ defmodule Tableau.Config do
     Tableau.Config.new(Map.new(Application.get_env(:tableau, :config, %{})))
   end
 
-  defp keyword(value) do
-    list(tuple([atom(), value]))
-  end
-
   defp schematic do
     schema(
       __MODULE__,
@@ -34,8 +30,8 @@ defmodule Tableau.Config do
         optional(:out_dir) => str(),
         optional(:timezone) => str(),
         optional(:reload_log) => bool(),
-        optional(:converters) => keyword(atom()),
-        optional(:markdown) => keyword(list()),
+        optional(:converters) => keyword(values: atom()),
+        optional(:markdown) => keyword(values: list()),
         optional(:base_path) => str(),
         url: str()
       },

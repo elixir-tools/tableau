@@ -15,14 +15,9 @@ defmodule Mix.Tasks.Tableau.Build do
     token = %{site: %{config: config}, graph: Graph.new()}
     Mix.Task.run("app.start", ["--preload-modules"])
 
-    dbg(argv)
     {opts, _argv} = OptionParser.parse!(argv, strict: [out: :string])
 
     out = opts[:out] || config.out_dir
-
-    dbg(config)
-    dbg(opts)
-    dbg(out)
 
     mods =
       :code.all_available()
