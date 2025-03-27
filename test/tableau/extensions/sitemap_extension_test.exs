@@ -3,12 +3,13 @@ defmodule Tableau.SitemapExtensionTest do
 
   alias Tableau.SitemapExtension
 
-  test "use _site as default out dir" do
+  @tag :tmp_dir
+  test "use _site as default out dir", %{tmp_dir: tmp_dir} do
     token = %{
       site: %{
         config: %{
           url: "http://example.com",
-          out_dir: "_site"
+          out_dir: tmp_dir
         },
         pages: [
           %{
