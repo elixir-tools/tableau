@@ -1,5 +1,22 @@
 # CHANGELOG
 
+## [0.22.0](https://github.com/elixir-tools/tableau/compare/v0.21.0...v0.22.0) (2025-03-27)
+
+
+### ⚠ BREAKING CHANGES
+
+* bump min mdex version to 0.4
+
+### Features
+
+* bump min mdex version to 0.4 ([dac5ddd](https://github.com/elixir-tools/tableau/commit/dac5ddd24c40e426a49082947611df64d2332e51))
+* **rss:** multiple feeds ([#125](https://github.com/elixir-tools/tableau/issues/125)) ([3803ee5](https://github.com/elixir-tools/tableau/commit/3803ee5002576dd97515f393ca45ddfb4c60615d))
+
+
+### Bug Fixes
+
+* **sitemap:** sitemap custom tags ([#124](https://github.com/elixir-tools/tableau/issues/124)) ([2ef75da](https://github.com/elixir-tools/tableau/commit/2ef75da49db9f21bca1400ebf48eda23d78bc1e0))
+
 ## [0.21.0](https://github.com/elixir-tools/tableau/compare/v0.20.1...v0.21.0) (2025-03-14)
 
 
