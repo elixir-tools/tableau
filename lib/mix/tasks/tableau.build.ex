@@ -17,7 +17,7 @@ defmodule Mix.Tasks.Tableau.Build do
 
     {opts, _argv} = OptionParser.parse!(argv, strict: [out: :string])
 
-    out = Keyword.get(opts, :out, "_site")
+    out = opts[:out] || config.out_dir
 
     mods =
       :code.all_available()

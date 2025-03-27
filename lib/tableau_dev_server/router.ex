@@ -6,6 +6,7 @@ defmodule TableauDevServer.Router do
   require Logger
 
   @base_path Path.join("/", Application.compile_env(:tableau, [:config, :base_path], ""))
+  @out_dir Application.compile_env(:tableau, [:config, :out_dir], "_site")
 
   @not_found ~s'''
   <!DOCTYPE html><html lang="en"><head></head><body>Not Found</body></html>
@@ -15,7 +16,7 @@ defmodule TableauDevServer.Router do
   plug :rerender
 
   plug TableauDevServer.IndexHtml
-  plug Plug.Static, at: @base_path, from: "_site", cache_control_for_etags: "no-cache"
+  plug Plug.Static, at: @base_path, from: @out_dir, cache_control_for_etags: "no-cache"
 
   plug :match
   plug :dispatch
@@ -57,7 +58,7 @@ defmodule TableauDevServer.Router do
 
   defp rerender(conn, _) do
     if conn.request_path != "/ws" do
-      Mix.Task.rerun("tableau.build", ["--out", "_site"])
+      Mix.Task.rerun("tableau.build", ["--out", @out_dir])
     end
 
     conn
