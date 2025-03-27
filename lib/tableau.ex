@@ -37,7 +37,7 @@ defmodule Tableau do
 
   By default, connects to `'ws://' + location.host + '/ws'`.
 
-  See `WebDevUtils` for configuration options.
+  See `WebDevUtils.Components.live_reload/1` for configuration options.
   """
   defdelegate live_reload(assigns), to: WebDevUtils.Components
 
