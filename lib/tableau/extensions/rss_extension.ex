@@ -76,20 +76,6 @@ defmodule Tableau.RSSExtension do
     keyword(values: list(str()))
   end
 
-  @doc """
-  The default filter function that is used when including the `:include` option in a feeds configuration.
-  """
-
-  def filter(post, include_filter) do
-    Enum.any?(include_filter, fn {front_matter_key, values_to_accept} ->
-      post[front_matter_key]
-      |> List.wrap()
-      |> Enum.any?(fn front_matter_key ->
-        front_matter_key in List.wrap(values_to_accept)
-      end)
-    end)
-  end
-
   @impl Tableau.Extension
   def run(%{site: %{config: %{url: url, out_dir: out_dir}}, posts: posts, extensions: %{rss: %{config: feeds}}} = token) do
     feeds =
@@ -149,5 +135,15 @@ defmodule Tableau.RSSExtension do
       {:ok, version} -> to_string(version)
       _ -> "dev"
     end
+  end
+
+  defp filter(post, include_filter) do
+    Enum.any?(include_filter, fn {front_matter_key, values_to_accept} ->
+      post[front_matter_key]
+      |> List.wrap()
+      |> Enum.any?(fn front_matter_key ->
+        front_matter_key in List.wrap(values_to_accept)
+      end)
+    end)
   end
 end
