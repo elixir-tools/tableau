@@ -23,7 +23,7 @@ defmodule Tableau.SitemapExtensionTest do
 
     SitemapExtension.run(token)
 
-    sitemap = File.read!("_site/sitemap.xml")
+    sitemap = File.read!("#{tmp_dir}/sitemap.xml")
 
     assert sitemap ===
              """
