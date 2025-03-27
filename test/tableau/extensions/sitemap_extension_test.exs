@@ -7,7 +7,8 @@ defmodule Tableau.SitemapExtensionTest do
     token = %{
       site: %{
         config: %{
-          url: "http://example.com"
+          url: "http://example.com",
+          out_dir: "_site"
         },
         pages: [
           %{
@@ -24,7 +25,7 @@ defmodule Tableau.SitemapExtensionTest do
     sitemap = File.read!("_site/sitemap.xml")
 
     assert sitemap ===
-             :erlang.iolist_to_binary([
+             IO.iodata_to_binary([
                ~s|<?xml version="1.0" encoding="UTF-8"?>|,
                ~s|<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">|,
                "<url>",
@@ -38,9 +39,9 @@ defmodule Tableau.SitemapExtensionTest do
   @tag :tmp_dir
   test "generates sitemap with optional tags", %{tmp_dir: tmp_dir} do
     token = %{
-      out: tmp_dir,
       site: %{
         config: %{
+          out_dir: tmp_dir,
           url: "http://example.com"
         },
         pages: [
@@ -61,7 +62,7 @@ defmodule Tableau.SitemapExtensionTest do
     sitemap = File.read!("#{tmp_dir}/sitemap.xml")
 
     assert sitemap ===
-             :erlang.iolist_to_binary([
+             IO.iodata_to_binary([
                ~s|<?xml version="1.0" encoding="UTF-8"?>|,
                ~s|<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">|,
                "<url>",
