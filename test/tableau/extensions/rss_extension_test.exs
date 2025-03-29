@@ -1,6 +1,8 @@
 defmodule Tableau.RSSExtensionTest do
   use ExUnit.Case, async: true
 
+  import Tableau.Support.Helpers
+
   alias Tableau.RSSExtension
 
   describe "run/1" do
@@ -191,20 +193,5 @@ defmodule Tableau.RSSExtensionTest do
       assert not_casual_content =~ "Post 1"
       refute not_casual_content =~ "Post 3"
     end
-  end
-
-  defp post(idx, overrides) do
-    base = %{
-      title: "Post #{idx}",
-      permalink: "/posts/post-#{1}",
-      date: DateTime.utc_now(),
-      body: """
-      ## Welcome to Post #{idx}
-
-      Here, we post like crazy.
-      """
-    }
-
-    Map.merge(base, Map.new(overrides))
   end
 end

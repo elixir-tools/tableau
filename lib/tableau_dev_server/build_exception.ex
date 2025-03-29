@@ -14,7 +14,12 @@ defmodule TableauDevServer.BuildException do
 
   @impl true
   def message(%__MODULE__{page: page, exception: exception}) do
-    exception = String.replace(exception, ~r/\x1B\[[0-9;]*m/, "")
+    exception =
+      if is_binary(exception) do
+        String.replace(exception, ~r/\x1B\[[0-9;]*m/, "")
+      else
+        exception
+      end
 
     """
     An exception was raised:

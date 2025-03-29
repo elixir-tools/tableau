@@ -19,6 +19,7 @@ Static Site Generator for Elixir.
     - [x] Posts
     - [x] RSS
     - [x] Sitemap
+    - [x] Tags
     - [ ] SEO
 - [x] Project generator
 
