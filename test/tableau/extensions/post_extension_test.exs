@@ -19,6 +19,8 @@ end
 defmodule Tableau.PostExtensionTest do
   use ExUnit.Case, async: true
 
+  import Tableau.Support.Helpers
+
   alias Tableau.PostExtension
 
   @moduletag :tmp_dir
@@ -113,9 +115,10 @@ defmodule Tableau.PostExtensionTest do
 
       vertices = Graph.vertices(graph)
 
-      assert Enum.any?(vertices, fn v -> is_struct(v, Tableau.Page) and v.permalink == post_1.permalink end)
-      assert Enum.any?(vertices, fn v -> is_struct(v, Tableau.Page) and v.permalink == post_2.permalink end)
-      assert Enum.any?(vertices, fn v -> v == Blog.PostLayout end)
+      assert Enum.any?(vertices, &page_with_permalink?(&1, post_1.permalink))
+      assert Enum.any?(vertices, &page_with_permalink?(&1, post_2.permalink))
+
+      assert Blog.PostLayout in vertices
     end
 
     test "future: true will render future posts", %{tmp_dir: dir, token: token} do
@@ -155,8 +158,9 @@ defmodule Tableau.PostExtensionTest do
 
       vertices = Graph.vertices(graph)
 
-      assert Enum.any?(vertices, fn v -> is_struct(v, Tableau.Page) and v.permalink == post.permalink end)
-      assert Enum.any?(vertices, fn v -> v == Blog.PostLayout end)
+      assert Enum.any?(vertices, &page_with_permalink?(&1, post.permalink))
+
+      assert Blog.PostLayout in vertices
     end
 
     test "configured permalink works when you dont specify one", %{tmp_dir: dir, token: token} do

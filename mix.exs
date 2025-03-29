@@ -38,7 +38,7 @@ defmodule Tableau.MixProject do
       {:html_entities, "~> 0.5.2"},
       {:libgraph, "~> 0.16.0"},
       {:mdex, "~> 0.4.0"},
-      {:schematic, "~> 0.5"},
+      {:schematic, "~> 0.5.1"},
       {:tz, "~> 0.28.1"},
       {:web_dev_utils, "~> 0.3"},
       {:websock_adapter, "~> 0.5"},
@@ -71,19 +71,20 @@ defmodule Tableau.MixProject do
           Tableau,
           Tableau.Layout,
           Tableau.Page,
-          Tableau.Document.Helper
+          Tableau.Document.Helper,
+          Tableau.Extension
         ],
         Converters: [
           Tableau.Converter,
           Tableau.MDExConverter
         ],
         Extensions: [
-          Tableau.Extension,
           Tableau.PostExtension,
           Tableau.PageExtension,
           Tableau.SitemapExtension,
           Tableau.RSSExtension,
-          Tableau.DataExtension
+          Tableau.DataExtension,
+          Tableau.TagExtension
         ]
       ]
     ]

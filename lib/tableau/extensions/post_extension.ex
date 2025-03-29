@@ -77,6 +77,13 @@ defmodule Tableau.PostExtension do
 
   alias Tableau.Extension.Common
 
+  @type post :: %{
+          body: String.t(),
+          file: String.t(),
+          layout: module(),
+          date: DateTime.t()
+        }
+
   @impl Tableau.Extension
   def config(config) do
     unify(
