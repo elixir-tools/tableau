@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [0.23.0](https://github.com/elixir-tools/tableau/compare/v0.22.0...v0.23.0) (2025-03-29)
+
+
+### Features
+
+* **tags:** tag extension ([#127](https://github.com/elixir-tools/tableau/issues/127)) ([286e3e8](https://github.com/elixir-tools/tableau/commit/286e3e859c5477f1ed3f23e5bf0b4305397cc3ee))
+
 ## [0.22.0](https://github.com/elixir-tools/tableau/compare/v0.21.0...v0.22.0) (2025-03-27)
 
 
