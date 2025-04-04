@@ -92,7 +92,7 @@ defmodule Tableau.PostExtension do
       map(%{
         optional(:enabled) => bool(),
         optional(:dir, "_posts") => str(),
-        optional(:drafts, "_drafts") => str(),
+        optional(:drafts_dir, "_drafts") => str(),
         optional(:future, false) => bool(),
         optional(:permalink) => str(),
         optional(:layout) => oneof([atom(), str()])
@@ -133,8 +133,8 @@ defmodule Tableau.PostExtension do
         end
       end)
       |> Enum.reject(fn {post, _} ->
-        if config.drafts do
-          String.starts_with?(post.file, config.drafts) || Map.get(post, :draft, false)
+        if config.drafts_dir do
+          String.starts_with?(post.file, config.drafts_dir) || Map.get(post, :draft, false)
         else
           Map.get(post, :draft, false)
         end

@@ -27,7 +27,7 @@ defmodule Tableau.PostExtensionTest do
 
   describe "config" do
     test "provides defaults for dir, drafts, and future fields" do
-      assert {:ok, %{dir: "_posts", drafts: "_drafts", future: false}} = PostExtension.config(%{})
+      assert {:ok, %{dir: "_posts", drafts_dir: "_drafts", future: false}} = PostExtension.config(%{})
     end
   end
 
@@ -186,7 +186,7 @@ defmodule Tableau.PostExtensionTest do
       assert [] == token.posts
     end
 
-    test "files in config.drafts will not render a post", %{tmp_dir: dir, token: token} do
+    test "files in config.drafts_dir will not render a post", %{tmp_dir: dir, token: token} do
       File.write(Path.join("_drafts", "my-post-in-drafts-folder.md"), """
       ---
       layout: Blog.PostLayout
