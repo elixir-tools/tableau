@@ -92,6 +92,7 @@ defmodule Tableau.PostExtension do
       map(%{
         optional(:enabled) => bool(),
         optional(:dir, "_posts") => str(),
+        optional(:drafts, false) => bool(),
         optional(:drafts_dir, "_drafts") => str(),
         optional(:future, false) => bool(),
         optional(:permalink) => str(),
@@ -132,11 +133,17 @@ defmodule Tableau.PostExtension do
           Enum.reject(posts, fn {post, _} -> DateTime.after?(post.date, DateTime.utc_now()) end)
         end
       end)
-      |> Enum.reject(fn {post, _} ->
-        if config.drafts_dir do
-          String.starts_with?(post.file, config.drafts_dir) || Map.get(post, :draft, false)
+      |> then(fn posts ->
+        if config.drafts do
+          posts
         else
-          Map.get(post, :draft, false)
+          Enum.reject(posts, fn {post, _} ->
+            unless config.drafts do
+              String.starts_with?(post.file, config.drafts_dir) || Map.get(post, :draft, false)
+            else
+              Map.get(post, :draft, false)
+            end
+          end)
         end
       end)
 

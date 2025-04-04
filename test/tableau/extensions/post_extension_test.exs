@@ -27,7 +27,7 @@ defmodule Tableau.PostExtensionTest do
 
   describe "config" do
     test "provides defaults for dir, drafts, and future fields" do
-      assert {:ok, %{dir: "_posts", drafts_dir: "_drafts", future: false}} = PostExtension.config(%{})
+      assert {:ok, %{dir: "_posts", drafts: false, drafts_dir: "_drafts", future: false}} = PostExtension.config(%{})
     end
   end
 
