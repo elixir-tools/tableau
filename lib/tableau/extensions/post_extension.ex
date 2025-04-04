@@ -135,9 +135,9 @@ defmodule Tableau.PostExtension do
       |> Enum.reject(fn {post, _} ->
         if config.drafts do
           String.starts_with?(post.file, config.drafts) || Map.get(post, :draft, false)
+        else
+          Map.get(post, :draft, false)
         end
-
-        Map.get(post, :draft, false)
       end)
 
     graph =
