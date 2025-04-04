@@ -183,9 +183,7 @@ defmodule Tableau.PostExtensionTest do
 
       assert {:ok, token} = PostExtension.run(token)
 
-      assert %{
-               posts: []
-             } = token
+      assert [] == token.posts
     end
 
     test "files in config.drafts will not render a post", %{tmp_dir: dir, token: token} do
