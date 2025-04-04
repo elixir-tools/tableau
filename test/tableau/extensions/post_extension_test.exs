@@ -164,7 +164,7 @@ defmodule Tableau.PostExtensionTest do
     end
 
     test "drafts: true will not render a post", %{tmp_dir: dir, token: token} do
-      File.write(Path.join(dir, "my-draft-post.md"), """
+      File.write!(Path.join(dir, "my-draft-post.md"), """
       ---
       layout: Blog.PostLayout
       title: My Draft Post
