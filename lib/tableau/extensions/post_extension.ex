@@ -41,7 +41,8 @@ defmodule Tableau.PostExtension do
   - `:future` - boolean - Show posts that have dates later than the current timestamp, or time at which the site is generated.
   - `:permalink` - string - Default output path for posts. Accepts `:title` as a replacement keyword, replaced with the post's provided title. If a post has a `:permalink` provided, that will override this value _for that post_.
   - `:layout` - string - Elixir module providing page layout for posts. Default is nil
-  - `:draft` - boolean - Only show this post in dev.
+  - `:drafts` - boolean - Render draft posts. Default is false.
+  - `:drafts_dir` - string - Directory to scan for draft posts. Defaults to `_drafts`
 
   ### Example
 
