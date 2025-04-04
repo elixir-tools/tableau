@@ -21,6 +21,7 @@ defmodule Tableau.PostExtension do
   title: "The elixir-tools Update Vol. 3"
   permalink: "/news/:title"
   date: "~N[2023-09-19 01:00:00]"
+  draft: false
   layout: "ElixirTools.PostLayout"
   converter: "MyConverter"
   ```
@@ -40,6 +41,7 @@ defmodule Tableau.PostExtension do
   - `:future` - boolean - Show posts that have dates later than the current timestamp, or time at which the site is generated.
   - `:permalink` - string - Default output path for posts. Accepts `:title` as a replacement keyword, replaced with the post's provided title. If a post has a `:permalink` provided, that will override this value _for that post_.
   - `:layout` - string - Elixir module providing page layout for posts. Default is nil
+  - `:draft` - boolean - Only show this post in dev.
 
   ### Example
 
@@ -90,6 +92,7 @@ defmodule Tableau.PostExtension do
       map(%{
         optional(:enabled) => bool(),
         optional(:dir, "_posts") => str(),
+        optional(:drafts, "_drafts") => str(),
         optional(:future, false) => bool(),
         optional(:permalink) => str(),
         optional(:layout) => oneof([atom(), str()])
@@ -129,6 +132,14 @@ defmodule Tableau.PostExtension do
           Enum.reject(posts, fn {post, _} -> DateTime.after?(post.date, DateTime.utc_now()) end)
         end
       end)
+      |> then(fn posts ->
+        unless config.drafts do
+          posts
+        else
+          Enum.reject(posts, fn {post, _} -> post.file =~ config.drafts end)
+        end
+      end)
+      |> Enum.reject(fn {post, _} -> Map.get(post, :draft, false) == true end)
 
     graph =
       Tableau.Graph.insert(
