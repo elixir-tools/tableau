@@ -132,14 +132,13 @@ defmodule Tableau.PostExtension do
           Enum.reject(posts, fn {post, _} -> DateTime.after?(post.date, DateTime.utc_now()) end)
         end
       end)
-      |> then(fn posts ->
+      |> Enum.reject(fn {post, _} ->
         if config.drafts do
-          Enum.reject(posts, fn {post, _} -> post.file =~ config.drafts end)
-        else
-          posts
+          String.starts_with?(post.file, config.drafts) || Map.get(post, :draft, false)
         end
+
+        Map.get(post, :draft, false)
       end)
-      |> Enum.reject(fn {post, _} -> Map.get(post, :draft, false) == true end)
 
     graph =
       Tableau.Graph.insert(
