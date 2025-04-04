@@ -139,11 +139,7 @@ defmodule Tableau.PostExtension do
           posts
         else
           Enum.reject(posts, fn {post, _} ->
-            unless config.drafts do
-              String.starts_with?(post.file, config.drafts_dir) || Map.get(post, :draft, false)
-            else
-              Map.get(post, :draft, false)
-            end
+            String.starts_with?(post.file, config.drafts_dir) || Map.get(post, :draft, false)
           end)
         end
       end)
