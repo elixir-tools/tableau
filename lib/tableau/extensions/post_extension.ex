@@ -133,10 +133,10 @@ defmodule Tableau.PostExtension do
         end
       end)
       |> then(fn posts ->
-        unless config.drafts do
-          posts
-        else
+        if config.drafts do
           Enum.reject(posts, fn {post, _} -> post.file =~ config.drafts end)
+        else
+          posts
         end
       end)
       |> Enum.reject(fn {post, _} -> Map.get(post, :draft, false) == true end)
