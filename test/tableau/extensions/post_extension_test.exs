@@ -85,6 +85,31 @@ defmodule Tableau.PostExtensionTest do
       Do cars fly yet?
       """)
 
+      File.write(Path.join(dir, "my-draft-post.md"), """
+      ---
+      layout: Blog.PostLayout
+      title: My Draft Post
+      date: 2017-03-01
+      categories: post
+      permalink: /post/2020/02/29/draft-post/
+      draft: true
+      ---
+
+      The answer is 42.
+      """)
+
+      File.write(Path.join("_drafts", "my-post-in-drafts-dir.md"), """
+      ---
+      layout: Blog.PostLayout
+      title: My Draft Post
+      date: 2017-03-01
+      categories: post
+      permalink: /post/2020/02/30/drafts-dir-post/
+      ---
+
+      The answer is 42.
+      """)
+
       assert {:ok, token} = PostExtension.run(token)
 
       assert %{
@@ -161,53 +186,6 @@ defmodule Tableau.PostExtensionTest do
       assert Enum.any?(vertices, &page_with_permalink?(&1, post.permalink))
 
       assert Blog.PostLayout in vertices
-    end
-
-    test "drafts: true will not render a post", %{tmp_dir: dir, token: token} do
-      File.write!(Path.join(dir, "my-draft-post.md"), """
-      ---
-      layout: Blog.PostLayout
-      title: My Draft Post
-      date: 2020-01-01
-      categories: post
-      permalink: /post/2020/01/01/my-draft-post/
-      draft: true
-      ---
-
-      Do androids dream of electric sheep?
-      """)
-
-      assert {:ok, config} = PostExtension.config(%{dir: dir, enabled: true})
-
-      token = put_in(token.extensions.posts.config, config)
-
-      assert {:ok, token} = PostExtension.run(token)
-
-      assert [] == token.posts
-    end
-
-    test "files in config.drafts_dir will not render a post", %{tmp_dir: dir, token: token} do
-      File.write(Path.join("_drafts", "my-post-in-drafts-folder.md"), """
-      ---
-      layout: Blog.PostLayout
-      title: My Draft Post in Drafts Folder
-      date: 2020-01-01
-      categories: post
-      permalink: /post/2020/01/02/my-post-in-drafts-folder/
-      ---
-
-      Do androids dream of electric sheep?
-      """)
-
-      assert {:ok, config} = PostExtension.config(%{dir: dir, enabled: true})
-
-      token = put_in(token.extensions.posts.config, config)
-
-      assert {:ok, token} = PostExtension.run(token)
-
-      assert %{
-               posts: []
-             } = token
     end
 
     test "configured permalink works when you dont specify one", %{tmp_dir: dir, token: token} do
