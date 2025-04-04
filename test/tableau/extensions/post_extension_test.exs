@@ -98,7 +98,7 @@ defmodule Tableau.PostExtensionTest do
       The answer is 42.
       """)
 
-      File.write(Path.join("_drafts", "my-post-in-drafts-dir.md"), """
+      File.write(Path.join(["_drafts", "my-post-in-drafts-dir.md"]), """
       ---
       layout: Blog.PostLayout
       title: My Draft Post
@@ -142,6 +142,75 @@ defmodule Tableau.PostExtensionTest do
 
       assert Enum.any?(vertices, &page_with_permalink?(&1, post_1.permalink))
       assert Enum.any?(vertices, &page_with_permalink?(&1, post_2.permalink))
+
+      assert Blog.PostLayout in vertices
+    end
+
+    test "drafts: true will render draft posts", %{tmp_dir: dir, token: token} do
+      File.write(Path.join(dir, "my-draft-post.md"), """
+      ---
+      layout: Blog.PostLayout
+      title: My Draft Post
+      date: 2017-03-01
+      categories: post
+      permalink: /post/2020/02/29/draft-post/
+      draft: true
+      ---
+
+      The answer is 42.
+      """)
+
+      drafts_dir = "_drafts"
+
+      File.write(Path.join([dir, drafts_dir, "my-post-in-drafts-dir.md"]), """
+      ---
+      layout: Blog.PostLayout
+      title: My Draft Dir Post
+      date: 2017-03-01
+      categories: post
+      permalink: /post/2020/02/30/drafts-dir-post/
+      ---
+
+      The answer is not 42.
+      """)
+
+      assert {:ok, config} = PostExtension.config(%{dir: dir, enabled: true, drafts: true, drafts_dir: drafts_dir})
+
+      token = put_in(token.extensions.posts.config, config)
+
+      assert {:ok, token} = PostExtension.run(token)
+
+      assert %{
+               posts: [
+                 %{
+                   date: ~U[2017-03-01 00:00:00Z],
+                   file: ^dir <> "/my-draft-post.md",
+                   title: "My Draft Post",
+                   body: "\nThe answer is 42.\n",
+                   layout: Blog.PostLayout,
+                   __tableau_post_extension__: true,
+                   permalink: "/post/2020/02/29/draft-post/",
+                   draft: true,
+                   categories: "post"
+                 } = post1,
+                 %{
+                   date: ~U[2017-03-01 00:00:00Z],
+                   # file: ^dir <> "/my-post-in-drafts-dir.md",
+                   title: "My Draft Dir Post",
+                   body: "\nThe answer is not 42.\n",
+                   layout: Blog.PostLayout,
+                   __tableau_post_extension__: true,
+                   permalink: "/post/2020/02/30/drafts-dir-post/",
+                   categories: "post"
+                 } = post2
+               ],
+               graph: graph
+             } = token
+
+      vertices = Graph.vertices(graph)
+
+      assert Enum.any?(vertices, &page_with_permalink?(&1, post1.permalink))
+      assert Enum.any?(vertices, &page_with_permalink?(&1, post2.permalink))
 
       assert Blog.PostLayout in vertices
     end
