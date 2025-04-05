@@ -37,12 +37,10 @@ defmodule Tableau.PostExtension do
   ## Configuration
 
   - `:enabled` - boolean - Extension is active or not.
-  - `:dir` - string - Directory to scan for markdown files. Defaults to `_posts`
+  - `:dir` - string or list of strings - Directores to scan for markdown files. Defaults to `_posts`
   - `:future` - boolean - Show posts that have dates later than the current timestamp, or time at which the site is generated.
   - `:permalink` - string - Default output path for posts. Accepts `:title` as a replacement keyword, replaced with the post's provided title. If a post has a `:permalink` provided, that will override this value _for that post_.
   - `:layout` - string - Elixir module providing page layout for posts. Default is nil
-  - `:drafts` - boolean - Render draft posts. Default is false.
-  - `:drafts_dir` - string - Directory to scan for draft posts. Defaults to `_drafts`
 
   ### Example
 
@@ -92,9 +90,7 @@ defmodule Tableau.PostExtension do
     unify(
       map(%{
         optional(:enabled) => bool(),
-        optional(:dir, "_posts") => str(),
-        optional(:drafts, false) => bool(),
-        optional(:drafts_dir, "_drafts") => str(),
+        optional(:dir, "_posts") => oneof([list(str()), str()]),
         optional(:future, false) => bool(),
         optional(:permalink) => str(),
         optional(:layout) => oneof([atom(), str()])
@@ -132,15 +128,6 @@ defmodule Tableau.PostExtension do
           posts
         else
           Enum.reject(posts, fn {post, _} -> DateTime.after?(post.date, DateTime.utc_now()) end)
-        end
-      end)
-      |> then(fn posts ->
-        if config.drafts do
-          posts
-        else
-          Enum.reject(posts, fn {post, _} ->
-            String.starts_with?(post.file, config.drafts_dir) || Map.get(post, :draft, false)
-          end)
         end
       end)
 

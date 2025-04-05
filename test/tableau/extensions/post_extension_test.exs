@@ -26,8 +26,8 @@ defmodule Tableau.PostExtensionTest do
   @moduletag :tmp_dir
 
   describe "config" do
-    test "provides defaults for dir, drafts, and future fields" do
-      assert {:ok, %{dir: "_posts", drafts: false, drafts_dir: "_drafts", future: false}} = PostExtension.config(%{})
+    test "provides defaults for dir, and future fields" do
+      assert {:ok, %{dir: "_posts", future: false}} = PostExtension.config(%{})
     end
   end
 
@@ -85,19 +85,6 @@ defmodule Tableau.PostExtensionTest do
       Do cars fly yet?
       """)
 
-      File.write(Path.join(dir, "my-draft-post.md"), """
-      ---
-      layout: Blog.PostLayout
-      title: My Draft Post
-      date: 2017-03-01
-      categories: post
-      permalink: /post/2020/02/29/draft-post/
-      draft: true
-      ---
-
-      The answer is 42.
-      """)
-
       File.write(Path.join(["_drafts", "my-post-in-drafts-dir.md"]), """
       ---
       layout: Blog.PostLayout
@@ -146,20 +133,7 @@ defmodule Tableau.PostExtensionTest do
       assert Blog.PostLayout in vertices
     end
 
-    test "drafts: true will render draft posts", %{tmp_dir: dir, token: token} do
-      File.write(Path.join(dir, "my-draft-post.md"), """
-      ---
-      layout: Blog.PostLayout
-      title: My Draft Post
-      date: 2017-03-01
-      categories: post
-      permalink: /post/2020/02/29/draft-post/
-      draft: true
-      ---
-
-      The answer is 42.
-      """)
-
+    test "adding another directory to dir allows showing draft posts", %{tmp_dir: dir, token: token} do
       drafts_dir = "_drafts"
 
       File.write(Path.join([dir, drafts_dir, "my-post-in-drafts-dir.md"]), """
@@ -184,17 +158,6 @@ defmodule Tableau.PostExtensionTest do
                posts: [
                  %{
                    date: ~U[2017-03-01 00:00:00Z],
-                   file: ^dir <> "/my-draft-post.md",
-                   title: "My Draft Post",
-                   body: "\nThe answer is 42.\n",
-                   layout: Blog.PostLayout,
-                   __tableau_post_extension__: true,
-                   permalink: "/post/2020/02/29/draft-post/",
-                   draft: true,
-                   categories: "post"
-                 } = post1,
-                 %{
-                   date: ~U[2017-03-01 00:00:00Z],
                    # file: ^dir <> "/my-post-in-drafts-dir.md",
                    title: "My Draft Dir Post",
                    body: "\nThe answer is not 42.\n",
@@ -202,15 +165,14 @@ defmodule Tableau.PostExtensionTest do
                    __tableau_post_extension__: true,
                    permalink: "/post/2020/02/30/drafts-dir-post/",
                    categories: "post"
-                 } = post2
+                 } = post
                ],
                graph: graph
              } = token
 
       vertices = Graph.vertices(graph)
 
-      assert Enum.any?(vertices, &page_with_permalink?(&1, post1.permalink))
-      assert Enum.any?(vertices, &page_with_permalink?(&1, post2.permalink))
+      assert Enum.any?(vertices, &page_with_permalink?(&1, post.permalink))
 
       assert Blog.PostLayout in vertices
     end
