@@ -21,7 +21,6 @@ defmodule Tableau.PostExtension do
   title: "The elixir-tools Update Vol. 3"
   permalink: "/news/:title"
   date: "~N[2023-09-19 01:00:00]"
-  draft: false
   layout: "ElixirTools.PostLayout"
   converter: "MyConverter"
   ```
