@@ -137,6 +137,7 @@ defmodule Tableau.PostExtensionTest do
       posts_dir = Path.join(dir, "_posts")
 
       File.mkdir_p(posts_dir)
+
       File.write(Path.join(posts_dir, "my-post-in-posts-dir.md"), """
       ---
       layout: Blog.PostLayout
@@ -151,6 +152,7 @@ defmodule Tableau.PostExtensionTest do
 
       drafts_dir = Path.join(dir, "_drafts")
       File.mkdir_p(drafts_dir)
+
       File.write(Path.join(drafts_dir, "my-post-in-drafts-dir.md"), """
       ---
       layout: Blog.PostLayout

@@ -105,13 +105,13 @@ defmodule Tableau.PostExtension do
 
     posts =
       config.dir
-      |> List.wrap
+      |> List.wrap()
       |> Enum.map(fn path ->
         path
         |> Path.join("**/*.{#{exts}}")
         |> Common.paths()
       end)
-      |> List.flatten
+      |> List.flatten()
       |> Common.entries(fn %{path: path, front_matter: front_matter, pre_convert_body: body, ext: ext} ->
         {
           build(path, front_matter, body, config),
