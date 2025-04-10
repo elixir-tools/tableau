@@ -72,7 +72,11 @@ defmodule Tableau.TagExtension do
   end
   ```
   '''
-  use Tableau.Extension, key: :tag, priority: 200, type: :pre_build
+  use Tableau.Extension,
+    enabled: false,
+    type: :pre_build,
+    key: :tag,
+    priority: 200
 
   import Schematic
 
