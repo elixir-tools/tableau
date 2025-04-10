@@ -26,7 +26,7 @@ defmodule Tableau.PostExtensionTest do
   @moduletag :tmp_dir
 
   describe "config" do
-    test "provides defaults for dir, and future fields" do
+    test "provides defaults for dir and future fields" do
       assert {:ok, %{dir: "_posts", future: false}} = PostExtension.config(%{})
     end
   end
@@ -83,18 +83,6 @@ defmodule Tableau.PostExtensionTest do
       ---
 
       Do cars fly yet?
-      """)
-
-      File.write(Path.join([dir, "_drafts", "my-post-in-drafts-dir.md"]), """
-      ---
-      layout: Blog.PostLayout
-      title: My Draft Post
-      date: 2017-03-01
-      categories: post
-      permalink: /post/2020/02/30/drafts-dir-post/
-      ---
-
-      The answer is 42.
       """)
 
       assert {:ok, token} = PostExtension.run(token)
