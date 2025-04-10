@@ -133,7 +133,7 @@ defmodule Tableau.PostExtensionTest do
       assert Blog.PostLayout in vertices
     end
 
-    test "adding another directory to dir allows showing draft posts", %{tmp_dir: dir, token: token} do
+    test "can read posts from multiple directories", %{tmp_dir: dir, token: token} do
       posts_dir = Path.join(dir, "_posts")
 
       File.mkdir_p(posts_dir)
