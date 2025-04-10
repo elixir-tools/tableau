@@ -36,7 +36,7 @@ defmodule Tableau.PostExtension do
   ## Configuration
 
   - `:enabled` - boolean - Extension is active or not.
-  - `:dir` - string - Directory to scan for markdown files. Defaults to `_posts`
+  - `:dir` - string or list of strings - Directories to scan for markdown files. Defaults to `_posts`
   - `:future` - boolean - Show posts that have dates later than the current timestamp, or time at which the site is generated.
   - `:permalink` - string - Default output path for posts. Accepts `:title` as a replacement keyword, replaced with the post's provided title. If a post has a `:permalink` provided, that will override this value _for that post_.
   - `:layout` - string - Elixir module providing page layout for posts. Default is nil
@@ -89,7 +89,7 @@ defmodule Tableau.PostExtension do
     unify(
       map(%{
         optional(:enabled) => bool(),
-        optional(:dir, "_posts") => str(),
+        optional(:dir, "_posts") => oneof([list(str()), str()]),
         optional(:future, false) => bool(),
         optional(:permalink) => str(),
         optional(:layout) => oneof([atom(), str()])
@@ -105,8 +105,12 @@ defmodule Tableau.PostExtension do
 
     posts =
       config.dir
-      |> Path.join("**/*.{#{exts}}")
-      |> Common.paths()
+      |> List.wrap()
+      |> Enum.flat_map(fn path ->
+        path
+        |> Path.join("**/*.{#{exts}}")
+        |> Common.paths()
+      end)
       |> Common.entries(fn %{path: path, front_matter: front_matter, pre_convert_body: body, ext: ext} ->
         {
           build(path, front_matter, body, config),

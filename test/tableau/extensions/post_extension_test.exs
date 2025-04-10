@@ -121,6 +121,76 @@ defmodule Tableau.PostExtensionTest do
       assert Blog.PostLayout in vertices
     end
 
+    test "can read posts from multiple directories", %{tmp_dir: dir, token: token} do
+      posts_dir = Path.join(dir, "_posts")
+
+      File.mkdir_p(posts_dir)
+
+      File.write(Path.join(posts_dir, "my-post-in-posts-dir.md"), """
+      ---
+      layout: Blog.PostLayout
+      title: My Dir Post
+      date: 2017-02-01
+      categories: post
+      permalink: /post/2017/02/01/normal-post/
+      ---
+
+      I am a real boy.
+      """)
+
+      drafts_dir = Path.join(dir, "_drafts")
+      File.mkdir_p(drafts_dir)
+
+      File.write(Path.join(drafts_dir, "my-post-in-drafts-dir.md"), """
+      ---
+      layout: Blog.PostLayout
+      title: My Draft Dir Post
+      date: 2017-03-01
+      categories: post
+      permalink: /post/2017/03/01/drafts-dir-post/
+      ---
+
+      The answer is not 42.
+      """)
+
+      assert {:ok, config} = PostExtension.config(%{dir: [posts_dir, drafts_dir], enabled: true})
+
+      token = put_in(token.extensions.posts.config, config)
+
+      assert {:ok, token} = PostExtension.run(token)
+
+      assert %{
+               posts: [
+                 %{
+                   date: ~U[2017-03-01 00:00:00Z],
+                   file: ^drafts_dir <> "/my-post-in-drafts-dir.md",
+                   title: "My Draft Dir Post",
+                   body: "\nThe answer is not 42.\n",
+                   layout: Blog.PostLayout,
+                   __tableau_post_extension__: true,
+                   permalink: "/post/2017/03/01/drafts-dir-post/",
+                   categories: "post"
+                 } = post1,
+                 %{
+                   date: ~U[2017-02-01 00:00:00Z],
+                   file: ^posts_dir <> "/my-post-in-posts-dir.md",
+                   title: "My Dir Post",
+                   body: "\nI am a real boy.\n",
+                   layout: Blog.PostLayout,
+                   __tableau_post_extension__: true,
+                   permalink: "/post/2017/02/01/normal-post/",
+                   categories: "post"
+                 } = post2
+               ],
+               graph: graph
+             } = token
+
+      vertices = Graph.vertices(graph)
+
+      assert Enum.any?(vertices, &page_with_permalink?(&1, post1.permalink))
+      assert Enum.any?(vertices, &page_with_permalink?(&1, post2.permalink))
+    end
+
     test "future: true will render future posts", %{tmp_dir: dir, token: token} do
       File.write(Path.join(dir, "my-future-post.md"), """
       ---
