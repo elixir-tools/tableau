@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [0.23.1](https://github.com/elixir-tools/tableau/compare/v0.23.0...v0.23.1) (2025-04-10)
+
+
+### Bug Fixes
+
+* **tags:** disable by default ([f62c257](https://github.com/elixir-tools/tableau/commit/f62c257347f2236fa4f2fd883f49a169cae799bf)), closes [#131](https://github.com/elixir-tools/tableau/issues/131)
+
 ## [0.23.0](https://github.com/elixir-tools/tableau/compare/v0.22.0...v0.23.0) (2025-03-29)
 
 
