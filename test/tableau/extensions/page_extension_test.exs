@@ -102,6 +102,71 @@ defmodule Tableau.PageExtensionTest do
       assert Enum.any?(vertices, fn v -> v == Blog.PageLayout end)
     end
 
+    test "can read pages from multiple directories", %{tmp_dir: dir, token: token} do
+      dir_1 = Path.join(dir, "_pages")
+      File.mkdir_p(dir_1)
+
+      File.write(Path.join(dir_1, "page-1.md"), """
+      ---
+      layout: Blog.PageLayout
+      title: Page One
+      categories: page
+      permalink: /page/gibberish/page-1/
+      ---
+
+      I am a real boy.
+      """)
+
+      dir_2 = Path.join(dir, "_drafts")
+      File.mkdir_p(dir_2)
+
+      File.write(Path.join(dir_2, "page-2.md"), """
+      ---
+      layout: Blog.PageLayout
+      title: Page Two
+      categories: page
+      permalink: /page/gibberish/page-2/
+      ---
+
+      The answer is not 42.
+      """)
+
+      assert {:ok, config} = PageExtension.config(%{dir: [dir_1, dir_2], enabled: true})
+
+      token = put_in(token.extensions.pages.config, config)
+
+      assert {:ok, token} = PageExtension.run(token)
+
+      assert %{
+               pages: [
+                 %{
+                   file: ^dir_1 <> "/page-1.md",
+                   title: "Page One",
+                   body: "\nI am a real boy.\n",
+                   layout: Blog.PageLayout,
+                   __tableau_page_extension__: true,
+                   permalink: "/page/gibberish/page-1/",
+                   categories: "page"
+                 } = page_1,
+                 %{
+                   file: ^dir_2 <> "/page-2.md",
+                   title: "Page Two",
+                   body: "\nThe answer is not 42.\n",
+                   layout: Blog.PageLayout,
+                   __tableau_page_extension__: true,
+                   permalink: "/page/gibberish/page-2/",
+                   categories: "page"
+                 } = page_2
+               ],
+               graph: graph
+             } = token
+
+      vertices = Graph.vertices(graph)
+
+      assert Enum.any?(vertices, fn v -> is_struct(v, Tableau.Page) and v.permalink == page_1.permalink end)
+      assert Enum.any?(vertices, fn v -> is_struct(v, Tableau.Page) and v.permalink == page_2.permalink end)
+    end
+
     test "configured permalink works when you dont specify one", %{tmp_dir: dir, token: token} do
       File.write(Path.join(dir, "my-future-page.md"), """
       ---
