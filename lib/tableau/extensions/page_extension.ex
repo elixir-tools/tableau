@@ -32,7 +32,7 @@ defmodule Tableau.PageExtension do
   ## Configuration
 
   - `:enabled` - boolean - Extension is active or not.
-  - `:dir` - string - Directory to scan for markdown files. Defaults to `_pages`
+  - `:dir` - string or list of strings - Directories to scan for markdown files. Defaults to `_pages`
   - `:permalink` - string - Default output path for pages. Accepts `:title` as a replacement keyword, replaced with the page's provided title. If a page has a `:permalink` provided, that will override this value _for that page_.
   - `:layout` - string - Elixir module providing page layout for pages. Default is nil.
 
@@ -75,7 +75,7 @@ defmodule Tableau.PageExtension do
     unify(
       map(%{
         optional(:enabled, true) => bool(),
-        optional(:dir, "_pages") => str(),
+        optional(:dir, "_pages") => oneof([list(str()), str()]),
         optional(:permalink) => str(),
         optional(:layout) => oneof([str(), atom()])
       }),
@@ -90,8 +90,12 @@ defmodule Tableau.PageExtension do
 
     pages =
       config.dir
-      |> Path.join("**/*.{#{exts}}")
-      |> Common.paths()
+      |> List.wrap()
+      |> Enum.flat_map(fn path ->
+        path
+        |> Path.join("**/*.{#{exts}}")
+        |> Common.paths()
+      end)
       |> Common.entries(fn %{path: path, front_matter: front_matter, pre_convert_body: body, ext: ext} ->
         {
           build(path, front_matter, body, config),
