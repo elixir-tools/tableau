@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## [0.24.0](https://github.com/elixir-tools/tableau/compare/v0.23.1...v0.24.0) (2025-04-17)
+
+
+### Features
+
+* **page:** support sourcing from multiple directories ([#134](https://github.com/elixir-tools/tableau/issues/134)) ([0e1115b](https://github.com/elixir-tools/tableau/commit/0e1115b8e5c68afaf4825dcafe1b07a9a2e87c0b))
+* **posts:** allow multiple source directories ([#130](https://github.com/elixir-tools/tableau/issues/130)) ([4220c6e](https://github.com/elixir-tools/tableau/commit/4220c6e62aba8b19809a392b1275e65bf430153c))
+
+
+### Bug Fixes
+
+* **posts,page:** handle path based permalinks ([4c71375](https://github.com/elixir-tools/tableau/commit/4c71375d0cd106d93ae75f7ec26f450f62250b9d))
+
 ## [0.23.1](https://github.com/elixir-tools/tableau/compare/v0.23.0...v0.23.1) (2025-04-10)
 
 
