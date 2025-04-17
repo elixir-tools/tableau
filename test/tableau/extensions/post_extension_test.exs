@@ -266,6 +266,9 @@ defmodule Tableau.PostExtensionTest do
     end
 
     test "generates permalink from file path if not configured or in front matter", %{tmp_dir: dir, token: token} do
+      assert {:ok, config} = PostExtension.config(%{dir: [dir], enabled: true})
+
+      token = put_in(token.extensions.posts.config, config)
       fancy_dir = Path.join(dir, "/some/fancy/path")
       File.mkdir_p!(fancy_dir)
 

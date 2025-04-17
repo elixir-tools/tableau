@@ -46,7 +46,12 @@ defmodule Tableau.Extension.Common do
   def build_permalink(%{file: filename} = front_matter, config) do
     filename
     |> Path.rootname()
-    |> String.replace_prefix(config.dir, "")
+    |> then(fn rootname ->
+      for dir <- List.wrap(config.dir), reduce: rootname do
+        rootname ->
+          String.replace_prefix(rootname, dir, "")
+      end
+    end)
     |> transform_permalink(front_matter)
     |> then(&Map.put(front_matter, :permalink, &1))
   end
