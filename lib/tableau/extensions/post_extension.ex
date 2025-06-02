@@ -80,6 +80,7 @@ defmodule Tableau.PostExtension do
   @type post :: %{
           body: String.t(),
           file: String.t(),
+          renderer: fun(),
           layout: module(),
           date: DateTime.t()
         }
@@ -112,49 +113,47 @@ defmodule Tableau.PostExtension do
         |> Common.paths()
       end)
       |> Common.entries(fn %{path: path, front_matter: front_matter, pre_convert_body: body, ext: ext} ->
-        {
-          build(path, front_matter, body, config),
-          fn assigns ->
-            converter =
-              case front_matter[:converter] do
-                nil -> converters[ext]
-                converter -> Module.concat([converter])
-              end
+        build(path, front_matter, body, config, fn assigns ->
+          converter =
+            case front_matter[:converter] do
+              nil -> converters[ext]
+              converter -> Module.concat([converter])
+            end
 
-            converter.convert(path, front_matter, body, assigns)
-          end
-        }
+          converter.convert(path, front_matter, body, assigns)
+        end)
       end)
-      |> Enum.sort_by(fn {post, _} -> post.date end, {:desc, DateTime})
+      |> Enum.sort_by(fn post -> post.date end, {:desc, DateTime})
       |> then(fn posts ->
         if config.future do
           posts
         else
-          Enum.reject(posts, fn {post, _} -> DateTime.after?(post.date, DateTime.utc_now()) end)
+          Enum.reject(posts, fn post -> DateTime.after?(post.date, DateTime.utc_now()) end)
         end
       end)
 
     graph =
       Tableau.Graph.insert(
         token.graph,
-        Enum.map(posts, fn {post, renderer} ->
-          %Tableau.Page{parent: post.layout, permalink: post.permalink, template: renderer, opts: post}
+        Enum.map(posts, fn post ->
+          %Tableau.Page{parent: post.layout, permalink: post.permalink, template: post.renderer, opts: post}
         end)
       )
 
     {:ok,
      token
-     |> Map.put(:posts, posts |> Enum.unzip() |> elem(0))
+     |> Map.put(:posts, posts)
      |> Map.put(:graph, graph)}
   end
 
-  defp build(filename, attrs, body, posts_config) do
+  defp build(filename, attrs, body, posts_config, renderer) do
     Application.put_env(:date_time_parser, :include_zones_from, ~N[2010-01-01T00:00:00])
 
     attrs
     |> Map.put(:__tableau_post_extension__, true)
     |> Map.put(:body, body)
     |> Map.put(:file, filename)
+    |> Map.put(:renderer, renderer)
     |> Map.put(:layout, Module.concat([attrs[:layout] || posts_config.layout]))
     |> Map.put(:date, DateTimeParser.parse_datetime!(attrs.date, assume_time: true, assume_utc: true))
     |> Common.build_permalink(posts_config)

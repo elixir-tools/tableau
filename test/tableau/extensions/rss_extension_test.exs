@@ -42,9 +42,9 @@ defmodule Tableau.RSSExtensionTest do
       assert File.exists?(feed_path)
       feed_content = File.read!(feed_path)
 
-      assert feed_content =~ "Post 1"
-      refute feed_content =~ "Post 2"
-      refute feed_content =~ "Post 3"
+      assert feed_content =~ "POST 1"
+      refute feed_content =~ "POST 2"
+      refute feed_content =~ "POST 3"
     end
   end
 
@@ -118,17 +118,17 @@ defmodule Tableau.RSSExtensionTest do
       assert File.exists?(feed_path)
       feed_content = File.read!(feed_path)
 
-      assert feed_content =~ "Post 1"
-      refute feed_content =~ "Post 2"
-      refute feed_content =~ "Post 3"
+      assert feed_content =~ "POST 1"
+      refute feed_content =~ "POST 2"
+      refute feed_content =~ "POST 3"
       # only contains posts with category as "casual"
       casual_path = Path.join(tmp_dir, "casual.xml")
       assert File.exists?(casual_path)
       casual_content = File.read!(casual_path)
 
-      refute casual_content =~ "Post 2"
-      refute casual_content =~ "Post 1"
-      assert casual_content =~ "Post 3"
+      refute casual_content =~ "POST 2"
+      refute casual_content =~ "POST 1"
+      assert casual_content =~ "POST 3"
     end
 
     test "includes everything if there is no includes key", %{token: token, tmp_dir: tmp_dir} do
@@ -149,9 +149,9 @@ defmodule Tableau.RSSExtensionTest do
       assert File.exists?(feed_path)
       feed_content = File.read!(feed_path)
 
-      assert feed_content =~ "Post 1"
-      assert feed_content =~ "Post 2"
-      assert feed_content =~ "Post 3"
+      assert feed_content =~ "POST 1"
+      assert feed_content =~ "POST 2"
+      assert feed_content =~ "POST 3"
     end
 
     test "excludes various frontmatter", %{token: token, tmp_dir: tmp_dir} do
@@ -180,18 +180,18 @@ defmodule Tableau.RSSExtensionTest do
       assert File.exists?(not_posts_path)
       not_posts_content = File.read!(not_posts_path)
 
-      refute not_posts_content =~ "Post 1"
-      assert not_posts_content =~ "Post 2"
-      assert not_posts_content =~ "Post 3"
+      refute not_posts_content =~ "POST 1"
+      assert not_posts_content =~ "POST 2"
+      assert not_posts_content =~ "POST 3"
 
       # only contains posts without category as "bar"
       not_casual_path = Path.join(tmp_dir, "not_casual.xml")
       assert File.exists?(not_casual_path)
       not_casual_content = File.read!(not_casual_path)
 
-      assert not_casual_content =~ "Post 2"
-      assert not_casual_content =~ "Post 1"
-      refute not_casual_content =~ "Post 3"
+      assert not_casual_content =~ "POST 2"
+      assert not_casual_content =~ "POST 1"
+      refute not_casual_content =~ "POST 3"
     end
   end
 end
