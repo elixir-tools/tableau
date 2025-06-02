@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [0.24.1](https://github.com/elixir-tools/tableau/compare/v0.24.0...v0.24.1) (2025-06-02)
+
+
+### Bug Fixes
+
+* **rss:** convert post body ([#135](https://github.com/elixir-tools/tableau/issues/135)) ([0aa6185](https://github.com/elixir-tools/tableau/commit/0aa61854badce32f9e6ce70139ddfe08af88cb7c))
+
 ## [0.24.0](https://github.com/elixir-tools/tableau/compare/v0.23.1...v0.24.0) (2025-04-17)
 
 
