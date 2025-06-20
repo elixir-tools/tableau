@@ -55,10 +55,11 @@ defmodule Tableau.DataExtension do
 
   <!-- tabs-close -->
   """
-  use Tableau.Extension, key: :data, type: :pre_build, priority: 200
+  use Tableau.Extension, key: :data, priority: 200
 
   import Schematic
 
+  @impl Tableau.Extension
   def config(config) do
     unify(
       map(%{
@@ -69,7 +70,8 @@ defmodule Tableau.DataExtension do
     )
   end
 
-  def run(token) do
+  @impl Tableau.Extension
+  def pre_build(token) do
     data =
       for file <- Path.wildcard(Path.join(token.extensions.data.config.dir, "**/*.{yml,yaml,exs}")), into: %{} do
         case Path.extname(file) do

@@ -74,7 +74,6 @@ defmodule Tableau.TagExtension do
   '''
   use Tableau.Extension,
     enabled: false,
-    type: :pre_build,
     key: :tag,
     priority: 200
 
@@ -113,9 +112,8 @@ defmodule Tableau.TagExtension do
   end
 
   @impl Tableau.Extension
-  def run(token) do
+  def pre_build(token) do
     posts = token.posts
-    layout = token.extensions.tag.config.layout
     permalink = token.extensions.tag.config.permalink
 
     tags =
@@ -127,10 +125,17 @@ defmodule Tableau.TagExtension do
           Map.update(acc, tag, [post], &[post | &1])
       end
 
+    {:ok, Map.put(token, :tags, tags)}
+  end
+
+  @impl Tableau.Extension
+  def pre_render(token) do
+    layout = token.extensions.tag.config.layout
+
     graph =
       Tableau.Graph.insert(
         token.graph,
-        for {tag, posts} <- tags do
+        for {tag, posts} <- token.tags do
           posts = Enum.sort_by(posts, & &1.date, {:desc, DateTime})
 
           opts = Map.put(tag, :posts, posts)
@@ -144,6 +149,6 @@ defmodule Tableau.TagExtension do
         end
       )
 
-    {:ok, token |> Map.put(:graph, graph) |> Map.put(:tags, tags)}
+    {:ok, Map.put(token, :graph, graph)}
   end
 end

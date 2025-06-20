@@ -44,11 +44,12 @@ defmodule Tableau.SitemapExtension do
   For more information about sitemaps, see <https://www.sitemaps.org>.
   """
 
-  use Tableau.Extension, key: :sitemap, type: :post_write, priority: 300
+  use Tableau.Extension, key: :sitemap, priority: 300
 
   require Logger
 
-  def run(%{site: %{config: %{url: root, out_dir: out_dir}, pages: pages}} = token) do
+  @impl Tableau.Extension
+  def post_write(%{site: %{config: %{url: root, out_dir: out_dir}, pages: pages}} = token) do
     urls =
       for page <- pages, uniq: true do
         loc =

@@ -71,7 +71,7 @@ defmodule Tableau.PostExtension do
   As noted above, a converter can be overridden on a specific page, using the frontmatter `:converter` key.
   """
 
-  use Tableau.Extension, key: :posts, type: :pre_build, priority: 100
+  use Tableau.Extension, key: :posts, priority: 100
 
   import Schematic
 
@@ -100,7 +100,7 @@ defmodule Tableau.PostExtension do
   end
 
   @impl Tableau.Extension
-  def run(token) do
+  def pre_build(token) do
     %{site: %{config: %{converters: converters}}, extensions: %{posts: %{config: config}}} = token
     exts = Enum.map_join(converters, ",", fn {ext, _} -> to_string(ext) end)
 
@@ -132,18 +132,20 @@ defmodule Tableau.PostExtension do
         end
       end)
 
+    {:ok, Map.put(token, :posts, posts)}
+  end
+
+  @impl Tableau.Extension
+  def pre_render(token) do
     graph =
       Tableau.Graph.insert(
         token.graph,
-        Enum.map(posts, fn post ->
+        Enum.map(token.posts, fn post ->
           %Tableau.Page{parent: post.layout, permalink: post.permalink, template: post.renderer, opts: post}
         end)
       )
 
-    {:ok,
-     token
-     |> Map.put(:posts, posts)
-     |> Map.put(:graph, graph)}
+    {:ok, Map.put(token, :graph, graph)}
   end
 
   defp build(filename, attrs, body, posts_config, renderer) do

@@ -7,13 +7,12 @@ defmodule Tableau.Extension do
   ## Options
 
   * `:key` - The key in which the extensions configuration and data is loaded.
-  * `:type` - The type of extension. See below for a description.
   * `:priority` - An integer used for ordering extensions of the same type.
   * `:enabled` - Whether or not to enable the extension. Defaults to true, and can be configured differently based on the extension.
 
-  ## Types
+  ## Callbacks
 
-  There are currently the following extension types:
+  There are currently the following extension callbacks:
 
   - `:pre_build` - executed before tableau builds your site and writes anything to disk.
   - `:pre_write` - executed after tableau builds your site but before it writes anything to disk.
@@ -33,9 +32,10 @@ defmodule Tableau.Extension do
 
   ```elixir
   defmodule MySite.PostsExtension do
-    use Tableau.Extension, key: :posts, type: :pre_build, priority: 300
+    use Tableau.Extension, key: :posts, priority: 300
 
-    def run(token) do
+    @impl Tableau.Extension
+    def pre_build(token) do
       posts = 
         for post <- Path.wildcard("_posts/**/*.md") do
           %Tableau.Page{
@@ -57,15 +57,35 @@ defmodule Tableau.Extension do
   ```
   '''
 
-  @typep extension_type :: :pre_build | :post_write
   @type token :: map()
 
   @doc """
-  The extension entry point.
+  Called in the pre_build phase.
 
   The function is passed a token and can return a new token with new data loaded into it.
   """
-  @callback run(token()) :: {:ok, token()} | :error
+  @callback pre_build(token()) :: {:ok, token()} | :error
+
+  @doc """
+  Called in the pre_render phase.
+
+  The function is passed a token and can return a new token with new data loaded into it.
+  """
+  @callback pre_render(token()) :: {:ok, token()} | :error
+
+  @doc """
+  Called in the pre_write phase.
+
+  The function is passed a token and can return a new token with new data loaded into it.
+  """
+  @callback pre_write(token()) :: {:ok, token()} | :error
+
+  @doc """
+  Called in the post_write phase.
+
+  The function is passed a token and can return a new token with new data loaded into it.
+  """
+  @callback post_write(token()) :: {:ok, token()} | :error
 
   @doc """
   Optional callback to validate the config for an extension. Useful for 
@@ -74,15 +94,18 @@ defmodule Tableau.Extension do
   @callback config(Keyword.t() | map()) :: {:ok, map()} | {:error, any()}
 
   @optional_callbacks [
-    config: 1
+    config: 1,
+    pre_build: 1,
+    pre_render: 1,
+    pre_write: 1,
+    post_write: 1
   ]
 
   defmacro __using__(opts) do
-    opts = Keyword.validate!(opts, [:key, :enabled, :type, :priority])
+    opts = Keyword.validate!(opts, [:key, :enabled, :priority])
 
     prelude =
       quote do
-        def __tableau_extension_type__, do: unquote(opts)[:type]
         def __tableau_extension_key__, do: unquote(opts)[:key]
         def __tableau_extension_enabled__, do: Keyword.get(unquote(opts), :enabled, true)
         def __tableau_extension_priority__, do: unquote(opts)[:priority] || 0
@@ -97,17 +120,7 @@ defmodule Tableau.Extension do
   end
 
   @doc false
-  @spec type(module()) :: extension_type()
-  def type(module) do
-    if function_exported?(module, :__tableau_extension_type__, 0) do
-      {:ok, module.__tableau_extension_type__()}
-    else
-      :error
-    end
-  end
-
-  @doc false
-  @spec key(module()) :: extension_type()
+  @spec key(module()) :: atom()
   def key(module) do
     if function_exported?(module, :__tableau_extension_key__, 0) do
       {:ok, module.__tableau_extension_key__()}

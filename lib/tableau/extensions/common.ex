@@ -72,12 +72,8 @@ defmodule Tableau.Extension.Common do
         end
       end)
 
-    path
-    |> String.replace(Map.keys(vars), &to_string(Map.fetch!(vars, &1)))
-    |> String.replace(" ", "-")
-    |> String.replace("_", "-")
-    |> String.replace(~r/[^[:alnum:]\/\-.]/, "")
-    |> String.downcase()
-    |> URI.encode()
+    String.replace(path, Map.keys(vars), fn key ->
+      vars |> Map.fetch!(key) |> to_string() |> Slug.slugify(ignore: ["."])
+    end)
   end
 end

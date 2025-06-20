@@ -36,7 +36,7 @@ defmodule Tableau.RSSExtensionTest do
         }
       }
 
-      assert {:ok, _} = RSSExtension.run(token)
+      assert {:ok, _} = RSSExtension.post_write(token)
 
       feed_path = Path.join(tmp_dir, "feed.xml")
       assert File.exists?(feed_path)
@@ -111,7 +111,7 @@ defmodule Tableau.RSSExtensionTest do
           }
         )
 
-      assert {:ok, _} = RSSExtension.run(token)
+      assert {:ok, _} = RSSExtension.post_write(token)
 
       # only contains posts tagged as "post"
       feed_path = Path.join(tmp_dir, "feed.xml")
@@ -142,7 +142,7 @@ defmodule Tableau.RSSExtensionTest do
           }
         )
 
-      assert {:ok, _} = RSSExtension.run(token)
+      assert {:ok, _} = RSSExtension.post_write(token)
 
       # contains all posts
       feed_path = Path.join(tmp_dir, "feed.xml")
@@ -173,7 +173,7 @@ defmodule Tableau.RSSExtensionTest do
           }
         )
 
-      assert {:ok, _} = RSSExtension.run(token)
+      assert {:ok, _} = RSSExtension.post_write(token)
 
       # only contains posts not tagged as "post"
       not_posts_path = Path.join(tmp_dir, "not_posts.xml")

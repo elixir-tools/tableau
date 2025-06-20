@@ -21,7 +21,7 @@ defmodule Tableau.SitemapExtensionTest do
       }
     }
 
-    SitemapExtension.run(token)
+    SitemapExtension.post_write(token)
 
     sitemap = File.read!("#{tmp_dir}/sitemap.xml")
 
@@ -58,7 +58,7 @@ defmodule Tableau.SitemapExtensionTest do
       }
     }
 
-    SitemapExtension.run(token)
+    SitemapExtension.post_write(token)
 
     sitemap = File.read!("#{tmp_dir}/sitemap.xml")
 

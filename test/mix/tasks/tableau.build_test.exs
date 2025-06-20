@@ -1,8 +1,8 @@
 defmodule Mix.Tasks.Tableau.LogExtension do
   @moduledoc false
-  use Tableau.Extension, key: :log, type: :pre_build, priority: 200
+  use Tableau.Extension, key: :log, priority: 200
 
-  def run(token) do
+  def pre_build(token) do
     IO.write(:stderr, "second: #{System.monotonic_time()}\n")
     {:ok, token}
   end
@@ -10,9 +10,9 @@ end
 
 defmodule Mix.Tasks.Tableau.FailExtension do
   @moduledoc false
-  use Tableau.Extension, key: :fail, type: :pre_build, priority: 100
+  use Tableau.Extension, key: :fail, priority: 100
 
-  def run(_site) do
+  def pre_build(_site) do
     IO.write(:stderr, "first: #{System.monotonic_time()}\n")
     :error
   end
@@ -20,9 +20,9 @@ end
 
 defmodule Mix.Tasks.Tableau.FooExtension do
   @moduledoc false
-  use Tableau.Extension, key: :foo, type: :pre_write, priority: 100
+  use Tableau.Extension, key: :foo, priority: 100
 
-  def run(token) do
+  def pre_write(token) do
     pages =
       for page <- token.site.pages do
         Map.put(page, :foo, "bar")
