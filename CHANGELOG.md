@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## [0.25.0](https://github.com/elixir-tools/tableau/compare/v0.24.1...v0.25.0) (2025-06-21)
+
+
+### ⚠ BREAKING CHANGES
+
+* **extensions:** Extensions no longer implement a `run/1` callback. They can implement a callback named after the build phase: `pre_build/1`, `pre_render/1`, etc
+
+### Features
+
+* **extensions:** pre_render phase ([#138](https://github.com/elixir-tools/tableau/issues/138)) ([a8a819e](https://github.com/elixir-tools/tableau/commit/a8a819e01d431afdb861641a636c61d80e8f18d4))
+
 ## [0.24.1](https://github.com/elixir-tools/tableau/compare/v0.24.0...v0.24.1) (2025-06-02)
 
 
