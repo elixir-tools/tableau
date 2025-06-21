@@ -6,7 +6,7 @@ defmodule Tableau.DataExtensionTest do
   test "reads/evals files from disk" do
     token = %{extensions: %{data: %{config: %{dir: "test/support/fixtures"}}}}
 
-    assert {:ok, actual} = DataExtension.run(token)
+    assert {:ok, actual} = DataExtension.pre_build(token)
 
     assert %{
              data: %{

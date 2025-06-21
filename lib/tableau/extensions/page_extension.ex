@@ -65,12 +65,13 @@ defmodule Tableau.PageExtension do
   As noted above, a converter can be overridden on a specific page, using the frontmatter `:converter` key.
   """
 
-  use Tableau.Extension, key: :pages, type: :pre_build, priority: 100
+  use Tableau.Extension, key: :pages, priority: 100
 
   import Schematic
 
   alias Tableau.Extension.Common
 
+  @impl Tableau.Extension
   def config(input) do
     unify(
       map(%{
@@ -83,7 +84,8 @@ defmodule Tableau.PageExtension do
     )
   end
 
-  def run(token) do
+  @impl Tableau.Extension
+  def pre_build(token) do
     %{site: %{config: %{converters: converters}}, extensions: %{pages: %{config: config}}} = token
 
     exts = Enum.map_join(converters, ",", fn {ext, _} -> to_string(ext) end)
@@ -96,40 +98,47 @@ defmodule Tableau.PageExtension do
         |> Path.join("**/*.{#{exts}}")
         |> Common.paths()
       end)
-      |> Common.entries(fn %{path: path, front_matter: front_matter, pre_convert_body: body, ext: ext} ->
-        {
-          build(path, front_matter, body, config),
-          fn assigns ->
-            converter =
-              case front_matter[:converter] do
-                nil -> converters[ext]
-                converter -> Module.concat([converter])
-              end
+      |> Common.entries(fn entry ->
+        %{
+          path: path,
+          front_matter: front_matter,
+          pre_convert_body: body,
+          ext: ext
+        } = entry
 
-            converter.convert(path, front_matter, body, assigns)
-          end
-        }
+        build(path, front_matter, body, config, fn assigns ->
+          converter =
+            case front_matter[:converter] do
+              nil -> converters[ext]
+              converter -> Module.concat([converter])
+            end
+
+          converter.convert(path, front_matter, body, assigns)
+        end)
       end)
 
+    {:ok, Map.put(token, :pages, pages)}
+  end
+
+  @impl Tableau.Extension
+  def pre_render(token) do
     graph =
       Tableau.Graph.insert(
         token.graph,
-        Enum.map(pages, fn {page, renderer} ->
-          %Tableau.Page{parent: page.layout, permalink: page.permalink, template: renderer, opts: page}
+        Enum.map(token.pages, fn page ->
+          %Tableau.Page{parent: page.layout, permalink: page.permalink, template: page.renderer, opts: page}
         end)
       )
 
-    {:ok,
-     token
-     |> Map.put(:pages, pages |> Enum.unzip() |> elem(0))
-     |> Map.put(:graph, graph)}
+    {:ok, Map.put(token, :graph, graph)}
   end
 
-  defp build(filename, front_matter, body, pages_config) do
+  defp build(filename, front_matter, body, pages_config, renderer) do
     front_matter
     |> Map.put(:__tableau_page_extension__, true)
     |> Map.put(:body, body)
     |> Map.put(:file, filename)
+    |> Map.put(:renderer, renderer)
     |> Map.put(:layout, Module.concat([front_matter[:layout] || pages_config.layout]))
     |> Common.build_permalink(pages_config)
   end

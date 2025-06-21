@@ -1,6 +1,6 @@
 name: Lint Commit
 on:
-  pull_request:
+  pull_request_target:
     types:
       - opened
       - reopened
@@ -14,9 +14,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - name: Install Deps
-        run: yarn install
-      - name: Lint PR Title
-        run: echo "${PULL_REQUEST_TITLE}" | yarn commitlint
+      - uses: amannn/action-semantic-pull-request@v5
         env:
-          PULL_REQUEST_TITLE: ${{ github.event.pull_request.title }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          subjectPattern: ^(?![A-Z]).+$

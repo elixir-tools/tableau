@@ -85,7 +85,8 @@ defmodule Tableau.PostExtensionTest do
       Do cars fly yet?
       """)
 
-      assert {:ok, token} = PostExtension.run(token)
+      assert {:ok, token} = PostExtension.pre_build(token)
+      assert {:ok, token} = PostExtension.pre_render(token)
 
       assert %{
                posts: [
@@ -157,7 +158,8 @@ defmodule Tableau.PostExtensionTest do
 
       token = put_in(token.extensions.posts.config, config)
 
-      assert {:ok, token} = PostExtension.run(token)
+      assert {:ok, token} = PostExtension.pre_build(token)
+      assert {:ok, token} = PostExtension.pre_render(token)
 
       assert %{
                posts: [
@@ -208,7 +210,8 @@ defmodule Tableau.PostExtensionTest do
 
       token = put_in(token.extensions.posts.config, config)
 
-      assert {:ok, token} = PostExtension.run(token)
+      assert {:ok, token} = PostExtension.pre_build(token)
+      assert {:ok, token} = PostExtension.pre_render(token)
 
       assert %{
                posts: [
@@ -248,7 +251,8 @@ defmodule Tableau.PostExtensionTest do
 
       token = put_in(token.extensions.posts.config, config)
 
-      assert {:ok, token} = PostExtension.run(token)
+      assert {:ok, token} = PostExtension.pre_build(token)
+      assert {:ok, token} = PostExtension.pre_render(token)
 
       assert %{
                posts: [
@@ -282,7 +286,8 @@ defmodule Tableau.PostExtensionTest do
       A great post
       """)
 
-      assert {:ok, token} = PostExtension.run(token)
+      assert {:ok, token} = PostExtension.pre_build(token)
+      assert {:ok, token} = PostExtension.pre_render(token)
 
       assert %{
                posts: [
@@ -311,7 +316,8 @@ defmodule Tableau.PostExtensionTest do
       A great post
       """)
 
-      assert {:ok, token} = PostExtension.run(token)
+      assert {:ok, token} = PostExtension.pre_build(token)
+      assert {:ok, token} = PostExtension.pre_render(token)
 
       assert %{
                posts: [
@@ -321,7 +327,7 @@ defmodule Tableau.PostExtensionTest do
                    date: ~U[2018-02-28 00:00:00Z],
                    file: ^dir <> "/a-post.md",
                    layout: Blog.PostLayout,
-                   permalink: "/%C2qu%C3-es-la-programaci%C3n-funcional",
+                   permalink: "/que-es-la-programacion-funcional",
                    title: "¿Qué es la programación funcional?"
                  }
                ]
@@ -339,7 +345,8 @@ defmodule Tableau.PostExtensionTest do
       A great post
       """)
 
-      assert {:ok, token} = PostExtension.run(token)
+      assert {:ok, token} = PostExtension.pre_build(token)
+      assert {:ok, token} = PostExtension.pre_render(token)
 
       assert %{
                posts: [
@@ -369,7 +376,8 @@ defmodule Tableau.PostExtensionTest do
       A great post
       """)
 
-      assert {:ok, token} = PostExtension.run(token)
+      assert {:ok, token} = PostExtension.pre_build(token)
+      assert {:ok, token} = PostExtension.pre_render(token)
 
       assert %{
                posts: [
@@ -401,7 +409,8 @@ defmodule Tableau.PostExtensionTest do
       A great post
       """)
 
-      assert {:ok, token} = PostExtension.run(token)
+      assert {:ok, token} = PostExtension.pre_build(token)
+      assert {:ok, token} = PostExtension.pre_render(token)
 
       assert %{posts: [%{converter: "Tableau.PostExtensionTest"}], graph: graph} = token
 

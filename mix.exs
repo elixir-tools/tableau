@@ -39,6 +39,7 @@ defmodule Tableau.MixProject do
       {:libgraph, "~> 0.16.0"},
       {:mdex, "~> 0.4.0"},
       {:schematic, "~> 0.5.1"},
+      {:slugify, "~> 1.3"},
       {:tz, "~> 0.28.1"},
       {:web_dev_utils, "~> 0.3"},
       {:websock_adapter, "~> 0.5"},

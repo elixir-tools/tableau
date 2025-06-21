@@ -28,15 +28,16 @@ defmodule Mix.Tasks.Tableau.Build do
     {:ok, config} = Tableau.Config.get()
     token = Map.put(token, :extensions, %{})
 
-    token = mods |> extensions_for(:pre_build) |> run_extensions(token)
+    token = mods |> extensions_for(:pre_build) |> run_extensions(:pre_build, token)
 
+    token = mods |> extensions_for(:pre_render) |> run_extensions(:pre_render, token)
     graph = Tableau.Graph.insert(token.graph, mods)
 
     File.mkdir_p!(out)
 
     pages =
-      for mod <- Graph.vertices(graph), {:ok, :page} == Nodable.type(mod) do
-        {mod, Map.new(Nodable.opts(mod) || [])}
+      for page <- Graph.vertices(graph), {:ok, :page} == Nodable.type(page) do
+        {page, Map.new(Nodable.opts(page) || [])}
       end
 
     token = put_in(token.site[:pages], Enum.map(pages, fn {_mod, page} -> page end))
@@ -62,7 +63,7 @@ defmodule Mix.Tasks.Tableau.Build do
 
     token = put_in(token.site[:pages], pages)
 
-    token = mods |> extensions_for(:pre_write) |> run_extensions(token)
+    token = mods |> extensions_for(:pre_write) |> run_extensions(:pre_write, token)
 
     for %{body: body, permalink: permalink} <- pages do
       file_path = build_file_path(out, permalink)
@@ -77,7 +78,7 @@ defmodule Mix.Tasks.Tableau.Build do
       File.cp_r!(config.include_dir, out)
     end
 
-    token = mods |> extensions_for(:post_write) |> run_extensions(token)
+    token = mods |> extensions_for(:post_write) |> run_extensions(:post_write, token)
 
     token
   end
@@ -101,14 +102,14 @@ defmodule Mix.Tasks.Tableau.Build do
 
   defp extensions_for(modules, type) do
     extensions =
-      for mod <- modules, Code.ensure_loaded?(mod), {:ok, type} == Tableau.Extension.type(mod) do
+      for mod <- modules, Code.ensure_loaded?(mod), function_exported?(mod, type, 1) do
         mod
       end
 
     Enum.sort_by(extensions, & &1.__tableau_extension_priority__())
   end
 
-  defp run_extensions(extensions, token) do
+  defp run_extensions(extensions, type, token) do
     for module <- extensions, reduce: token do
       token ->
         raw_config =
@@ -124,7 +125,7 @@ defmodule Mix.Tasks.Tableau.Build do
 
           token = put_in(token.extensions[key], %{config: config})
 
-          case module.run(token) do
+          case apply(module, type, [token]) do
             {:ok, token} ->
               token
 

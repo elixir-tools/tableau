@@ -42,7 +42,7 @@ defmodule Tableau.RSSExtension do
     ]
   ```
   """
-  use Tableau.Extension, key: :rss, type: :post_write, priority: 200
+  use Tableau.Extension, key: :rss, priority: 200
 
   import Schematic
 
@@ -77,7 +77,9 @@ defmodule Tableau.RSSExtension do
   end
 
   @impl Tableau.Extension
-  def run(%{site: %{config: %{url: url, out_dir: out_dir}}, posts: posts, extensions: %{rss: %{config: feeds}}} = token) do
+  def post_write(
+        %{site: %{config: %{url: url, out_dir: out_dir}}, posts: posts, extensions: %{rss: %{config: feeds}}} = token
+      ) do
     feeds =
       if Map.has_key?(feeds, :feeds) do
         feeds.feeds

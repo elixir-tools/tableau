@@ -22,7 +22,8 @@ defmodule Tableau.TagExtensionTest do
         extensions: %{tag: %{config: %{layout: Layout, permalink: "/tags"}}}
       }
 
-      assert {:ok, token} = TagExtension.run(token)
+      assert {:ok, token} = TagExtension.pre_build(token)
+      assert {:ok, token} = TagExtension.pre_render(token)
 
       assert %{
                tags: %{

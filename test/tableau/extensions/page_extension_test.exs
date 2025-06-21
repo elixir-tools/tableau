@@ -69,7 +69,8 @@ defmodule Tableau.PageExtensionTest do
       with gas!
       """)
 
-      assert {:ok, token} = PageExtension.run(token)
+      assert {:ok, token} = PageExtension.pre_build(token)
+      assert {:ok, token} = PageExtension.pre_render(token)
 
       assert %{
                pages: [
@@ -135,7 +136,8 @@ defmodule Tableau.PageExtensionTest do
 
       token = put_in(token.extensions.pages.config, config)
 
-      assert {:ok, token} = PageExtension.run(token)
+      assert {:ok, token} = PageExtension.pre_build(token)
+      assert {:ok, token} = PageExtension.pre_render(token)
 
       assert %{
                pages: [
@@ -182,7 +184,8 @@ defmodule Tableau.PageExtensionTest do
 
       token = put_in(token.extensions.pages.config, config)
 
-      assert {:ok, token} = PageExtension.run(token)
+      assert {:ok, token} = PageExtension.pre_build(token)
+      assert {:ok, token} = PageExtension.pre_render(token)
 
       assert %{
                pages: [
@@ -215,7 +218,8 @@ defmodule Tableau.PageExtensionTest do
       A great page
       """)
 
-      assert {:ok, token} = PageExtension.run(token)
+      assert {:ok, token} = PageExtension.pre_build(token)
+      assert {:ok, token} = PageExtension.pre_render(token)
 
       assert %{
                pages: [
@@ -242,7 +246,8 @@ defmodule Tableau.PageExtensionTest do
       A great page
       """)
 
-      assert {:ok, token} = PageExtension.run(token)
+      assert {:ok, token} = PageExtension.pre_build(token)
+      assert {:ok, token} = PageExtension.pre_render(token)
 
       assert %{
                pages: [
@@ -251,7 +256,7 @@ defmodule Tableau.PageExtensionTest do
                    body: "\nA great page\n",
                    file: ^dir <> "/a-page.md",
                    layout: Blog.PageLayout,
-                   permalink: "/%C2qu%C3-es-la-programaci%C3n-funcional",
+                   permalink: "/que-es-la-programacion-funcional",
                    title: "¿Qué es la programación funcional?"
                  }
                ]
@@ -270,7 +275,8 @@ defmodule Tableau.PageExtensionTest do
       A great page
       """)
 
-      assert {:ok, token} = PageExtension.run(token)
+      assert {:ok, token} = PageExtension.pre_build(token)
+      assert {:ok, token} = PageExtension.pre_render(token)
 
       assert %{
                pages: [
@@ -298,7 +304,8 @@ defmodule Tableau.PageExtensionTest do
       A great page
       """)
 
-      assert {:ok, token} = PageExtension.run(token)
+      assert {:ok, token} = PageExtension.pre_build(token)
+      assert {:ok, token} = PageExtension.pre_render(token)
 
       assert %{
                pages: [
@@ -328,7 +335,8 @@ defmodule Tableau.PageExtensionTest do
       A great page
       """)
 
-      assert {:ok, token} = PageExtension.run(token)
+      assert {:ok, token} = PageExtension.pre_build(token)
+      assert {:ok, token} = PageExtension.pre_render(token)
 
       assert %{
                pages: [%{body: "\nA great page\n", converter: "Tableau.PageExtensionTest"}],
