@@ -3,7 +3,14 @@
 
 defmodule Tableau.YamlFrontMatter.Error do
   @moduledoc false
-  defexception message: "Error parsing yaml front matter"
+  defexception [:message]
+
+  # message: "Error parsing yaml front matter"
+
+  @impl true
+  def exception(value) do
+    %__MODULE__{message: "Error parsing yaml front matter: #{inspect(value)}"}
+  end
 end
 
 defmodule Tableau.YamlFrontMatter do
@@ -17,12 +24,12 @@ defmodule Tableau.YamlFrontMatter do
   def parse!(string, opts \\ []) do
     case parse(string, opts) do
       {:ok, matter, body} -> {atomicize(matter), body}
-      {:error, _} -> raise Tableau.YamlFrontMatter.Error
+      {:error, error} -> raise Tableau.YamlFrontMatter.Error, error
     end
   end
 
   defp split_string(string) do
-    split_pattern = ~r/[\s\r\n]---[\s\r\n]/s
+    split_pattern = ~r/[\s\r\n]---[\s\r\n]?/s
 
     string
     |> String.trim_leading()
@@ -30,9 +37,9 @@ defmodule Tableau.YamlFrontMatter do
     |> then(&Regex.split(split_pattern, &1, parts: 3))
   end
 
-  defp process_parts([_, yaml, body], opts) do
+  defp process_parts([_, yaml | rest], opts) do
     case parse_yaml(yaml, opts) do
-      {:ok, yaml} -> {:ok, yaml, body}
+      {:ok, yaml} -> {:ok, yaml, List.first(rest, "")}
       {:error, error} -> {:error, error}
     end
   end
