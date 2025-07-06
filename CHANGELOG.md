@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [0.25.1](https://github.com/elixir-tools/tableau/compare/v0.25.0...v0.25.1) (2025-07-06)
+
+
+### Bug Fixes
+
+* **front_matter:** don't fail when parsing without a body ([#141](https://github.com/elixir-tools/tableau/issues/141)) ([86e0106](https://github.com/elixir-tools/tableau/commit/86e0106d93306daa6130cc2093dc3848381d0880))
+
 ## [0.25.0](https://github.com/elixir-tools/tableau/compare/v0.24.1...v0.25.0) (2025-06-21)
 
 
