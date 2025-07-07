@@ -24,9 +24,17 @@ defmodule Tableau do
     ],
     markdown: [
       mdex: [
-        extension: [table: true, header_ids: "", tasklist: true, strikethrough: true],
-        render: [unsafe_: true],
-        features: [syntax_highlight_theme: "kanagawa"]
+        extension: [
+          table: true,
+          header_ids: "",
+          tasklist: true,
+          strikethrough: true,
+          autolink: true,
+          alerts: true,
+          footnotes: true
+        ],
+        render: [unsafe: true],
+        syntax_highlight: [formatter: {:html_inline, theme: "neovim_dark"}]
       ]
     ]
   ```
