@@ -42,7 +42,7 @@ defmodule Tableau.RSSExtension do
     ]
   ```
   """
-  use Tableau.Extension, key: :rss, priority: 200
+  use Tableau.Extension, key: :rss, priority: 200, enabled: false
 
   import Schematic
 
