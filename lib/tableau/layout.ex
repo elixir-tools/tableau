@@ -6,7 +6,7 @@ defmodule Tableau.Layout do
 
   ```elixir
   defmodule MySite.SidebarLayout do
-    use Tableau.Layout
+    use Tableau.Layout, layout: MySite.RootLayout
 
     def template(assigns) do
       """
