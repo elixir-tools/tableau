@@ -50,7 +50,7 @@ Otherwise, you can just install Tableau into a new mix project.
 ```elixir
 def deps do
   [
-    {:tableau, "~> 0.17"}
+    {:tableau, "~> 0.26"}
   ]
 end
 ```
