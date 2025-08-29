@@ -6,19 +6,20 @@ defmodule Tableau.Layout do
 
   ```elixir
   defmodule MySite.SidebarLayout do
-    use Tableau.Page,
-      layout: MySite.RootLayout
+    use Tableau.Layout, layout: MySite.RootLayout
 
     def template(assigns) do
       """
-      <nav>
-        <a href="/home">
-        <a href="/about">
-      </nav>
+      <aside>
+        <nav>
+          <a href="/home">
+          <a href="/about">
+        </nav>
 
-      <p>
-        <%= render @inner_content %>
-      </p>
+        <p>
+          <%= render @inner_content %>
+        </p>
+      </aside>
       """
     end
   end
