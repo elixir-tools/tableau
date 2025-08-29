@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [0.26.1](https://github.com/elixir-tools/tableau/compare/v0.26.0...v0.26.1) (2025-08-29)
+
+
+### Bug Fixes
+
+* **rss:** don't enable by default ([#150](https://github.com/elixir-tools/tableau/issues/150)) ([fb93438](https://github.com/elixir-tools/tableau/commit/fb93438f66831e4de8660e7faf6d6dd99f784f10)), closes [#149](https://github.com/elixir-tools/tableau/issues/149)
+
 ## [0.26.0](https://github.com/elixir-tools/tableau/compare/v0.25.1...v0.26.0) (2025-07-07)
 
 
