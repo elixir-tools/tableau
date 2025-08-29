@@ -54,7 +54,10 @@ defmodule Tableau.PageExtension do
   Currently the `Tableau.MDExConverter` is the only builtin converter, but you are free to write your own!
 
   ```elixir
-  # configs/config.exs
+  # config/config.exs
+
+  import Config
+
   config :tableau, :config,
     converters: [
       md: Tableau.MDExConverter,
