@@ -14,7 +14,10 @@ defmodule Tableau do
   ### Example
 
   ```elixir
-  # configs/config.exs
+  # config/config.exs
+
+  import Config
+
   config :tableau, :config,
     url: "http://localhost:8080",
     timezone: "America/Indiana/Indianapolis",
