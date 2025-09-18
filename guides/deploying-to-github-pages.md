@@ -2,26 +2,9 @@
 
 GitHub Pages can host the static files that Tableau produces. This guide walks through a production-ready setup that you can adopt for your own site.
 
-## 1. Prepare your Tableau project
+## Prepare your Tableau project
 
-1. Ensure your project exposes a `build` alias that calls `tableau.build`. The generator already includes this:
-
-   ```elixir
-   # mix.exs
-   defp aliases do
-     [
-       build: ["tableau.build"]
-     ]
-   end
-   ```
-
-2. Make sure `_site/` is gitignored. Tableau writes the built site there and your workflow will upload it as an artifact:
-
-   ```gitignore
-   /_site/
-   ```
-
-3. Configure your production URL in `config/prod.exs`. If you use a custom domain, set it to that value:
+1. Configure your production URL in `config/prod.exs`. If you use a custom domain, set it to that value:
 
    ```elixir
    # config/prod.exs
@@ -29,11 +12,9 @@ GitHub Pages can host the static files that Tableau produces. This guide walks t
      url: "https://your-domain.tld"
    ```
 
-   For GitHub Pages sites served from `<user>.github.io/<repo>`, use the full Pages URL and optionally set `base_path: "/<repo>"` so links render correctly locally.
+2. If you serve additional assets (Tailwind, esbuild, etc.), add the corresponding Mix tasks to the `build` alias so they also run in CI.
 
-4. If you serve additional assets (Tailwind, esbuild, etc.), add the corresponding Mix tasks to the `build` alias so they also run in CI.
-
-## 2. Add the GitHub Pages workflow
+## Add the GitHub Pages workflow
 
 Create `.github/workflows/deploy.yml` with the following workflow. It installs Erlang/OTP + Elixir, builds the site in production mode, and publishes the `_site` directory to GitHub Pages:
 
@@ -105,20 +86,23 @@ jobs:
 - If `mix build` already chains your asset pipelines, no other changes are needed. Otherwise, insert additional steps before "Upload artifact".
 - The cache step speeds up successive runs but can be removed if you prefer.
 
-## 3. Enable GitHub Pages
+## Enable GitHub Pages
 
 1. Push the workflow to your default branch (the example uses `main`).
 2. In your repository, open **Settings → Pages**.
 3. Under **Build and deployment**, choose **GitHub Actions**.
 4. After the first successful run, the deployment will appear under the **Deployments** tab and the workflow output prints the public URL.
 
-## 4. Using a custom domain
+## Custom domains & pages.io URLs
 
 If you have a custom domain:
 
 - Add a `CNAME` file at the repo root containing the domain, e.g. `example.com`.
 - Configure your DNS to point at GitHub Pages.
 - Keep `config :tableau, :config, url: "https://your-domain"` in sync so absolute links are generated correctly.
+- GitHub’s docs cover the DNS details in depth: <https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site/about-custom-domains-and-github-pages>.
+
+If you deploy to `<user>.github.io/<repo>`, use the full Pages URL (e.g. `https://username.github.io/my-site`) and optionally set `base_path: "/my-site"` in `config/prod.exs` so local links match production.
 
 ## Troubleshooting
 
