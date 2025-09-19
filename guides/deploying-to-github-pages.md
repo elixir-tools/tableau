@@ -4,7 +4,7 @@ GitHub Pages can host the static files that Tableau produces. This guide walks t
 
 ## Prepare your Tableau project
 
-1. Configure your production URL in `config/prod.exs`. If you use a custom domain, set it to that value:
+1. Set the production `url` in `config/prod.exs` (your custom domain or the full GitHub Pages URL):
 
    ```elixir
    # config/prod.exs
@@ -54,9 +54,9 @@ jobs:
             ~/.mix
             deps
             _build
-          key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
+          key: ${{ runner.os }}-otp-28-elixir-1.18-mix-${{ hashFiles('**/mix.lock') }}
           restore-keys: |
-            ${{ runner.os }}-mix-
+            ${{ runner.os }}-otp-28-elixir-1.18-mix-
 
       - name: Install dependencies
         run: MIX_ENV=prod mix deps.get --only prod
@@ -83,6 +83,7 @@ jobs:
 ### Workflow notes
 
 - Set `otp-version` and `elixir-version` to match your project.
+- Update the cache key when you bump OTP or Elixir so a fresh build occurs.
 - If `mix build` already chains your asset pipelines, no other changes are needed. Otherwise, insert additional steps before "Upload artifact".
 - The cache step speeds up successive runs but can be removed if you prefer.
 
@@ -108,6 +109,6 @@ If you deploy to `<user>.github.io/<repo>`, use the full Pages URL (e.g. `https:
 
 - See a 404 for nested routes? Double-check `base_path` in `config/prod.exs` when deploying under a subdirectory.
 - Need to rebuild assets? Append those build steps to the `build` alias so `mix build` runs everything locally and in CI.
-- Want to test locally? Run `MIX_ENV=prod mix build` and inspect `_site/` before pushing.
+- Want to test locally? Run `MIX_ENV=prod mix build` and inspect the output directory (which defaults to  `_site/`) before pushing.
 
 With these pieces in place, every push to `main` rebuilds your Tableau site and deploys it to GitHub Pages.
