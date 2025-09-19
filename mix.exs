@@ -67,6 +67,13 @@ defmodule Tableau.MixProject do
   defp docs do
     [
       main: "Tableau",
+      extras: [
+        "README.md",
+        "guides/deploying-to-github-pages.md"
+      ],
+      groups_for_extras: [
+        Guides: ~r/guides\/[^\/]+\.md/
+      ],
       groups_for_modules: [
         Site: [
           Tableau,
