@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## [0.27.0](https://github.com/elixir-tools/tableau/compare/v0.26.1...v0.27.0) (2025-10-03)
+
+
+### ⚠ BREAKING CHANGES
+
+* update mdex to 0.9
+
+### Features
+
+* update mdex to 0.9 ([acee4e4](https://github.com/elixir-tools/tableau/commit/acee4e4c421a989a80dbd165f6e73cdcda4ca07f))
+
 ## [0.26.1](https://github.com/elixir-tools/tableau/compare/v0.26.0...v0.26.1) (2025-08-29)
 
 
