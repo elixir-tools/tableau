@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [0.27.1](https://github.com/elixir-tools/tableau/compare/v0.27.0...v0.27.1) (2025-12-08)
+
+
+### Bug Fixes
+
+* **build:** capture pre_write page changes ([#162](https://github.com/elixir-tools/tableau/issues/162)) ([74bf8fb](https://github.com/elixir-tools/tableau/commit/74bf8fb1ee9e6d916a6a2cd80a709bfe41bd076d))
+
 ## [0.27.0](https://github.com/elixir-tools/tableau/compare/v0.26.1...v0.27.0) (2025-10-03)
 
 
