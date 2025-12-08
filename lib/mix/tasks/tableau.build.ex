@@ -65,7 +65,7 @@ defmodule Mix.Tasks.Tableau.Build do
 
     token = mods |> extensions_for(:pre_write) |> run_extensions(:pre_write, token)
 
-    for %{body: body, permalink: permalink} <- pages do
+    for %{body: body, permalink: permalink} <- token.site[:pages] do
       file_path = build_file_path(out, permalink)
       dir = Path.dirname(file_path)
 

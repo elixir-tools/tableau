@@ -25,7 +25,9 @@ defmodule Mix.Tasks.Tableau.FooExtension do
   def pre_write(token) do
     pages =
       for page <- token.site.pages do
-        Map.put(page, :foo, "bar")
+        page
+        |> Map.put(:foo, "bar")
+        |> Map.put(:body, page.body <> "<!-- foo: bar -->\n")
       end
 
     {:ok, put_in(token.site.pages, pages)}
@@ -189,10 +191,16 @@ defmodule Mix.Tasks.Tableau.BuildTest do
 
     assert log =~ "FailExtension failed to run"
 
-    assert File.exists?(Path.join(out, "/index.html"))
-    assert File.exists?(Path.join(out, "/about/index.html"))
-    assert File.exists?(Path.join(out, "/a-bing-bong-blog-post/index.html"))
-    assert File.exists?(Path.join(out, "/some/deeply/nested/page/my-page/index.html"))
+    for file <- [
+          "/index.html",
+          "/about/index.html",
+          "/a-bing-bong-blog-post/index.html",
+          "/some/deeply/nested/page/my-page/index.html"
+        ] do
+      path = Path.join(out, file)
+      assert File.exists?(path)
+      assert path |> File.read!() |> String.ends_with?("<!-- foo: bar -->\n")
+    end
   end
 
   @tag :tmp_dir
