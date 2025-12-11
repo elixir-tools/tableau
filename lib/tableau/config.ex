@@ -10,6 +10,7 @@ defmodule Tableau.Config do
     out_dir: "_site",
     timezone: "Etc/UTC",
     reload_log: false,
+    slug: [],
     converters: [md: Tableau.MDExConverter],
     markdown: [mdex: []]
   ]
@@ -32,6 +33,13 @@ defmodule Tableau.Config do
         optional(:reload_log) => bool(),
         optional(:converters) => keyword(values: atom()),
         optional(:markdown) => keyword(values: list()),
+        optional(:slug) =>
+          keyword(%{
+            optional(:separator) => oneof([str(), int()]),
+            optional(:lowercase) => bool(),
+            optional(:truncate) => int(),
+            optional(:ignore) => oneof([str(), list(oneof([str(), int()]))])
+          }),
         optional(:base_path) => str(),
         url: str()
       },

@@ -6,11 +6,29 @@ defmodule Tableau.TagExtension do
 
   The `@page` assign passed to the `layout` provided in the configuration is described by `t:page/0`.
 
+  Unless a tag has a `slug` defined in the plugin `tags` map, tag names will be converted to slugs using `Slug.slugify/2` with options provided in Tableau configuration. These slugs will be used to build the permalink.
+
   ## Configuration
 
   - `:enabled` - boolean - Extension is active or not.
   * `:layout` - module - The `Tableau.Layout` implementation to use.
   * `:permalink` - string - The permalink prefix to use for the tag page, will be joined with the tag name.
+  * `:tags` - map - A map of tag display values to slug options. Supported options:
+    * `:slug` - string - The slug to use for the displayed tag
+
+
+  ### Configuring Manual Tag Slugs
+
+  ```elixir
+  config :tableau, Tableau.TagExtension,
+    enabled: true,
+    tags: %{
+      "C++" => [slug: "c-plus-plus"]
+    }
+  ```
+
+  With this configuration, the tag `C++` will be have a permalink slug of `c-plus-plus`,
+  `Eixir` will be `elixir`, and `Bun.sh` will be `bun-sh`.
 
 
   ## Layout and Page
@@ -79,6 +97,8 @@ defmodule Tableau.TagExtension do
 
   import Schematic
 
+  alias Tableau.Extension.Common
+
   @type page :: %{
           title: String.t(),
           tag: String.t(),
@@ -89,7 +109,8 @@ defmodule Tableau.TagExtension do
   @type tag :: %{
           title: String.t(),
           tag: String.t(),
-          permalink: String.t()
+          permalink: String.t(),
+          slug: String.t()
         }
 
   @type tags :: %{
@@ -102,6 +123,7 @@ defmodule Tableau.TagExtension do
       oneof([
         map(%{enabled: false}),
         map(%{
+          optional(:tags, %{}) => map(keys: str(), values: keyword(%{slug: str()})),
           enabled: true,
           layout: atom(),
           permalink: str()
@@ -115,14 +137,21 @@ defmodule Tableau.TagExtension do
   def pre_build(token) do
     posts = token.posts
     permalink = token.extensions.tag.config.permalink
+    defs = token.extensions.tag.config.tags
 
     tags =
       for post <- posts, tag <- post |> Map.get(:tags, []) |> Enum.uniq(), reduce: Map.new() do
         acc ->
-          permalink = Path.join(permalink, tag)
+          slug = get_in(defs, [tag, :slug]) || Common.slugify(tag, token)
+          permalink = Path.join(permalink, slug)
 
-          tag = %{title: tag, permalink: permalink, tag: tag}
-          Map.update(acc, tag, [post], &[post | &1])
+          tag = %{title: tag, permalink: permalink, tag: tag, slug: slug}
+          Map.update(acc, slug, %{tag: tag, posts: [post]}, &%{tag: tag, posts: [post | &1.posts]})
+      end
+
+    tags =
+      for {_slug, %{tag: tag, posts: posts}} <- tags, into: %{} do
+        {tag, posts}
       end
 
     {:ok, Map.put(token, :tags, tags)}

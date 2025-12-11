@@ -10,6 +10,7 @@ defmodule Tableau do
   * `:converters` - mapping of file extensions to converter module. Defaults to `[md: Tableau.MDExConverter]`
   * `:markdown` - keyword
       * `:mdex` - keyword - Options to pass to `MDEx.to_html/2`
+  * `:slug` - keyword - Options to pass to `Slug.slugify/2`
 
   ### Example
 
@@ -24,6 +25,9 @@ defmodule Tableau do
     converters: [
       md: Tableau.MDExConverter,
       dj: MySite.DjotConverter
+    ],
+    slug: [
+      lowercase: false
     ],
     markdown: [
       mdex: [

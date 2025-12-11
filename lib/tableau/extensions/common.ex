@@ -9,6 +9,27 @@ defmodule Tableau.Extension.Common do
   end
 
   @doc """
+  Transform strings from any language into slugs using `Slug.slugify/1`.
+
+  Returns the original string if the slug cannot be generated.
+  """
+  def slugify(string, overrides \\ [])
+
+  def slugify(string, %{site: %{config: config}}) do
+    Slug.slugify(string, config.slug) || string
+  end
+
+  def slugify(string, config) when is_map(config) do
+    slugify(string)
+  end
+
+  def slugify(string, overrides) do
+    {:ok, config} = Tableau.Config.get()
+
+    Slug.slugify(string, Keyword.merge(config.slug, overrides)) || string
+  end
+
+  @doc """
   Build content entries from a list of paths.
 
   Content should contain YAML frontmatter, with the body from the file passed to the callback.
