@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [0.28.0](https://github.com/elixir-tools/tableau/compare/v0.27.1...v0.28.0) (2025-12-18)
+
+
+### Features
+
+* **tags:** slugify tag names ([#164](https://github.com/elixir-tools/tableau/issues/164)) ([00defac](https://github.com/elixir-tools/tableau/commit/00defaca3b1751d7e8c9aa5bc680b5f2a9790948))
+
 ## [0.27.1](https://github.com/elixir-tools/tableau/compare/v0.27.0...v0.27.1) (2025-12-08)
 
 
