@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [0.30.0](https://github.com/elixir-tools/tableau/compare/v0.29.0...v0.30.0) (2026-01-24)
+
+
+### Features
+
+* update to MDEx 0.11 ([#172](https://github.com/elixir-tools/tableau/issues/172)) ([95de2af](https://github.com/elixir-tools/tableau/commit/95de2af52826cea38c15e2f258edd44f7aed7391))
+
 ## [0.29.0](https://github.com/elixir-tools/tableau/compare/v0.28.0...v0.29.0) (2026-01-08)
 
 
