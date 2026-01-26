@@ -72,6 +72,7 @@ Documentation can be found at <https://hexdocs.pm/tableau>.
 | [www.ethangunderson.com](https://www.ethangunderson.com/)  | [HEEx](https://hexdocs.pm/phoenix_live_view/Phoenix.Component.html#sigil_H/2) | Tailwind   |          | [ethangunderson/website](https://github.com/ethangunderson/website)               |
 | [https://adrienanselme.com/](https://adrienanselme.com/)   | [HEEx](https://hexdocs.pm/phoenix_live_view/Phoenix.Component.html#sigil_H/2) | Tailwind   |          | [adanselm/adanselm.github.io](https://github.com/adanselm/adanselm.github.io)     |
 | [acrogenesis.com](https://acrogenesis.com)                  | [HEEx](https://hexdocs.pm/phoenix_live_view/Phoenix.Component.html#sigil_H/2) | CSS        |          | [acrogenesis/acrogenesis.com](https://github.com/acrogenesis/acrogenesis.com)     |
+| [elixirchangelog.com](https://elixirchangelog.com)         | [HEEx](https://hexdocs.pm/phoenix_live_view/Phoenix.Component.html#sigil_H/2) | CSS        |          | [crbelaus/elixirchangelog.com](https://github.com/crbelaus/elixirchangelog.com)     |
 
 ## Getting Started
 
