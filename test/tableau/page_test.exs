@@ -23,7 +23,7 @@ defmodule Tableau.PageTest do
 
   setup do
     purge_on_exit([
-      Tableau.PageTest.AboutPage,
+      AboutPage,
       Tableau.PageTest.InnerLayout
     ])
   end
