@@ -100,7 +100,7 @@ defmodule Tableau.PageExtensionTest do
 
       assert Enum.any?(vertices, fn v -> is_struct(v, Tableau.Page) and v.permalink == page_1.permalink end)
       assert Enum.any?(vertices, fn v -> is_struct(v, Tableau.Page) and v.permalink == page_2.permalink end)
-      assert Enum.any?(vertices, fn v -> v == Blog.PageLayout end)
+      assert Blog.PageLayout in vertices
     end
 
     test "can read pages from multiple directories", %{tmp_dir: dir, token: token} do
