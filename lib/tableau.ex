@@ -19,6 +19,8 @@ defmodule Tableau do
 
   import Config
 
+  config :mdex_native, syntax_highlighter: :lumis
+
   config :tableau, :config,
     url: "http://localhost:8080",
     timezone: "America/Indiana/Indianapolis",
@@ -41,7 +43,10 @@ defmodule Tableau do
           footnotes: true
         ],
         render: [unsafe: true],
-        syntax_highlight: [formatter: {:html_inline, theme: "neovim_dark"}],
+        syntax_highlight: [
+          engine: :lumis,
+          opts: [formatter: {:html_inline, theme: "neovim_dark"}]
+        ],
         plugins: [MDExGFM]
       ]
     ]
