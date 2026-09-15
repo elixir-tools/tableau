@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## [0.31.0](https://github.com/elixir-tools/tableau/compare/v0.30.0...v0.31.0) (2026-09-15)
+
+
+### ⚠ BREAKING CHANGES
+
+* extract TableauDevServer ([#190](https://github.com/elixir-tools/tableau/issues/190))
+
+### Features
+
+* extract TableauDevServer ([#190](https://github.com/elixir-tools/tableau/issues/190)) ([6a6c894](https://github.com/elixir-tools/tableau/commit/6a6c89430113eee6b5fc5aa3140b7c9d034661d7))
+
 ## [0.30.0](https://github.com/elixir-tools/tableau/compare/v0.29.0...v0.30.0) (2026-01-24)
 
 
