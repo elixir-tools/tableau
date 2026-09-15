@@ -1,4 +1,4 @@
-defmodule TableauDevServer.BuildException do
+defmodule Tableau.BuildException do
   @moduledoc false
   @type t :: %__MODULE__{
           page: map(),

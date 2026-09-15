@@ -49,15 +49,6 @@ defmodule Tableau do
   """
 
   @doc """
-  Component to connect to the development server via websocket to broadcast that the page should reload.
-
-  By default, connects to `'ws://' + location.host + '/ws'`.
-
-  See `WebDevUtils.Components.live_reload/1` for configuration options.
-  """
-  defdelegate live_reload(assigns), to: WebDevUtils.Components
-
-  @doc """
   Convert markdown content to HTML using `MDEx.to_html!/2`.
 
   Will use the globally configured options, but you can also pass it overrides.

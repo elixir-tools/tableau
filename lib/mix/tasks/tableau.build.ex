@@ -52,7 +52,7 @@ defmodule Mix.Tasks.Tableau.Build do
           Map.merge(page, %{body: content, permalink: permalink})
         rescue
           exception ->
-            reraise TableauDevServer.BuildException, [page: page, exception: exception], __STACKTRACE__
+            reraise Tableau.BuildException, [page: page, exception: exception], __STACKTRACE__
         end
       end)
       |> Stream.map(fn
