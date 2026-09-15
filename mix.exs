@@ -21,8 +21,7 @@ defmodule Tableau.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger, :inets],
-      mod: {TableauDevServer.Application, []}
+      extra_applications: [:logger]
     ]
   end
 
@@ -33,7 +32,6 @@ defmodule Tableau.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:bandit, "~> 1.0"},
       {:date_time_parser, "~> 1.2"},
       {:html_entities, "~> 0.5.2"},
       {:libgraph, "~> 0.16.0"},
@@ -41,8 +39,6 @@ defmodule Tableau.MixProject do
       {:schematic, "~> 0.5.1"},
       {:slugify, "~> 1.3"},
       {:tz, "~> 0.28.1"},
-      {:web_dev_utils, "~> 0.3"},
-      {:websock_adapter, "~> 0.5"},
       {:yaml_elixir, "~> 2.9"},
 
       # dev
