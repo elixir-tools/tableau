@@ -33,7 +33,8 @@ defmodule Tableau.PostExtensionTest do
 
   describe "run" do
     setup %{tmp_dir: dir} do
-      assert {:ok, config} = PostExtension.config(%{dir: dir, enabled: true, layout: Blog.DefaultPostLayout})
+      assert {:ok, config} =
+               PostExtension.config(%{dir: dir, enabled: true, layout: Blog.DefaultPostLayout})
 
       token = %{
         site: %{config: %{converters: [md: Tableau.MDExConverter]}},
@@ -247,7 +248,8 @@ defmodule Tableau.PostExtensionTest do
       A great post
       """)
 
-      assert {:ok, config} = PostExtension.config(%{dir: dir, enabled: true, permalink: "/post/:title"})
+      assert {:ok, config} =
+               PostExtension.config(%{dir: dir, enabled: true, permalink: "/post/:title"})
 
       token = put_in(token.extensions.posts.config, config)
 
@@ -269,7 +271,10 @@ defmodule Tableau.PostExtensionTest do
              } = token
     end
 
-    test "generates permalink from file path if not configured or in front matter", %{tmp_dir: dir, token: token} do
+    test "generates permalink from file path if not configured or in front matter", %{
+      tmp_dir: dir,
+      token: token
+    } do
       assert {:ok, config} = PostExtension.config(%{dir: [dir], enabled: true})
 
       token = put_in(token.extensions.posts.config, config)
@@ -412,7 +417,7 @@ defmodule Tableau.PostExtensionTest do
       assert {:ok, token} = PostExtension.pre_build(token)
       assert {:ok, token} = PostExtension.pre_render(token)
 
-      assert %{posts: [%{converter: "Tableau.PostExtensionTest"}], graph: graph} = token
+      assert %{posts: [%{converter: Tableau.PostExtensionTest}], graph: graph} = token
 
       page =
         graph
@@ -432,5 +437,5 @@ defmodule Tableau.PostExtensionTest do
     end
   end
 
-  def convert(_, _, body, _), do: String.upcase(body)
+  def convert(body), do: String.upcase(body)
 end

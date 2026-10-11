@@ -56,7 +56,9 @@ defmodule Tableau.TagExtensionTest do
                  } => [
                    %{title: "Post 2"}
                  ],
-                 %{tag: "C++", title: "C++", permalink: "/tags/c-plus-plus", slug: "c-plus-plus"} => [%{title: "Post 2"}]
+                 %{tag: "C++", title: "C++", permalink: "/tags/c-plus-plus", slug: "c-plus-plus"} => [
+                   %{title: "Post 2"}
+                 ]
                },
                graph: graph
              } = token

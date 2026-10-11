@@ -2,6 +2,8 @@ defmodule Tableau.PostExtension do
   @moduledoc """
   Content files (with YAML frontmatter) in the configured posts directory will be automatically compiled into Tableau pages.
 
+  All files in the directory are copied to the output directory, and if their filetype has a matching converter, they are converted.
+
   Certain frontmatter keys are required and all keys are passed as options to the `Tableau.Page`.
 
   ## Options
@@ -104,26 +106,26 @@ defmodule Tableau.PostExtension do
 
   @impl Tableau.Extension
   def pre_build(token) do
-    %{site: %{config: %{converters: converters}}, extensions: %{posts: %{config: config}}} = token
-    exts = Enum.map_join(converters, ",", fn {ext, _} -> to_string(ext) end)
+    %{extensions: %{posts: %{config: config}}} = token
 
     posts =
       config.dir
       |> List.wrap()
       |> Enum.flat_map(fn path ->
         path
-        |> Path.join("**/*.{#{exts}}")
+        |> Path.join("**/*.*")
         |> Common.paths()
       end)
-      |> Common.entries(fn %{path: path, front_matter: front_matter, pre_convert_body: body, ext: ext} ->
-        build(path, front_matter, body, config, fn assigns ->
-          converter =
-            case front_matter[:converter] do
-              nil -> converters[ext]
-              converter -> Module.concat([converter])
-            end
+      |> Common.entries(fn entry ->
+        %{
+          path: path,
+          front_matter: front_matter,
+          pre_convert_body: body,
+          ext: ext
+        } = entry
 
-          converter.convert(path, front_matter, body, assigns)
+        build(path, front_matter, body, config, fn assigns ->
+          Tableau.Converter.convert(body, converter: assigns.page[:converter], ext: ext)
         end)
       end)
       |> Enum.sort_by(fn post -> post.date end, {:desc, DateTime})
@@ -144,23 +146,50 @@ defmodule Tableau.PostExtension do
       Tableau.Graph.insert(
         token.graph,
         Enum.map(token.posts, fn post ->
-          %Tableau.Page{parent: post.layout, permalink: post.permalink, template: post.renderer, opts: post}
+          %Tableau.Page{
+            parent: post.layout,
+            permalink: post.permalink,
+            template: post.renderer,
+            opts: post
+          }
         end)
       )
 
     {:ok, Map.put(token, :graph, graph)}
   end
 
-  defp build(filename, attrs, body, posts_config, renderer) do
+  defp build(filename, front_matter, body, posts_config, renderer) do
     Application.put_env(:date_time_parser, :include_zones_from, ~N[2010-01-01T00:00:00])
 
-    attrs
+    converter =
+      case front_matter[:converter] do
+        nil -> nil
+        converter -> Module.concat([converter])
+      end
+
+    front_matter
     |> Map.put(:__tableau_post_extension__, true)
     |> Map.put(:body, body)
+    |> Map.put(:title, front_matter[:title] || filename |> Path.basename() |> Path.rootname())
     |> Map.put(:file, filename)
     |> Map.put(:renderer, renderer)
-    |> Map.put(:layout, Module.concat([attrs[:layout] || posts_config.layout]))
-    |> Map.put(:date, DateTimeParser.parse_datetime!(attrs.date, assume_time: true, assume_utc: true))
+    |> Map.put(:layout, Module.concat([front_matter[:layout] || posts_config.layout]))
+    |> Map.put(:converter, converter)
+    |> Map.put(
+      :date,
+      parse_datetime!(front_matter[:date], filename)
+    )
     |> Common.build_permalink(posts_config)
+  end
+
+  defp parse_datetime!(nil, filename) do
+    raise "Missing required front matter missing from post #{filename}: date"
+  end
+
+  defp parse_datetime!(datetime, _filename) do
+    DateTimeParser.parse_datetime!(datetime,
+      assume_time: true,
+      assume_utc: true
+    )
   end
 end

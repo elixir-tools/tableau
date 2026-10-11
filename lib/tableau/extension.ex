@@ -93,12 +93,20 @@ defmodule Tableau.Extension do
   """
   @callback config(Keyword.t() | map()) :: {:ok, map()} | {:error, any()}
 
+  @doc """
+  Called by content generators to convert content for a specific content type.
+  """
+  @callback convert(String.t(), any()) :: String.t()
+  @callback convert(String.t()) :: String.t()
+
   @optional_callbacks [
     config: 1,
     pre_build: 1,
     pre_render: 1,
     pre_write: 1,
-    post_write: 1
+    post_write: 1,
+    convert: 1,
+    convert: 2
   ]
 
   defmacro __using__(opts) do

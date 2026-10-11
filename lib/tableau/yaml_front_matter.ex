@@ -5,8 +5,6 @@ defmodule Tableau.YamlFrontMatter.Error do
   @moduledoc false
   defexception [:message]
 
-  # message: "Error parsing yaml front matter"
-
   @impl true
   def exception(value) do
     %__MODULE__{message: "Error parsing yaml front matter: #{inspect(value)}"}
@@ -15,15 +13,15 @@ end
 
 defmodule Tableau.YamlFrontMatter do
   @moduledoc false
-  def parse(string, opts \\ []) do
+  def parse(string) do
     string
     |> split_string()
-    |> process_parts(opts)
+    |> process_parts()
   end
 
-  def parse!(string, opts \\ []) do
-    case parse(string, opts) do
-      {:ok, matter, body} -> {atomicize(matter), body}
+  def parse!(string) do
+    case parse(string) do
+      {:ok, matter, body} -> {matter, body}
       {:error, error} -> raise Tableau.YamlFrontMatter.Error, error
     end
   end
@@ -37,32 +35,32 @@ defmodule Tableau.YamlFrontMatter do
     |> then(&Regex.split(split_pattern, &1, parts: 3))
   end
 
-  defp process_parts([_, yaml | rest], opts) do
-    case parse_yaml(yaml, opts) do
-      {:ok, yaml} -> {:ok, yaml, List.first(rest, "")}
+  defp process_parts([_, yaml | rest]) do
+    case parse_yaml(yaml) do
+      {:ok, yaml} -> {:ok, atomize(yaml), List.first(rest, "")}
       {:error, error} -> {:error, error}
     end
   end
 
-  defp process_parts(_, _), do: {:error, :invalid_front_matter}
+  defp process_parts(_), do: {:error, :invalid_front_matter}
 
-  defp parse_yaml(yaml, opts) do
-    case YamlElixir.read_from_string(yaml, opts) do
+  defp parse_yaml(yaml) do
+    case YamlElixir.read_from_string(yaml) do
       {:ok, parsed} -> {:ok, parsed}
       error -> error
     end
   end
 
-  defp atomicize(map) when is_map(map) do
+  defp atomize(map) when is_map(map) do
     Map.new(map, fn
-      {k, v} when is_binary(k) -> {String.to_atom(k), atomicize(v)}
+      {k, v} when is_binary(k) -> {String.to_atom(k), atomize(v)}
       other -> other
     end)
   end
 
-  defp atomicize(list) when is_list(list) do
-    Enum.map(list, &atomicize/1)
+  defp atomize(list) when is_list(list) do
+    Enum.map(list, &atomize/1)
   end
 
-  defp atomicize(other), do: other
+  defp atomize(other), do: other
 end

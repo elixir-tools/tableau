@@ -11,8 +11,7 @@ defmodule Tableau.Config do
     timezone: "Etc/UTC",
     reload_log: false,
     slug: [],
-    converters: [md: Tableau.MDExConverter],
-    markdown: [mdex: []]
+    converters: []
   ]
 
   def new(config) do
