@@ -10,7 +10,7 @@ defmodule Tableau.PostExtension do
 
   * `:title` - The title of the post.
   * `:permalink` - The permalink of the post. `:title` will be replaced with the posts title and non alphanumeric characters removed. Optional.
-  * `:date` - A string representation of an Elixir `NaiveDateTime`, often presented as a `sigil_N`. This will be converted to your configured timezone.
+  * `:date` - A string representation of a date time, parsed by `DateTimeParser`. Supports timezones.
   * `:layout` - A string representation of a Tableau layout module.
   * `:converter` - A string representation of a converter module. (optional)
 
