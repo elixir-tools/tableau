@@ -120,7 +120,7 @@ defmodule Tableau.Extension do
   end
 
   @doc false
-  @spec key(module()) :: atom()
+  @spec key(module()) :: {:ok, term()} | :error
   def key(module) do
     if function_exported?(module, :__tableau_extension_key__, 0) do
       {:ok, module.__tableau_extension_key__()}
