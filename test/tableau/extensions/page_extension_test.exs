@@ -31,7 +31,8 @@ defmodule Tableau.PageExtensionTest do
 
   describe "run" do
     setup %{tmp_dir: dir} do
-      assert {:ok, config} = PageExtension.config(%{dir: dir, enabled: true, layout: Blog.DefaultPageLayout})
+      assert {:ok, config} =
+               PageExtension.config(%{dir: dir, enabled: true, layout: Blog.DefaultPageLayout})
 
       token = %{
         site: %{config: %{converters: [md: Tableau.MDExConverter]}},
@@ -165,8 +166,13 @@ defmodule Tableau.PageExtensionTest do
 
       vertices = Graph.vertices(graph)
 
-      assert Enum.any?(vertices, fn v -> is_struct(v, Tableau.Page) and v.permalink == page_1.permalink end)
-      assert Enum.any?(vertices, fn v -> is_struct(v, Tableau.Page) and v.permalink == page_2.permalink end)
+      assert Enum.any?(vertices, fn v ->
+               is_struct(v, Tableau.Page) and v.permalink == page_1.permalink
+             end)
+
+      assert Enum.any?(vertices, fn v ->
+               is_struct(v, Tableau.Page) and v.permalink == page_2.permalink
+             end)
     end
 
     test "configured permalink works when you dont specify one", %{tmp_dir: dir, token: token} do
@@ -180,7 +186,8 @@ defmodule Tableau.PageExtensionTest do
       A great page
       """)
 
-      assert {:ok, config} = PageExtension.config(%{dir: dir, enabled: true, permalink: "/page/:title"})
+      assert {:ok, config} =
+               PageExtension.config(%{dir: dir, enabled: true, permalink: "/page/:title"})
 
       token = put_in(token.extensions.pages.config, config)
 
@@ -202,7 +209,10 @@ defmodule Tableau.PageExtensionTest do
              } = token
     end
 
-    test "generates permalink from file path if not configured or in front matter", %{tmp_dir: dir, token: token} do
+    test "generates permalink from file path if not configured or in front matter", %{
+      tmp_dir: dir,
+      token: token
+    } do
       assert {:ok, config} = PageExtension.config(%{dir: [dir], enabled: true})
 
       token = put_in(token.extensions.pages.config, config)
@@ -339,7 +349,7 @@ defmodule Tableau.PageExtensionTest do
       assert {:ok, token} = PageExtension.pre_render(token)
 
       assert %{
-               pages: [%{body: "\nA great page\n", converter: "Tableau.PageExtensionTest"}],
+               pages: [%{body: "\nA great page\n", converter: Tableau.PageExtensionTest}],
                graph: graph
              } = token
 
@@ -361,5 +371,5 @@ defmodule Tableau.PageExtensionTest do
     end
   end
 
-  def convert(_, _, body, _), do: String.upcase(body)
+  def convert(body), do: String.upcase(body)
 end

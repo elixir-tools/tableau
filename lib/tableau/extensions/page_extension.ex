@@ -2,6 +2,8 @@ defmodule Tableau.PageExtension do
   @moduledoc """
   Content files (with YAML frontmatter) in the configured pages directory will be automatically compiled into Tableau pages.
 
+  All files in the directory are copied to the output directory, and if their filetype has a matching converter, they are converted.
+
   Certain frontmatter keys are required and all keys are passed as options to the `Tableau.Page`.
 
   ## Options
@@ -89,16 +91,14 @@ defmodule Tableau.PageExtension do
 
   @impl Tableau.Extension
   def pre_build(token) do
-    %{site: %{config: %{converters: converters}}, extensions: %{pages: %{config: config}}} = token
-
-    exts = Enum.map_join(converters, ",", fn {ext, _} -> to_string(ext) end)
+    %{extensions: %{pages: %{config: config}}} = token
 
     pages =
       config.dir
       |> List.wrap()
       |> Enum.flat_map(fn path ->
         path
-        |> Path.join("**/*.{#{exts}}")
+        |> Path.join("**/*.*")
         |> Common.paths()
       end)
       |> Common.entries(fn entry ->
@@ -110,13 +110,7 @@ defmodule Tableau.PageExtension do
         } = entry
 
         build(path, front_matter, body, config, fn assigns ->
-          converter =
-            case front_matter[:converter] do
-              nil -> converters[ext]
-              converter -> Module.concat([converter])
-            end
-
-          converter.convert(path, front_matter, body, assigns)
+          Tableau.Converter.convert(body, converter: assigns.page[:converter], ext: ext)
         end)
       end)
 
@@ -129,7 +123,12 @@ defmodule Tableau.PageExtension do
       Tableau.Graph.insert(
         token.graph,
         Enum.map(token.pages, fn page ->
-          %Tableau.Page{parent: page.layout, permalink: page.permalink, template: page.renderer, opts: page}
+          %Tableau.Page{
+            parent: page.layout,
+            permalink: page.permalink,
+            template: page.renderer,
+            opts: page
+          }
         end)
       )
 
@@ -137,12 +136,20 @@ defmodule Tableau.PageExtension do
   end
 
   defp build(filename, front_matter, body, pages_config, renderer) do
+    converter =
+      case front_matter[:converter] do
+        nil -> nil
+        converter -> Module.concat([converter])
+      end
+
     front_matter
     |> Map.put(:__tableau_page_extension__, true)
     |> Map.put(:body, body)
+    |> Map.put(:title, front_matter[:title] || filename |> Path.basename() |> Path.rootname())
     |> Map.put(:file, filename)
     |> Map.put(:renderer, renderer)
     |> Map.put(:layout, Module.concat([front_matter[:layout] || pages_config.layout]))
+    |> Map.put(:converter, converter)
     |> Common.build_permalink(pages_config)
   end
 end

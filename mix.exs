@@ -35,11 +35,13 @@ defmodule Tableau.MixProject do
       {:date_time_parser, "~> 1.2"},
       {:html_entities, "~> 0.5.2"},
       {:libgraph, "~> 0.16.0"},
-      {:mdex, "~> 0.11.1"},
       {:schematic, "~> 0.5.1"},
       {:slugify, "~> 1.3"},
       {:tz, "~> 0.28.1"},
       {:yaml_elixir, "~> 2.9"},
+
+      # optional
+      {:mdex, "~> 0.14", optional: true},
 
       # dev
       {:floki, "~> 0.34", only: :test},
@@ -76,18 +78,16 @@ defmodule Tableau.MixProject do
           Tableau.Layout,
           Tableau.Page,
           Tableau.Document.Helper,
-          Tableau.Extension
-        ],
-        Converters: [
-          Tableau.Converter,
-          Tableau.MDExConverter
+          Tableau.Extension,
+          Tableau.Converter
         ],
         Extensions: [
-          Tableau.PostExtension,
-          Tableau.PageExtension,
-          Tableau.SitemapExtension,
-          Tableau.RSSExtension,
           Tableau.DataExtension,
+          Tableau.MDExExtension,
+          Tableau.PageExtension,
+          Tableau.PostExtension,
+          Tableau.RSSExtension,
+          Tableau.SitemapExtension,
           Tableau.TagExtension
         ]
       ]
