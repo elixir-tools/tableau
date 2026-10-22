@@ -19,6 +19,8 @@ defmodule Tableau do
 
   import Config
 
+  config :mdex_native, syntax_highlighter: :syntect
+
   config :tableau, :config,
     url: "http://localhost:8080",
     timezone: "America/Indiana/Indianapolis",
@@ -41,11 +43,54 @@ defmodule Tableau do
           footnotes: true
         ],
         render: [unsafe: true],
-        syntax_highlight: [formatter: {:html_inline, theme: "neovim_dark"}],
+        syntax_highlight: [engine: :syntect, theme: "Catppuccin Macchiato"],
         plugins: [MDExGFM]
       ]
     ]
   ```
+
+  ### Syntax Highlighting
+
+  MDEx provides two syntax highlighting engines: [Lumis][lumis] and [Syntect][syntact].
+  The Syntect engine requires less configuration; it uses Sublime Text highlighting
+  grammars (defined with regular expressions). Supported themes are part of the
+  [two-face][2face] crate.
+
+  The Lumis engine requires more configuration and a defined package for each of the
+  languages rendered on your site.
+
+  ```elixir
+  # config/config.exs
+  config :mdex_native, syntax_highlighter: :lumis
+
+  config :tableau, :config,
+    # …
+    markdown: [
+      # …
+      syntax_highlight: [engine: :lumis, theme: "neovim_dark"]
+    ]
+
+  # mix.exs
+  defp defps do
+    [
+      # …
+      {:lumis, "~> 0.10"},
+      {:lumis_wasm_elixir, "~> 0.26"},
+      {:lumis_wasm_ruby, "~> 0.26"},
+      {:lumis_wasm_rust, "~> 0.26"}
+    ]
+  end
+  ```
+
+  The full list of tree-sitter syntax parsers can be loaded using the [full][lumis-full]
+  bundle, but note that Lumis enforces [highlighting budgets][lumis-budget] that can be
+  configured.
+
+  [2face]: https://crates.io/crates/two-face
+  [lumis-budget]: https://mdex.hexdocs.pm/lumis.html#highlighting-budgets
+  [lumis-full]: https://hex.pm/packages/lumis_wasm_bundle_full
+  [lumis]: https://mdex.hexdocs.pm/lumis.html
+  [syntect]: https://mdex.hexdocs.pm/syntect.html
   """
 
   @doc """

@@ -35,7 +35,7 @@ defmodule Tableau.MixProject do
       {:date_time_parser, "~> 1.2"},
       {:html_entities, "~> 0.5.2"},
       {:libgraph, "~> 0.16.0"},
-      {:mdex, "~> 0.11.1"},
+      {:mdex, "~> 0.14.2"},
       {:schematic, "~> 0.5.1"},
       {:slugify, "~> 1.3"},
       {:tz, "~> 0.28.1"},
