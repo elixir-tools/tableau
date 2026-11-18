@@ -37,7 +37,7 @@ defmodule Tableau.PostExtensionTest do
                PostExtension.config(%{dir: dir, enabled: true, layout: Blog.DefaultPostLayout})
 
       token = %{
-        site: %{config: %{converters: [md: Tableau.MDExConverter]}},
+        site: %{config: %{converters: [md: Tableau.MDExExtension]}},
         extensions: %{posts: %{config: config}},
         graph: Graph.new()
       }

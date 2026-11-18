@@ -53,7 +53,7 @@ defmodule Tableau.PageExtension do
   If you're interested in authoring your content in something other than markdown (or you want to use a different markdown parser), you can configure
   a converter for your format in the global configuration.
 
-  Currently the `Tableau.MDExConverter` is the only builtin converter, but you are free to write your own!
+  Currently the `Tableau.MDExExtension` is the only builtin converter, but you are free to write your own!
 
   ```elixir
   # config/config.exs
@@ -62,7 +62,7 @@ defmodule Tableau.PageExtension do
 
   config :tableau, :config,
     converters: [
-      md: Tableau.MDExConverter,
+      md: Tableau.MDExExtension,
       adoc: MySite.AsciiDocConverter
     ],
   ```

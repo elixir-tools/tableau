@@ -35,7 +35,7 @@ defmodule Tableau.PageExtensionTest do
                PageExtension.config(%{dir: dir, enabled: true, layout: Blog.DefaultPageLayout})
 
       token = %{
-        site: %{config: %{converters: [md: Tableau.MDExConverter]}},
+        site: %{config: %{converters: [md: Tableau.MDExExtension]}},
         extensions: %{pages: %{config: config}},
         graph: Graph.new()
       }
