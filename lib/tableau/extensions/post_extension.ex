@@ -124,7 +124,7 @@ defmodule Tableau.PostExtension do
           ext: ext
         } = entry
 
-        build(path, front_matter, body, config, fn assigns ->
+        build(path, ext, front_matter, body, config, fn assigns ->
           Tableau.Converter.convert(body, converter: assigns.page[:converter], ext: ext)
         end)
       end)
@@ -158,7 +158,7 @@ defmodule Tableau.PostExtension do
     {:ok, Map.put(token, :graph, graph)}
   end
 
-  defp build(filename, front_matter, body, posts_config, renderer) do
+  defp build(filename, ext, front_matter, body, posts_config, renderer) do
     Application.put_env(:date_time_parser, :include_zones_from, ~N[2010-01-01T00:00:00])
 
     converter =
@@ -172,6 +172,7 @@ defmodule Tableau.PostExtension do
     |> Map.put(:body, body)
     |> Map.put(:title, front_matter[:title] || filename |> Path.basename() |> Path.rootname())
     |> Map.put(:file, filename)
+    |> Map.put(:ext, ext)
     |> Map.put(:renderer, renderer)
     |> Map.put(:layout, Module.concat([front_matter[:layout] || posts_config.layout]))
     |> Map.put(:converter, converter)

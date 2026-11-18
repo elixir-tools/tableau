@@ -109,7 +109,7 @@ defmodule Tableau.PageExtension do
           ext: ext
         } = entry
 
-        build(path, front_matter, body, config, fn assigns ->
+        build(path, ext, front_matter, body, config, fn assigns ->
           Tableau.Converter.convert(body, converter: assigns.page[:converter], ext: ext)
         end)
       end)
@@ -127,6 +127,7 @@ defmodule Tableau.PageExtension do
             parent: page.layout,
             permalink: page.permalink,
             template: page.renderer,
+            ext: page.ext,
             opts: page
           }
         end)
@@ -135,7 +136,7 @@ defmodule Tableau.PageExtension do
     {:ok, Map.put(token, :graph, graph)}
   end
 
-  defp build(filename, front_matter, body, pages_config, renderer) do
+  defp build(filename, ext, front_matter, body, pages_config, renderer) do
     converter =
       case front_matter[:converter] do
         nil -> nil
@@ -147,6 +148,7 @@ defmodule Tableau.PageExtension do
     |> Map.put(:body, body)
     |> Map.put(:title, front_matter[:title] || filename |> Path.basename() |> Path.rootname())
     |> Map.put(:file, filename)
+    |> Map.put(:ext, ext)
     |> Map.put(:renderer, renderer)
     |> Map.put(:layout, Module.concat([front_matter[:layout] || pages_config.layout]))
     |> Map.put(:converter, converter)

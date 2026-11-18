@@ -56,7 +56,7 @@ defmodule Tableau.PageExtensionTest do
       Bong!
       """)
 
-      File.write(Path.join(dir, "my-second-page.md"), """
+      File.write(Path.join(dir, "my-second-page.jingledown"), """
       ---
       layout: Blog.PageLayout
       title: My Second Page
@@ -80,12 +80,14 @@ defmodule Tableau.PageExtensionTest do
                    title: "How to Make Stuff",
                    body: "\n## Bing\n\nBong!\n",
                    layout: Blog.PageLayout,
+                   ext: :md,
                    permalink: "/page/2page02/28/bing-bong/",
                    __tableau_page_extension__: true
                  } = page_2,
                  %{
                    date: "2024-02-28",
-                   file: ^dir <> "/my-second-page.md",
+                   file: ^dir <> "/my-second-page.jingledown",
+                   ext: :jingledown,
                    title: "My Second Page",
                    body: "\n## Now we're cooking\n\nwith gas!\n",
                    layout: Blog.PageLayout,
@@ -144,6 +146,7 @@ defmodule Tableau.PageExtensionTest do
                pages: [
                  %{
                    file: ^dir_1 <> "/page-1.md",
+                   ext: :md,
                    title: "Page One",
                    body: "\nI am a real boy.\n",
                    layout: Blog.PageLayout,
@@ -153,6 +156,7 @@ defmodule Tableau.PageExtensionTest do
                  } = page_1,
                  %{
                    file: ^dir_2 <> "/page-2.md",
+                   ext: :md,
                    title: "Page Two",
                    body: "\nThe answer is not 42.\n",
                    layout: Blog.PageLayout,
@@ -199,6 +203,7 @@ defmodule Tableau.PageExtensionTest do
                  %{
                    date: "2018-02-28",
                    file: ^dir <> "/my-future-page.md",
+                   ext: :md,
                    title: "A Great page",
                    body: "\nA great page\n",
                    layout: Blog.PageLayout,
@@ -237,6 +242,7 @@ defmodule Tableau.PageExtensionTest do
                    __tableau_page_extension__: true,
                    body: "\nA great page\n",
                    file: ^dir <> "/some/fancy/path/a-deeply-nested-page.md",
+                   ext: :md,
                    layout: Blog.PageLayout,
                    permalink: "/some/fancy/path/a-deeply-nested-page",
                    title: "A Deeply Nested page"

@@ -46,7 +46,7 @@ defmodule Tableau.PostExtensionTest do
     end
 
     test "inserts posts into the graph and the token", %{token: token, tmp_dir: dir} do
-      File.write(Path.join(dir, "my-post.md"), """
+      File.write(Path.join(dir, "my-post.jingledown"), """
       ---
       layout: Blog.PostLayout
       title: A Bing Bong Blog Post
@@ -94,6 +94,7 @@ defmodule Tableau.PostExtensionTest do
                  %{
                    date: ~U[2024-02-28 00:00:00Z],
                    file: ^dir <> "/my-second-post.md",
+                   ext: :md,
                    title: "My Second Post",
                    body: "\n## Now we're cooking\n\nwith gas!\n",
                    layout: Blog.PostLayout,
@@ -103,7 +104,8 @@ defmodule Tableau.PostExtensionTest do
                  } = post_2,
                  %{
                    date: ~U[2017-02-28 00:00:00Z],
-                   file: ^dir <> "/my-post.md",
+                   file: ^dir <> "/my-post.jingledown",
+                   ext: :jingledown,
                    title: "A Bing Bong Blog Post",
                    body: "\n## Bing\n\nBong!\n",
                    layout: Blog.PostLayout,
@@ -167,6 +169,7 @@ defmodule Tableau.PostExtensionTest do
                  %{
                    date: ~U[2017-03-01 00:00:00Z],
                    file: ^drafts_dir <> "/my-post-in-drafts-dir.md",
+                   ext: :md,
                    title: "My Draft Dir Post",
                    body: "\nThe answer is not 42.\n",
                    layout: Blog.PostLayout,
@@ -177,6 +180,7 @@ defmodule Tableau.PostExtensionTest do
                  %{
                    date: ~U[2017-02-01 00:00:00Z],
                    file: ^posts_dir <> "/my-post-in-posts-dir.md",
+                   ext: :md,
                    title: "My Dir Post",
                    body: "\nI am a real boy.\n",
                    layout: Blog.PostLayout,
@@ -219,6 +223,7 @@ defmodule Tableau.PostExtensionTest do
                  %{
                    date: ~U[3000-02-28 00:00:00Z],
                    file: ^dir <> "/my-future-post.md",
+                   ext: :md,
                    title: "My Future Post",
                    body: "\nDo cars fly yet?\n",
                    layout: Blog.PostLayout,
@@ -261,6 +266,7 @@ defmodule Tableau.PostExtensionTest do
                  %{
                    date: ~U[2018-02-28 00:00:00Z],
                    file: ^dir <> "/my-future-post.md",
+                   ext: :md,
                    title: "A Great Post",
                    body: "\nA great post\n",
                    layout: Blog.PostLayout,
@@ -301,6 +307,7 @@ defmodule Tableau.PostExtensionTest do
                    body: "\nA great post\n",
                    date: ~U[2018-02-28 00:00:00Z],
                    file: ^dir <> "/some/fancy/path/a-deeply-nested-post.md",
+                   ext: :md,
                    layout: Blog.PostLayout,
                    permalink: "/some/fancy/path/a-deeply-nested-post",
                    title: "A Deeply Nested Post"
@@ -331,6 +338,7 @@ defmodule Tableau.PostExtensionTest do
                    body: "\nA great post\n",
                    date: ~U[2018-02-28 00:00:00Z],
                    file: ^dir <> "/a-post.md",
+                   ext: :md,
                    layout: Blog.PostLayout,
                    permalink: "/que-es-la-programacion-funcional",
                    title: "¿Qué es la programación funcional?"
@@ -360,6 +368,7 @@ defmodule Tableau.PostExtensionTest do
                    body: "\nA great post\n",
                    date: ~U[2018-02-28 00:00:00Z],
                    file: ^dir <> "/a-post.md",
+                   ext: :md,
                    layout: Blog.DefaultPostLayout,
                    permalink: "/missing-layout-key",
                    title: "Missing layout key"
@@ -391,6 +400,7 @@ defmodule Tableau.PostExtensionTest do
                    body: "\nA great post\n",
                    date: ~U[2023-02-01 00:01:00Z],
                    file: ^dir <> "/a-post.md",
+                   ext: :md,
                    layout: Some.Layout,
                    permalink: "/articles/2023/02/01/foo-man-chu-foo.js",
                    title: "foo man chu_foo.js",
