@@ -113,7 +113,7 @@ defmodule Tableau.RSSExtension do
                  <link>#{URI.merge(url, post.permalink)}</link>
                  <pubDate>#{Calendar.strftime(post.date, "%a, %d %b %Y %X %Z")}</pubDate>
                  <guid>#{URI.merge(url, post.permalink)}</guid>
-                 <description><![CDATA[ #{post.renderer.(token)} ]]></description>
+                 <description><![CDATA[ #{post.renderer.(Map.put(token, :page, post))} ]]></description>
               </item>
           """
         end

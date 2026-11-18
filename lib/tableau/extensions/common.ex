@@ -36,9 +36,22 @@ defmodule Tableau.Extension.Common do
   """
   def entries(paths, callback) do
     for path <- paths do
-      {front_matter, body} = Tableau.YamlFrontMatter.parse!(File.read!(path), atoms: true)
+      content = File.read!(path)
+
+      {front_matter, body} =
+        case Tableau.YamlFrontMatter.parse(content) do
+          {:ok, fm, body} -> {fm, body}
+          {:error, _} -> {%{}, content}
+        end
+
       "." <> ext = Path.extname(path)
-      callback.(%{path: path, ext: String.to_atom(ext), front_matter: front_matter, pre_convert_body: body})
+
+      callback.(%{
+        path: path,
+        ext: String.to_atom(ext),
+        front_matter: front_matter,
+        pre_convert_body: body
+      })
     end
   end
 

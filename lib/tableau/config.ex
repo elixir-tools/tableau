@@ -11,8 +11,7 @@ defmodule Tableau.Config do
     timezone: "Etc/UTC",
     reload_log: false,
     slug: [],
-    converters: [md: Tableau.MDExConverter],
-    markdown: [mdex: []]
+    converters: []
   ]
 
   def new(config) do
@@ -32,7 +31,6 @@ defmodule Tableau.Config do
         optional(:timezone) => str(),
         optional(:reload_log) => bool(),
         optional(:converters) => keyword(values: atom()),
-        optional(:markdown) => keyword(values: list()),
         optional(:slug) =>
           keyword(%{
             optional(:separator) => oneof([str(), int()]),

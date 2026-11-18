@@ -31,10 +31,11 @@ defmodule Tableau.PageExtensionTest do
 
   describe "run" do
     setup %{tmp_dir: dir} do
-      assert {:ok, config} = PageExtension.config(%{dir: dir, enabled: true, layout: Blog.DefaultPageLayout})
+      assert {:ok, config} =
+               PageExtension.config(%{dir: dir, enabled: true, layout: Blog.DefaultPageLayout})
 
       token = %{
-        site: %{config: %{converters: [md: Tableau.MDExConverter]}},
+        site: %{config: %{converters: [md: Tableau.MDExExtension]}},
         extensions: %{pages: %{config: config}},
         graph: Graph.new()
       }
@@ -55,7 +56,7 @@ defmodule Tableau.PageExtensionTest do
       Bong!
       """)
 
-      File.write(Path.join(dir, "my-second-page.md"), """
+      File.write(Path.join(dir, "my-second-page.jingledown"), """
       ---
       layout: Blog.PageLayout
       title: My Second Page
@@ -79,12 +80,14 @@ defmodule Tableau.PageExtensionTest do
                    title: "How to Make Stuff",
                    body: "\n## Bing\n\nBong!\n",
                    layout: Blog.PageLayout,
+                   ext: :md,
                    permalink: "/page/2page02/28/bing-bong/",
                    __tableau_page_extension__: true
                  } = page_2,
                  %{
                    date: "2024-02-28",
-                   file: ^dir <> "/my-second-page.md",
+                   file: ^dir <> "/my-second-page.jingledown",
+                   ext: :jingledown,
                    title: "My Second Page",
                    body: "\n## Now we're cooking\n\nwith gas!\n",
                    layout: Blog.PageLayout,
@@ -143,6 +146,7 @@ defmodule Tableau.PageExtensionTest do
                pages: [
                  %{
                    file: ^dir_1 <> "/page-1.md",
+                   ext: :md,
                    title: "Page One",
                    body: "\nI am a real boy.\n",
                    layout: Blog.PageLayout,
@@ -152,6 +156,7 @@ defmodule Tableau.PageExtensionTest do
                  } = page_1,
                  %{
                    file: ^dir_2 <> "/page-2.md",
+                   ext: :md,
                    title: "Page Two",
                    body: "\nThe answer is not 42.\n",
                    layout: Blog.PageLayout,
@@ -165,8 +170,13 @@ defmodule Tableau.PageExtensionTest do
 
       vertices = Graph.vertices(graph)
 
-      assert Enum.any?(vertices, fn v -> is_struct(v, Tableau.Page) and v.permalink == page_1.permalink end)
-      assert Enum.any?(vertices, fn v -> is_struct(v, Tableau.Page) and v.permalink == page_2.permalink end)
+      assert Enum.any?(vertices, fn v ->
+               is_struct(v, Tableau.Page) and v.permalink == page_1.permalink
+             end)
+
+      assert Enum.any?(vertices, fn v ->
+               is_struct(v, Tableau.Page) and v.permalink == page_2.permalink
+             end)
     end
 
     test "configured permalink works when you dont specify one", %{tmp_dir: dir, token: token} do
@@ -180,7 +190,8 @@ defmodule Tableau.PageExtensionTest do
       A great page
       """)
 
-      assert {:ok, config} = PageExtension.config(%{dir: dir, enabled: true, permalink: "/page/:title"})
+      assert {:ok, config} =
+               PageExtension.config(%{dir: dir, enabled: true, permalink: "/page/:title"})
 
       token = put_in(token.extensions.pages.config, config)
 
@@ -192,6 +203,7 @@ defmodule Tableau.PageExtensionTest do
                  %{
                    date: "2018-02-28",
                    file: ^dir <> "/my-future-page.md",
+                   ext: :md,
                    title: "A Great page",
                    body: "\nA great page\n",
                    layout: Blog.PageLayout,
@@ -202,7 +214,10 @@ defmodule Tableau.PageExtensionTest do
              } = token
     end
 
-    test "generates permalink from file path if not configured or in front matter", %{tmp_dir: dir, token: token} do
+    test "generates permalink from file path if not configured or in front matter", %{
+      tmp_dir: dir,
+      token: token
+    } do
       assert {:ok, config} = PageExtension.config(%{dir: [dir], enabled: true})
 
       token = put_in(token.extensions.pages.config, config)
@@ -227,6 +242,7 @@ defmodule Tableau.PageExtensionTest do
                    __tableau_page_extension__: true,
                    body: "\nA great page\n",
                    file: ^dir <> "/some/fancy/path/a-deeply-nested-page.md",
+                   ext: :md,
                    layout: Blog.PageLayout,
                    permalink: "/some/fancy/path/a-deeply-nested-page",
                    title: "A Deeply Nested page"
@@ -339,7 +355,7 @@ defmodule Tableau.PageExtensionTest do
       assert {:ok, token} = PageExtension.pre_render(token)
 
       assert %{
-               pages: [%{body: "\nA great page\n", converter: "Tableau.PageExtensionTest"}],
+               pages: [%{body: "\nA great page\n", converter: Tableau.PageExtensionTest}],
                graph: graph
              } = token
 
@@ -361,5 +377,5 @@ defmodule Tableau.PageExtensionTest do
     end
   end
 
-  def convert(_, _, body, _), do: String.upcase(body)
+  def convert(body), do: String.upcase(body)
 end
