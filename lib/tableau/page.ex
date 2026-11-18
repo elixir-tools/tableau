@@ -28,8 +28,14 @@ defmodule Tableau.Page do
 
   @doc """
   The page struct allows you to create pages as data structures and manually insert them into the Graph.
+
+  - `parent` - The parent layout to render this page within.
+  - `permalink` - The location of this page.
+  - `template` - The render function used to build this page.
+  - `opts` - Additional options that are passed to the render function. Usually things like YAML frontmatter.
+  - `ext` - The file extension of the markup language backing this page (optional).
   """
-  defstruct [:parent, :permalink, :template, :opts]
+  defstruct [:parent, :permalink, :template, :opts, :ext]
 
   defimpl Tableau.Graph.Nodable do
     def template(nodable, assigns) do
