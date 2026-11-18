@@ -15,6 +15,8 @@ workflows:
         - 'actions/checkout@v7.0.1'
         - 'erlef/setup-beam@v1.24.1'
         - 'googleapis/release-please-action@v5.0.0'
+    '.github/workflows/verify-actions-lock.yaml':
+        - 'actions/checkout@v7.0.1'
 dependencies:
     'actions/cache@v6.1.0':
         ref: 'v6.1.0'

@@ -26,27 +26,27 @@ jobs:
             otp: 29.x
 
     steps:
-    - uses: actions/checkout@v7.0.1
-    - uses: erlef/setup-beam@v1.24.1
-      id: install
-      with:
-        otp-version: ${{matrix.otp}}
-        elixir-version: ${{matrix.elixir}}
-    - uses: actions/cache@v6.1.0
-      id: cache
-      with:
-        path: |
-          deps
-        key: ${{ runner.os }}-mix-${{steps.install.outputs.otp-version}}-${{steps.install.outputs.elixir-version}}-${{ hashFiles('**/mix.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-mix-${{steps.install.outputs.otp-version}}-${{steps.install.outputs.elixir-version}}-
+      - uses: actions/checkout@v7.0.1
+      - uses: erlef/setup-beam@v1.24.1
+        id: install
+        with:
+          otp-version: ${{matrix.otp}}
+          elixir-version: ${{matrix.elixir}}
+      - uses: actions/cache@v6.1.0
+        id: cache
+        with:
+          path: |
+            deps
+          key: ${{ runner.os }}-mix-${{steps.install.outputs.otp-version}}-${{steps.install.outputs.elixir-version}}-${{ hashFiles('**/mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-mix-${{steps.install.outputs.otp-version}}-${{steps.install.outputs.elixir-version}}-
 
-    - name: Install Dependencies
-      if: steps.cache.outputs.cache-hit != 'true'
-      run: mix deps.get
+      - name: Install Dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: mix deps.get
 
-    - name: Run Tests
-      run: mix test
+      - name: Run Tests
+        run: mix test
 
   formatter:
     runs-on: ubuntu-latest
@@ -58,25 +58,25 @@ jobs:
         elixir: [1.17.x]
 
     steps:
-    - uses: actions/checkout@v7.0.1
-    - uses: erlef/setup-beam@v1.24.1
-      id: install
-      with:
-        otp-version: ${{matrix.otp}}
-        elixir-version: ${{matrix.elixir}}
-    - uses: actions/cache@v6.1.0
-      id: cache
-      with:
-        path: |
-          deps
-          _build
-        key: ${{ runner.os }}-mix-${{steps.install.outputs.otp-version}}-${{steps.install.outputs.elixir-version}}-${{ hashFiles('**/mix.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-mix-${{steps.install.outputs.otp-version}}-${{steps.install.outputs.elixir-version}}-
+      - uses: actions/checkout@v7.0.1
+      - uses: erlef/setup-beam@v1.24.1
+        id: install
+        with:
+          otp-version: ${{matrix.otp}}
+          elixir-version: ${{matrix.elixir}}
+      - uses: actions/cache@v6.1.0
+        id: cache
+        with:
+          path: |
+            deps
+            _build
+          key: ${{ runner.os }}-mix-${{steps.install.outputs.otp-version}}-${{steps.install.outputs.elixir-version}}-${{ hashFiles('**/mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-mix-${{steps.install.outputs.otp-version}}-${{steps.install.outputs.elixir-version}}-
 
-    - name: Install Dependencies
-      if: steps.cache.outputs.cache-hit != 'true'
-      run: mix deps.get
+      - name: Install Dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: mix deps.get
 
-    - name: Run Formatter
-      run: mix format --check-formatted
+      - name: Run Formatter
+        run: mix format --check-formatted
