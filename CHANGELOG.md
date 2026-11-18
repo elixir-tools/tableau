@@ -1,5 +1,23 @@
 # CHANGELOG
 
+## [0.31.0](https://github.com/elixir-tools/tableau/compare/v0.30.0...v0.31.0) (2026-11-18)
+
+
+### ⚠ BREAKING CHANGES
+
+* add Tableau.MDExExtension ([#193](https://github.com/elixir-tools/tableau/issues/193))
+* extract TableauDevServer ([#190](https://github.com/elixir-tools/tableau/issues/190))
+
+### Features
+
+* add Tableau.MDExExtension ([#193](https://github.com/elixir-tools/tableau/issues/193)) ([0765694](https://github.com/elixir-tools/tableau/commit/07656941d1b14cdacc1b1c8d7cf96fe7400cdd9c))
+* extract TableauDevServer ([#190](https://github.com/elixir-tools/tableau/issues/190)) ([6a6c894](https://github.com/elixir-tools/tableau/commit/6a6c89430113eee6b5fc5aa3140b7c9d034661d7))
+
+
+### Bug Fixes
+
+* return {:ok, key} | :error in Tableau.Extension.key/1 spec ([#194](https://github.com/elixir-tools/tableau/issues/194)) ([f6f5e52](https://github.com/elixir-tools/tableau/commit/f6f5e52a6ec6afefcda7e9cf10c51a00c547ded7))
+
 ## [0.30.0](https://github.com/elixir-tools/tableau/compare/v0.29.0...v0.30.0) (2026-01-24)
 
 
